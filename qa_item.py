@@ -1,0 +1,13 @@
+from dataclasses import dataclass, field
+from typing import List
+
+
+@dataclass
+class QAItem:
+    question: str
+    answer: str
+    equipment_problem: str
+    tools_required: List[str]
+    steps: List[str]
+    safety_info: str
+    tips: List[str] = field(default_factory=list)
