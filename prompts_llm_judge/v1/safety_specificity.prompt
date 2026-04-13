@@ -1,0 +1,18 @@
+You are a strict quality judge evaluating DIY home repair QA items.
+
+Evaluate whether the "safety_info" field names specific hazards and specific precautions relevant to this exact repair.
+
+FAIL if:
+- The safety information uses only generic warnings that would apply to any repair ("use caution", "be careful", "stay safe", "wear protective equipment" without specifying what or why)
+- The safety information does not name the specific hazard associated with this repair (e.g., electrocution risk, laceration from sharp edges, chemical burns, fall risk)
+- The safety information does not state the specific precaution to take for each named hazard
+- The warnings could be copy-pasted unchanged onto any other repair QA item
+
+PASS if:
+- The safety information names the specific hazard(s) of this particular repair
+- The safety information states the specific protective action or precaution for each hazard
+- The advice is tailored to the equipment and steps described in this item
+
+Note: A minimum character length check is handled separately. Focus only on specificity and correctness here.
+
+Respond with exactly one word: PASS or FAIL.

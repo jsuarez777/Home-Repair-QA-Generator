@@ -1,0 +1,21 @@
+{
+  "question": "Why won’t my refrigerator cool, and how can I troubleshoot it step-by-step?",
+  "answer": "1) Check the basics: confirm the refrigerator is plugged in, the outlet has power, and the temperature controls are set to normal (not OFF). 2) Listen and observe: after the unit runs, the compressor and fans should start; if there’s no sound at all, suspect a power/control issue. 3) Inspect the condenser coils (back or bottom access panel): if heavily dusty, clean them to improve heat exchange. 4) Check the evaporator fan operation: open the freezer door and watch for fan movement; if the fan is not running or is blocked by ice, the refrigerator may not cool the fresh-food compartment. 5) Inspect for excessive ice buildup: if the evaporator coils are frosted over, a failing defrost system (defrost heater, defrost thermostat, or defrost control/timer) may be preventing thawing. 6) Test the defrost components (power off): locate the defrost thermostat/thermistor and heater, check for continuity with a multimeter, and replace any failed part. 7) Verify airflow after repairs: once the fan and defrost system are confirmed, run the fridge for 12–24 hours and recheck temperatures in both compartments.",
+  "equipment_problem": "Refrigerator not cooling; freezer may have frost/ice issues and the refrigerator compartment stays warm",
+  "tools_required": ["multimeter", "screwdriver set", "soft brush or vacuum", "flashlight", "work gloves"],
+  "steps": [
+    "Unplug the refrigerator (or switch off the breaker) and wait a few minutes",
+    "Verify power at the outlet and confirm temperature settings are not set to OFF",
+    "Pull the unit’s access panel and inspect/clean the condenser coils if they are dusty",
+    "Plug the unit back in briefly and check for compressor sound and airflow from the evaporator/fan area",
+    "Open the freezer and look for heavy ice buildup on the evaporator area",
+    "If ice is excessive, unplug again and test the defrost heater and defrost thermostat/thermistor for continuity using a multimeter",
+    "Replace any component that fails continuity and reassemble the access panel",
+    "Reapply power and monitor refrigerator/freezer temperatures for 12–24 hours"
+  ],
+  "safety_info": "Unplug the refrigerator or turn off the breaker before testing electrical components. Wear gloves when handling sharp metal panels and be cautious around capacitors and wiring. Allow time for the unit to thaw if heavy ice is present.",
+  "tips": [
+    "If the evaporator fan is running but cooling is still weak, recheck airflow obstructions and verify the defrost system isn’t repeatedly failing.",
+    "Take a photo before removing panels so you can reconnect wiring correctly."
+  ]
+}

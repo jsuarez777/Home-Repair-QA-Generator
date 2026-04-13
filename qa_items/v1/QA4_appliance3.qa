@@ -1,0 +1,21 @@
+{
+  "question": "My refrigerator isn’t cooling properly and the freezer seems warm—what should I check and how can I troubleshoot it?",
+  "answer": "Start by checking the basics: verify temperature settings, confirm the compressor is running, and inspect airflow. If the freezer is warm, common causes include a failed evaporator fan, a blocked defrost drain, or an issue in the defrost system (defrost heater/thermostat). Unplug the unit and remove the evaporator cover to inspect for heavy ice buildup. If the evaporator coil is iced over, test the defrost components (defrost heater and defrost thermostat/bi-metal). A failed evaporator fan can also prevent cold air from circulating. Clear any ice from the evaporator area safely (do not chip hard into coils), ensure the drain tube is clear, then reassemble and power back on. After repair, monitor temperatures for 4–24 hours to confirm normal operation.",
+  "equipment_problem": "Refrigerator not cooling (freezer is warm), suspected airflow or defrost problem",
+  "tools_required": ["multimeter", "screwdriver (appropriate size)", "flashlight", "soft brush or plastic scraper", "towel"],
+  "steps": [
+    "Check the refrigerator/freezer temperature controls and ensure they are set correctly; then listen for compressor start-up and confirm power is reaching the unit.",
+    "Verify airflow by opening the freezer and feeling for air movement; if there’s little/no airflow, suspect the evaporator fan.",
+    "Unplug the refrigerator and remove the interior evaporator fan cover (and any access panels needed) to inspect the evaporator coil for frost/ice buildup.",
+    "If heavy ice is present, inspect and test the defrost system components: defrost heater and defrost thermostat/bi-metal (use a multimeter according to the manufacturer’s specs).",
+    "Check the defrost drain area; clear any blockage in the drain tube so meltwater can flow properly during defrost cycles.",
+    "If the evaporator fan isn’t running or runs intermittently, replace the evaporator fan motor/fan assembly as needed.",
+    "Reassemble all covers, plug the unit back in, and monitor freezer and refrigerator temperatures until they stabilize."
+  ],
+  "safety_info": "Unplug the refrigerator before removing panels or inspecting the evaporator area. Use care around electrical connections and do not chip ice aggressively—damaging the evaporator can cause leaks and major repairs.",
+  "tips": [
+    "Photograph wiring connectors before unplugging anything to ensure correct reassembly.",
+    "If the compressor runs but temperatures don’t improve, prioritize checking defrost (ice on the evaporator) and the evaporator fan (airflow).",
+    "Allow extra time after repairs; refrigerators often take several hours to fully recover temperature."
+  ]
+}

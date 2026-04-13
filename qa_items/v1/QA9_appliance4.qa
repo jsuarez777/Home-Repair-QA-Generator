@@ -1,0 +1,21 @@
+{
+  "question": "My refrigerator is cooling intermittently and the compressor starts and stops frequently. How can I troubleshoot and fix a likely cause?",
+  "answer": "Start by confirming whether the issue is temperature-related or airflow-related. Check the freezer temperature first (freezer should typically be around 0°F/-18°C). If the freezer is warm, inspect the evaporator fan operation and check for airflow blockage. A common cause of intermittent cooling is a failed defrost system component (defrost heater, defrost thermostat, or control board) that allows frost to build up on the evaporator, then melts/clears temporarily and causes cycling. Unplug the refrigerator, remove the back panel in the freezer section (if accessible), and inspect the evaporator coil for heavy ice/frost. If the coil has significant ice buildup, test the defrost heater and defrost thermostat for continuity (or replace the failed part if testing isn’t possible). Also verify the refrigerator/freezer thermistor sensors are reading plausible resistance/values; a faulty thermistor can cause the control to misjudge temperature and cycle cooling. After replacing the defective component, reassemble, plug the unit back in, and monitor temperatures and compressor behavior for 24 hours to confirm stable cooling.",
+  "equipment_problem": "Refrigerator not cooling consistently; frequent compressor cycling and possible frost/ice buildup in the freezer",
+  "tools_required": ["multimeter", "screwdriver set", "flashlight", "soft brush or cloth", "work gloves"],
+  "steps": [
+    "Check temperatures: measure the freezer and fresh food compartment temperatures and note whether the freezer is warmer than normal.",
+    "Listen for fan operation: verify the evaporator fan runs when the compressor is running (and that vents are not blocked).",
+    "Unplug the refrigerator and remove the freezer back panel (if your model allows easy access).",
+    "Inspect the evaporator coil for heavy ice/frost or an iced-over area near where airflow passes.",
+    "If ice buildup is present, test the defrost components: use a multimeter to check the defrost heater and defrost thermostat for continuity/expected values.",
+    "If a defrost component is failed, replace the faulty part (or replace the defrost thermostat/heater assembly as specified for the model).",
+    "Also check the thermistor sensor(s) for plausible readings using the service information for your model; replace if out of range.",
+    "Reassemble, plug the refrigerator back in, and allow up to 24 hours for stable temperatures before judging the repair."
+  ],
+  "safety_info": "Unplug the refrigerator before removing panels and working near the evaporator area to avoid electrical shock. Use gloves when handling sharp panel edges. Do not chip ice with metal tools that could puncture coils—allow defrost or remove ice carefully with appropriate tools.",
+  "tips": [
+    "If the evaporator coil is heavily iced, focus on the defrost system first—intermittent cooling often tracks defrost failures.",
+    "Take photos of the wiring and connector positions before disconnecting anything, especially on thermistor or control harness connections."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "question": "My HVAC system runs but doesn’t seem to heat evenly—could it be a thermostat issue, a clogged filter, or dirty vents? What basic troubleshooting should I do first?",
+  "answer": "Start with the simplest, most common items before changing parts: (1) check and replace the air filter if it’s dirty, (2) verify thermostat settings and operation mode, (3) confirm the thermostat is calling for heat, and (4) inspect air delivery and vents for obvious blockages or heavy dust. After these checks, if airflow is still weak or temperature remains uneven, consider professional vent cleaning and deeper HVAC diagnostics (e.g., duct leakage, blower performance, or sensor calibration).",
+  "equipment_problem": "House HVAC system has weak/uneven heating; thermostat may be misconfigured, filter may be dirty, and vents may be dusty or partially blocked",
+  "tools_required": ["new HVAC air filter (correct size/MERV rating)", "flashlight", "clean cloth or vacuum with a brush attachment (for vent register dust)"],
+  "steps": [
+    "Check the HVAC filter: locate it at the return grille or air handler, remove it, and replace it if it’s visibly dirty or clogged (follow the size and MERV rating specified for your unit).",
+    "Verify thermostat mode and setpoints: ensure the thermostat is set to Heat (not Cool/Off), confirm the temperature setpoint is higher than the current room temperature, and check fan setting (use Auto for normal operation).",
+    "Confirm the system is actually responding: listen for the furnace/heat system to start when you raise the setpoint; if it doesn’t start, note any error codes or indicator lights on the thermostat.",
+    "Check airflow at registers: open several supply vents and make sure air is flowing. If some rooms are much weaker, inspect registers for obstructions and confirm dampers (if accessible) aren’t stuck closed.",
+    "Do a quick vent inspection: look for heavy dust buildup around vent openings/registers. Remove register covers if you can do so safely, vacuum loose dust, and wipe the surfaces.",
+    "Test again after filter/thermostat adjustments: run the system for 15–30 minutes and compare temperatures/airflow in multiple rooms."
+  ],
+  "safety_info": "Turn off power to the air handler/furnace before changing the filter if the unit has an exposed electrical disconnect, and avoid using sharp tools inside ducts. If you see signs of combustion issues, burning smells, or frequent cycling, stop troubleshooting and contact a qualified HVAC technician.",
+  "tips": [
+    "If you have a common 'dead' or blank thermostat issue, replace the thermostat batteries (if applicable) before deeper checks.",
+    "Use the thermostat’s 'fan' and 'heat' indicators to confirm it’s calling for heat; uneven temperatures can also be caused by blocked returns—verify return air paths are not blocked by furniture or rugs.",
+    "If vents are heavily caked with dust or you notice musty odors, vent cleaning may improve airflow, but airflow issues should still be verified by checking the filter and thermostat operation first."
+  ]
+}

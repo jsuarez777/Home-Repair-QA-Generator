@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(/Volumes/main/Users/wampa007/dev/ai_bootcamp/miniproject1/jorge_project/**)",
+      "Write(/Volumes/main/Users/wampa007/dev/ai_bootcamp/miniproject1/jorge_project/**)"
+    ]
+  }
+}

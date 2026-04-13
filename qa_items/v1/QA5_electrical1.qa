@@ -1,0 +1,22 @@
+{
+  "question": "How can I replace a damaged electrical outlet while staying safe?",
+  "answer": "1) Turn off power to the outlet at the main breaker (or the correct branch circuit) and confirm it’s off using a non-contact voltage tester. 2) Remove the outlet cover plate and unscrew the outlet from the electrical box. 3) Pull the outlet carefully out of the box and note which wires connect to which terminals (hot typically brass, neutral typically silver, ground typically green). If wires are not labeled, take a clear photo for reference. 4) Disconnect the wires: loosen the terminal screws (or release the backstab/quick-connect if present) and detach the hot (brass), neutral (silver), and ground wires. 5) Check the box: ensure it’s secure and not damaged, and that there are no signs of burning or corrosion. 6) If the wiring is nicked or corroded, cut back the damaged section and strip about 1/2 in (12–13 mm) of insulation to expose fresh copper. 7) Connect the new outlet: attach the hot wire to the brass screw, the neutral to the silver screw, and the ground wire to the green screw (or the green ground terminal). Tighten screws firmly but don’t overtighten. 8) If the outlet has a ground pigtail or if multiple grounds are present, follow the new outlet’s terminal layout and local wiring requirements (securely land all ground conductors in the designated way). 9) Carefully tuck wires back into the box without pinching them, position the outlet squarely, and screw it in. 10) Install the faceplate, turn the breaker back on, and test the outlet (ideally with a plug-in outlet tester) to confirm proper hot/neutral/ground wiring.",
+  "equipment_problem": "Damaged wall outlet with loose faceplate and a portion of the receptacle showing discoloration (possible arcing).",
+  "tools_required": ["non-contact voltage tester", "screwdriver (flathead and/or Phillips)", "wire strippers", "needle-nose pliers", "insulated wire connectors (if needed)", "outlet tester (plug-in)"],
+  "steps": [
+    "Shut off the power at the breaker and verify the outlet is dead with a non-contact voltage tester.",
+    "Remove the cover plate and unscrew the outlet from the electrical box.",
+    "Pull the outlet out slightly and identify the existing hot (brass), neutral (silver), and ground (green) connections (use photos if needed).",
+    "Disconnect the wires from the old outlet terminals (loosen terminal screws or release backstab/quick-connect).",
+    "Inspect the electrical box and wiring for damage; cut back any damaged copper and strip fresh insulation if necessary.",
+    "Connect hot to brass, neutral to silver, and ground to green on the new outlet; tighten terminals securely.",
+    "Tuck wires back into the box, mount the new outlet straight, and reinstall the cover plate.",
+    "Restore power and test the outlet with a plug-in tester."
+  ],
+  "safety_info": "Turn off the correct breaker first and verify with a voltage tester before touching any wires. If the outlet box is damaged, signs of overheating are present, or wiring is aluminum or improperly connected, stop and consider hiring a licensed electrician. Do not rely on the outlet switch or unplugged devices to ensure power is off.",
+  "tips": [
+    "Replace like-for-like: match the outlet type (e.g., standard vs. GFCI/ARC-fault) and amperage rating to what’s already installed.",
+    "When tightening terminal screws, keep stripped copper fully under the clamp—no bare copper should be exposed beyond the terminal area.",
+    "Use an outlet tester after installation to confirm correct wiring, not just power."
+  ]
+}

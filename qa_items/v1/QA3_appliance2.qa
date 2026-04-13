@@ -1,0 +1,22 @@
+{
+  "question": "Why won’t my refrigerator cool, and what steps can I take to troubleshoot it safely?",
+  "answer": "Start by confirming power and basic controls, then check common cooling-system causes. First, verify the unit is getting proper power and that the temperature settings are not mistakenly raised. Listen for the compressor fan/evaporator fan during a cooling cycle—if neither runs, the issue may be power/control related. If the compressor and fans run but the fridge doesn’t cool, inspect airflow and airflow obstructions: check the evaporator fan area for ice buildup or obstructions and ensure vents aren’t blocked. If the refrigerator is frosting excessively on the evaporator coils, test the defrost system components (defrost heater, defrost thermostat, and defrost control/timer depending on model). If the interior fan runs but there’s no airflow, check for a stuck or failed evaporator fan motor. Also inspect the door gasket for gaps and make sure the door closes firmly; warm air infiltration can prevent proper cooling. If you find severe ice buildup that doesn’t clear after defrosting, or if you determine the compressor or main control is faulty, stop and consider professional service because these involve sealed-system and high-voltage risk.",
+  "equipment_problem": "Refrigerator not cooling (warm interior; compressor may or may not be running)",
+  "tools_required": ["multimeter", "flashlight", "thermometer (optional)", "soft brush or vacuum with brush attachment", "hair dryer (low/medium heat, optional for manual defrost)"],
+  "steps": [
+    "Unplug the refrigerator (or switch off the breaker) before opening panels; wait 5 minutes and remove food to access internal components.",
+    "Check temperature settings (freezer and refrigerator) and confirm the unit is in the correct mode (e.g., not in 'Off' or 'Demo').",
+    "Verify power: check that the outlet/breaker is working and listen for fan operation when you plug it back in.",
+    "Locate the evaporator fan (typically behind the rear panel in the freezer). Look for ice buildup or blocked airflow and ensure no items are blocking vents.",
+    "If you see heavy ice on the evaporator area, manually defrost safely: use a hair dryer on low/medium from a distance, or allow time for the unit to thaw; do not puncture coils or use sharp tools.",
+    "After thawing, plug back in and observe whether the evaporator fan runs and whether air flows into the refrigerator section.",
+    "Use a multimeter to test the defrost components if the evaporator was iced up (exact terminals and readings vary by model—match to your service manual).",
+    "Check the door gasket for tears or poor sealing and test with the 'dollar bill' or paper test to ensure the door seals evenly.",
+    "If cooling still does not resume after defrost and basic checks, or if you suspect a compressor/control failure, schedule professional repair."
+  ],
+  "safety_info": "Unplug the refrigerator (or turn off the breaker) before removing panels. Avoid puncturing refrigerant lines or coils. Do not use metal tools to chip ice. When using a hair dryer, keep it on low/medium heat, keep it away from plastic parts and water, and never operate it near exposed electrical components. If any testing reveals unknown wiring or you lack model-specific guidance, stop and use a qualified technician.",
+  "tips": [
+    "Take note of sounds: a running compressor with no cooling often points to airflow or defrost issues, while no fan/compressor activity can indicate power/control faults.",
+    "After manual defrosting, give the unit time to stabilize—cooling can take a while depending on how warm the interior is."
+  ]
+}

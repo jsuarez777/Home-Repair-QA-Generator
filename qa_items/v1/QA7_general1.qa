@@ -1,0 +1,44 @@
+{
+  "question": "How can I patch and finish a small drywall hole, adjust a sticking interior door, and replace a damaged floor plank using basic tools?",
+  "answer": "For a small drywall hole: cut back any loose edges to square the opening, fill the gap with joint compound (or fast-set patch compound), embed a mesh patch if needed, and let it dry. Apply additional thin layers of joint compound, sanding between coats until smooth, then prime and paint to match. For a sticking interior door: check for rubbing by holding a pencil along the door edge and opening/closing to see where marks transfer; tighten loose hinges, then plane/sand only the high spot in small increments. If the latch won’t align, adjust the strike plate position by loosening and moving it slightly, then re-tighten. For replacing a damaged floor plank: remove the baseboard/quarter-round near the plank if necessary, remove the damaged plank (use a pull bar or pry tool carefully to avoid damaging adjacent pieces), clean the groove/tongue edges, slide the replacement plank in (or fasten if it’s nailed down), and reinstall trim. Finally, inspect gaps and allow any adhesive/fasteners to set before walking on the area and finish with caulk at trim seams if needed.",
+  "equipment_problem": "Interior repair after a small drywall hole, a door that rubs the frame, and one damaged section of flooring",
+  "tools_required": [
+    "utility knife",
+    "drywall saw or drywall rasp",
+    "putty knife (4–6 in.)",
+    "taping knife (8–10 in., optional)",
+    "mesh drywall patch (or backing strip)",
+    "joint compound (setting-type or topping compound)",
+    "sandpaper (120–220 grit) or sanding sponge",
+    "primer and matching paint",
+    "pencil",
+    "carpenter's level (optional for alignment)",
+    "screwdriver",
+    "hinge shim (optional)",
+    "shims",
+    "hand plane or sanding block (for door edge)",
+    "pull bar or pry bar",
+    "miter saw or hand saw (if trim/plank needs trimming)",
+    "replacement flooring plank",
+    "wood glue or flooring adhesive (if required by your floor type)",
+    "spackle or caulk (optional for finish)"
+  ],
+  "steps": [
+    "Drywall patch: Cut away loose drywall edges to make the hole clean and square; wipe dust from the opening.",
+    "Apply compound: If using a mesh patch, press the patch over the hole and trowel joint compound through the mesh; for small holes, fill and slightly overbuild with joint compound.",
+    "Build thin layers: After the first coat dries, add thin coats of joint compound, feathering edges outward; sand lightly between coats until smooth.",
+    "Prime and paint: Prime the repaired area, then paint so the patch blends with the surrounding wall.",
+    "Door adjustment: Identify the rub point by marking the door edge with a pencil and closing it; tighten hinge screws first, then remove material only at the high spot using a hand plane or sanding block.",
+    "Latch/strike alignment (if needed): If the door won’t latch or hits the wrong spot, loosen and move the strike plate slightly, then re-tighten.",
+    "Floor plank replacement: Remove nearby trim/baseboard if required; lift/remove the damaged plank carefully without damaging adjacent tongues/grooves.",
+    "Install replacement: Clean the subfloor and plank edges; insert the replacement plank, lock joints (for click-lock/float floors) or apply adhesive/fasteners as required.",
+    "Reinstall trim and finish: Put baseboard/quarter-round back, and touch up caulk/paint or floor transitions as needed."
+  ],
+  "safety_info": "Wear eye protection and a dust mask when sanding drywall and cutting/handling flooring. Turn off power to nearby outlets if you’re working near electrical devices. Use caution with pry bars and saws—support the trim/planks to prevent sudden breakage and flying debris.",
+  "tips": [
+    "Use thin joint compound coats and let each dry fully; rushing is the most common cause of cracking.",
+    "Feather sanding outward beyond the patch so the texture and paint sheen blend.",
+    "For door sticking, remove material gradually—take off less than you think you need, then re-check.",
+    "When replacing flooring, confirm the floor type (click-lock floating vs. nail-down vs. glue-down) so you use the correct removal and installation method."
+  ]
+}

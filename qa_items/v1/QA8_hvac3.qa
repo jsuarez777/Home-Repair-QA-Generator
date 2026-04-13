@@ -1,0 +1,19 @@
+{
+  "question": "Why is my HVAC system not cooling/heating properly and the thermostat seems unresponsive, and what basic checks can I do?",
+  "answer": "Start with simple, safe checks to confirm the thermostat is powered correctly and that the system has airflow. 1) Verify thermostat power: if it’s battery-powered, replace the batteries; if it’s wired, confirm the HVAC’s power switch/breaker is on and check that the thermostat display is lit. 2) Check settings: ensure the thermostat mode is set correctly (Cool or Heat as needed), the fan setting is set to Auto (or On if you’re testing), and the setpoint is set below (for cooling) or above (for heating) the current room temperature. 3) Perform a quick restart: turn the HVAC system off at the thermostat, wait 30 seconds, then turn it back on. 4) Inspect the air filter: if it’s dirty or clogged, replace it (a restricted filter can prevent proper heating/cooling and can cause temperature complaints). 5) Check vents for obstructions: confirm supply vents are not blocked by furniture, rugs, or registers are not closed. 6) Look for basic equipment signs: listen/feel for indoor blower operation and check outdoor unit operation if cooling (note: do not open electrical panels). If the thermostat works but there’s no airflow, focus on filter/vents first; if there’s airflow but temperatures don’t change, the issue may be with the system and should be diagnosed by an HVAC technician. If the thermostat is blank, blinking error codes persist after battery replacement, or the system cycles erratically, stop troubleshooting and call a professional.",
+  "equipment_problem": "HVAC system not cooling/heating properly; thermostat display is dim/unresponsive and temperature changes are minimal",
+  "tools_required": ["new thermostat batteries (if applicable)", "flashlight"],
+  "steps": [
+    "Check that the thermostat display is on; if it’s battery-powered, replace the batteries.",
+    "Confirm thermostat mode (Cool/Heat) and fan setting (Auto recommended for normal operation).",
+    "Adjust the setpoint to trigger the system (cool: setpoint below room temp; heat: setpoint above room temp).",
+    "Turn the HVAC system off at the thermostat, wait 30 seconds, then turn it back on.",
+    "Inspect the air filter; if it’s dirty or clogged, replace it with the correct size and rating.",
+    "Verify supply vents/registers are fully open and not blocked by furniture, curtains, or rugs."
+  ],
+  "safety_info": "Do not open electrical panels or attempt internal wiring. If you suspect electrical faults (burning smell, sparking, repeated breaker trips), turn off power at the breaker and contact a qualified HVAC technician.",
+  "tips": [
+    "After replacing a filter, allow 10–20 minutes for airflow and temperature to stabilize before judging performance.",
+    "If you have vent cleaning plans, ensure you also check and replace the filter first; dirty filters can quickly negate airflow improvements."
+  ]
+}

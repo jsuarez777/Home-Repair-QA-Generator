@@ -1,0 +1,21 @@
+{
+  "question": "Why is my dishwasher not draining properly, and how can I troubleshoot and fix it?",
+  "answer": "Start by confirming that the unit is actually failing to drain (standing water in the tub after a cycle). Inspect and clear the drain filter and any debris from the pump area, check for clogs in the drain hose, and verify that the garbage disposal (if connected) is not jammed. If the filter and hose are clear but water still won’t drain, test the drain pump for power and check the float/float switch for sticking. After reassembly, run a short rinse cycle to confirm proper drainage before using a full load.",
+  "equipment_problem": "Dishwasher leaving standing water at the bottom after running a wash cycle",
+  "tools_required": ["sponge or wet/dry shop towels", "screwdriver", "bucket or shallow pan", "flashlight", "needle-nose pliers (optional)"],
+  "steps": [
+    "Unplug the dishwasher (or turn off power at the breaker) and remove any standing water using a sponge or shop towels.",
+    "Remove the bottom rack and take out the drain filter (follow your model’s instructions). Rinse the filter under running water and remove any food debris or buildup.",
+    "Check the pump area for obstructions (chips, glass, labels, or food particles) and remove any blockage carefully.",
+    "Inspect the drain hose connection under the sink. Ensure the hose is not kinked, crushed, or clogged; if accessible, disconnect and flush the hose with water to clear debris.",
+    "If the dishwasher connects to a garbage disposal, confirm the disposal is not jammed and the knockout plug (if installed) is removed.",
+    "Check the float/float switch and nearby components for sticking due to residue or a misaligned float; clean and reposition as needed.",
+    "Reassemble the filter and pump area, restore power, and run a short rinse/drain cycle to verify the tub empties fully."
+  ],
+  "safety_info": "Disconnect power before reaching into the dishwasher. Watch for broken glass and sharp debris in the filter/pump area. If you must access wiring or test components beyond basic checks, use caution and consider professional service.",
+  "tips": [
+    "Take a photo of the filter/pump layout before removing parts so you can reassemble correctly.",
+    "Avoid running the dishwasher with a partially clogged filter; it can lead to odors and standing water problems.",
+    "If the dishwasher drains intermittently, suspect a recurring obstruction or a sticking float rather than a permanent hose issue."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "question": "My HVAC airflow is weak and the air feels dusty—what basic maintenance and troubleshooting steps should I do to check the filter and vents before calling for service?",
+  "answer": "Start by checking and replacing the air filter with the correct size and MERV rating, then inspect the return and supply vents for blockage and dust buildup. Turn off the HVAC system before removing the filter. After replacing the filter, check that the blower compartment and vent grilles aren’t obstructed (e.g., furniture, rugs, or closed dampers). If vents are heavily clogged with dust or debris, clean the grilles and visible duct runs (or schedule a professional duct cleaning if buildup is extensive). Finally, verify thermostat settings: set the thermostat to the correct mode (HEAT/COOL/AUTO) and temperature, confirm the fan setting is not stuck on HOLD/ON incorrectly, and check batteries if the display is blank or unresponsive. If airflow remains weak after a fresh filter and clear vents, check whether the blower motor is running normally and whether there are signs of an electrical or control issue—then contact an HVAC technician.",
+  "equipment_problem": "HVAC system with weak airflow and dusty air (possibly clogged filter and/or dirty/blocked vents)",
+  "tools_required": ["correct replacement HVAC filter", "flashlight", "vacuum with brush attachment", "screwdriver (if vent/grille removal is needed)"],
+  "steps": [
+    "Set the thermostat to OFF and turn off the HVAC system at the thermostat or breaker for safety.",
+    "Locate the return-air filter (typically behind a return grille or in the air handler) and remove the existing filter.",
+    "Inspect the old filter: if it’s clogged, discolored, or restricted, replace it with the exact same dimensions and the recommended MERV rating.",
+    "Reinstall the filter in the correct direction (airflow arrows must match system airflow).",
+    "Inspect return and supply vents for obstructions and excessive dust buildup; remove and vacuum grilles if accessible.",
+    "If vent openings are blocked by dust or debris, clean them gently with a vacuum brush attachment; avoid pushing debris further into ductwork.",
+    "Restore power and set the thermostat to the proper mode and temperature, ensuring the fan setting is set as desired (e.g., AUTO).",
+    "Run the system and confirm airflow improves at multiple vents.",
+    "If airflow is still weak after filter replacement and vent cleaning, check for obvious issues (unusual noises, repeated cycling) and schedule professional inspection for duct/air handler problems."
+  ],
+  "safety_info": "Turn the system off before removing the filter or cleaning vents to avoid moving parts and dusty debris. If you must work near the air handler, keep electrical safety in mind and avoid opening panels unless you’re comfortable and the system is de-energized. If you suspect mold, heavy duct contamination, or you see extensive debris inside ducts, consider professional duct cleaning.",
+  "tips": [
+    "Use the filter size listed on the filter frame label (thickness and dimensions must match).",
+    "If your home has pets, allergies, or recent construction dust, consider replacing filters more frequently (e.g., every 30–90 days depending on conditions).",
+    "If the thermostat display is blank or the HVAC won’t respond, replace thermostat batteries before deeper troubleshooting.",
+    "For heavy dust inside ductwork, basic vent/grille cleaning may not be enough—professional duct cleaning and an assessment of airflow restrictions may be required."
+  ]
+}
