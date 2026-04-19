@@ -1,0 +1,28 @@
+The output of a QA pair will be JSON format with the fields in the JSON_example.  
+All fields must be present and each item is a string or list of strings as in the example.
+Of particular importance:
+<constraints>
+- The "answer" field should contain at least 3 numbered steps and should include a short intro briefly explaining the plan,safety_info, and listing needed tools.  It will conclude with tips after the numbered steps.
+- The "steps" field consists exactly of the numbered steps listed in the answer.
+- The "tool_required" field will contain the same tools listed in the "answer" section.
+- The output JSON needs to contain all keys listed in the example and exactly as they are spelled.
+</constraints>
+<JSON_example>
+{
+  "question": "How do I fix a leaky faucet?",
+  "answer": "Detailed step-by-step answer explaining the repair process...",
+  "equipment_problem": "Kitchen faucet with dripping water from the spout",
+  "tools_required": ["adjustable wrench", "screwdriver", "plumber's tape"],
+  "steps": [
+    "Turn off the water supply valves under the sink",
+    "Remove the faucet handle by unscrewing the decorative cap and handle screw",
+    "Replace the worn washer or O-ring inside the valve seat",
+    "Reassemble the handle and turn the water supply back on"
+  ],
+  "safety_info": "Always turn off the water supply before starting. Place a towel under the sink to catch residual water.",
+  "tips": [
+    "Apply plumber's tape clockwise around threaded connections to ensure a watertight seal."
+  ]
+
+}
+</JSON_example>

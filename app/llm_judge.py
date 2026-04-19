@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
+import argparse
 import json
+import sys
 from enum import IntEnum
 from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
 from qa_item import QAItem
 from openai_client.openai_client import MyOpenAIClient
 
 
 JUDGE_PROMPT_VERSION = "v1"
-JUDGE_PROMPT_DIR = Path(f"./prompts_llm_judge/{JUDGE_PROMPT_VERSION}")
-QA_FOLDER = Path("./qa_items/v1")
+JUDGE_PROMPT_DIR = PROJECT_ROOT / f"prompts_llm_judge/{JUDGE_PROMPT_VERSION}"
+QA_FOLDER = PROJECT_ROOT / "qa_items/v1"
 MODEL = "gpt-4.1-nano"
 
 
@@ -157,33 +163,126 @@ def evaluate_qa_item(client: MyOpenAIClient, trace_id: str, qa_item: QAItem) -> 
 
 
 # ---------------------------------------------------------------------------
-# Main
+# Training set evaluation
 # ---------------------------------------------------------------------------
 
-def main():
-    client = MyOpenAIClient(model=MODEL)
+EVAL_JSONL = PROJECT_ROOT / "eval.jsonl"
+_QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
-    qa_files = sorted(QA_FOLDER.glob("*.qa"))
+
+def evaluate_training_set(client: MyOpenAIClient, eval_path: Path = EVAL_JSONL) -> list[dict]:
+    results = []
+    with eval_path.open() as f:
+        for line_num, line in enumerate(f, start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                raw = json.loads(line)
+            except json.JSONDecodeError as e:
+                print(f"  Line {line_num}: JSON parse error — {e}")
+                continue
+
+            trace_id = raw.get("id", f"line_{line_num}")
+            qa_fields = {k: v for k, v in raw.items() if k in _QA_ITEM_FIELDS}
+            try:
+                qa_item = QAItem.model_validate(qa_fields)
+            except Exception as e:
+                print(f"  {trace_id}: validation error — {e}")
+                continue
+
+            print(f"Evaluating: {trace_id}")
+            result = evaluate_qa_item(client, trace_id, qa_item)
+            results.append(result)
+            print(json.dumps(result, indent=2))
+
+    print(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Evaluation dispatch helpers
+# ---------------------------------------------------------------------------
+
+def evaluate_qa_folder(client: MyOpenAIClient, folder: Path) -> list[dict]:
+    qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
-        print("No .qa files found.")
-        return
-
+        print(f"No .qa files found in {folder}.")
+        return []
     results = []
     for qa_file in qa_files:
         trace_id = qa_file.stem
         print(f"Evaluating: {qa_file.name}")
-        content = qa_file.read_text()
         try:
-            qa_item = QAItem.model_validate_json(content)
+            qa_item = QAItem.model_validate_json(qa_file.read_text())
         except Exception as e:
             print(f"  Parse error: {e}")
             continue
-
         result = evaluate_qa_item(client, trace_id, qa_item)
         results.append(result)
         print(json.dumps(result, indent=2))
+    print(f"\nEvaluated {len(results)} item(s) from {folder}.")
+    return results
 
-    print(f"\nEvaluated {len(results)} item(s).")
+
+def evaluate_single_qa_file(client: MyOpenAIClient, path: Path) -> list[dict]:
+    print(f"Evaluating: {path.name}")
+    try:
+        qa_item = QAItem.model_validate_json(path.read_text())
+    except Exception as e:
+        print(f"  Parse error: {e}")
+        return []
+    result = evaluate_qa_item(client, path.stem, qa_item)
+    print(json.dumps(result, indent=2))
+    return [result]
+
+
+def _resolve_target(client: MyOpenAIClient, target: Path) -> list[dict]:
+    if target.is_dir():
+        return evaluate_qa_folder(client, target)
+    if target.suffix == ".jsonl":
+        return evaluate_training_set(client, target)
+    if target.suffix == ".qa":
+        return evaluate_single_qa_file(client, target)
+    print(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
+    return []
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(description="LLM judge for DIY repair QA items.")
+    parser.add_argument(
+        "--evaluate",
+        metavar="OBJECT",
+        help="Path to evaluate: a directory of .qa files, a .jsonl file, or a single .qa file.",
+    )
+    args = parser.parse_args()
+
+    client = MyOpenAIClient(model=MODEL)
+
+    if args.evaluate:
+        target = Path(args.evaluate)
+        if not target.exists():
+            print(f"Error: path not found — {target}")
+            return
+        _resolve_target(client, target)
+        return
+
+    # Interactive prompt
+    print("What would you like to evaluate?")
+    print("  1) Training dataset (eval.jsonl)")
+    print(f"  2) Generated QA items ({QA_FOLDER})")
+    choice = input("Enter 1 or 2: ").strip()
+
+    if choice == "1":
+        evaluate_training_set(client)
+    elif choice == "2":
+        evaluate_qa_folder(client, QA_FOLDER)
+    else:
+        print(f"Unknown choice: {choice!r}. Please enter 1 or 2.")
 
 
 if __name__ == "__main__":
