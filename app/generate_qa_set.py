@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 import argparse
+import json
+import os
+import re
 import shutil
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from pathlib import Path
 from random import randint
+from huggingface_hub import try_to_load_from_cache
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
+
+if try_to_load_from_cache("sentence-transformers/all-MiniLM-L6-v2", "config.json"):
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -28,17 +37,23 @@ def _read_file_content(file_path: str) -> str:
 
 def _pick_version() -> str:
     prompts_dir = PROJECT_ROOT / "prompts"
-    versions = sorted(p.name for p in prompts_dir.iterdir() if p.is_dir())
+    versions = sorted(
+        (p.name for p in prompts_dir.iterdir() if p.is_dir()),
+        key=lambda v: int(v.lstrip("v")) if v.lstrip("v").isdigit() else 0,
+    )
     if not versions:
         raise RuntimeError(f"No version folders found in {prompts_dir}")
+    default = versions[-1]
     if len(versions) == 1:
-        print(f"Using prompt version: {versions[0]}")
-        return versions[0]
+        print(f"Using prompt version: {default}")
+        return default
     print("Available prompt versions:")
     for i, v in enumerate(versions, start=1):
         print(f"  {i}) {v}")
     while True:
-        choice = input(f"Select version (1-{len(versions)}): ").strip()
+        choice = input(f"Select version (1-{len(versions)}) [{default}]: ").strip()
+        if choice == "":
+            return default
         if choice.isdigit() and 1 <= int(choice) <= len(versions):
             return versions[int(choice) - 1]
         print(f"  Please enter a number between 1 and {len(versions)}.")
@@ -76,12 +91,48 @@ def dim_sanity_check(qa_item: QAItem) -> None:
         raise ValueError("Sanity check failed:\n" + "\n".join(f"  - {p}" for p in problems))
 
 
+MAX_PARALLEL = 50
+MAX_RETRIES = 5
+RETRY_BASE_DELAY = 2.0  # seconds; doubles on each attempt
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 SIMILARITY_THRESHOLD = 0.92
 
 
+def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, QAItem]:
+    from openai import RateLimitError
+    delay = RETRY_BASE_DELAY
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = client.query(input=prompt)
+            try:
+                response_text = response.output_text.strip(' `\n')
+                brace = response_text.find("{")
+                bracket = response_text.find("[")
+                json_start = min(brace, bracket) if brace != -1 and bracket != -1 else max(brace, bracket)
+                if json_start == -1:
+                    raise ValueError(f"No valid JSON start character ('{{' or '[') found in response:\n{response_text}")
+                response_text = response_text[json_start:]
+                if response_text.startswith("["):
+                    parsed = json.loads(response_text)
+                    if not isinstance(parsed, list) or len(parsed) != 1:
+                        raise ValueError(f"Expected a JSON array with exactly 1 item, got {len(parsed) if isinstance(parsed, list) else 'non-list'}")
+                    response_text = json.dumps(parsed[0])
+                qa_item = QAItem.model_validate_json(response_text)
+            except Exception as e:
+                print(f"  [parse error] {cat}: {e}")
+                raise
+            dim_sanity_check(qa_item)
+            return cat, response_text, qa_item
+        except RateLimitError as e:
+            if attempt == MAX_RETRIES:
+                raise
+            print(f"  [rate limit] {cat}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
+            time.sleep(delay)
+            delay *= 2
+
+
 def batch_dedup_check(qa_folder: Path, client: MyOpenAIClient) -> None:
-    qa_files = sorted(qa_folder.glob("*.qa"))
+    qa_files = sorted(qa_folder.glob("*.qa"), key=lambda f: int(re.search(r"QA(\d+)", f.name).group(1)) if re.search(r"QA(\d+)", f.name) else 0)
     if len(qa_files) < 2:
         return
 
@@ -138,10 +189,12 @@ def main():
     qa_folder = PROJECT_ROOT / f"qa_items/{prompt_version}"
     qa_folder.mkdir(parents=True, exist_ok=True)
 
-    # Archive any existing .qa files before generating new ones
+    # Archive any existing .qa files (and duplicates/) before generating new ones
     existing_qa_files = list(qa_folder.glob("*.qa")) if qa_folder.exists() else []
-    if existing_qa_files:
-        archive_base = Path(qa_folder) / "archive"
+    duplicates_dir = qa_folder / "duplicates"
+    existing_duplicates = list(duplicates_dir.glob("*.qa")) if duplicates_dir.exists() else []
+    if existing_qa_files or existing_duplicates:
+        archive_base = qa_folder / "archive"
         archive_base.mkdir(parents=True, exist_ok=True)
         existing_counts = [
             int(p.name) for p in archive_base.iterdir()
@@ -152,6 +205,18 @@ def main():
         archive_dest.mkdir()
         for qa_file in existing_qa_files:
             shutil.move(str(qa_file), str(archive_dest / qa_file.name))
+        for qa_file in existing_duplicates:
+            shutil.move(str(qa_file), str(archive_dest / qa_file.name))
+
+    while True:
+        raw = input("How many items to generate? [50]: ").strip()
+        if raw == "":
+            items_to_generate = 50
+            break
+        if raw.isdigit() and 1 <= int(raw) <= 1000:
+            items_to_generate = int(raw)
+            break
+        print("  Please enter a number between 1 and 1000.")
 
     # Setup prompts for each category
     categories = ["appliance","electrical","general","hvac","plumbing"]
@@ -162,34 +227,40 @@ def main():
         prompt += "\n\n" + prompt_output_format_suffix
         prompts[cat] = prompt
     
-    # Initialize the OpenAI client and generate QA items for each category
+    # Initialize the OpenAI client and generate QA items in parallel
     my_ai_client = MyOpenAIClient(model="gpt-5.4-nano")
     total_count = 0
     count_per_category = {cat: 0 for cat in categories}
-    items_to_generate = 10
-    while total_count < items_to_generate:
-        cat = categories[randint(0, len(categories)-1)]
-        prompt = prompts[cat]
-        response = my_ai_client.query(input=prompt)
-        print(f"Category: {cat}")
-        print(response.output_text)
-        # Sometimes the response might contain a "```json" or "\n" block or similar formatting.
-        response_text = response.output_text.strip(' `\n')
-        json_start = response_text.find("{")  # Find the first '{' to handle cases where the model wraps the JSON in markdown
-        if json_start != -1:
-            response_text = response_text[json_start:]
-        try:
-            QAItem.model_validate_json(response_text)  # Pydantic - Will raise if the format is wrong
-            dim_sanity_check(QAItem.model_validate_json(response_text))
-            total_count += 1
-            count_per_category[cat] += 1
-            output_file = Path(qa_folder) / f"QA{total_count}_{cat}{count_per_category[cat]}.qa"
-            output_file.write_text(response_text)
-            print(f"Successfully validated QA items for category '{cat}'.\n")
 
-        except Exception as e:
-            print(f"=============================Error validating QA items for category '{cat}': {e}")
-            continue
+    def _pick_cat():
+        return categories[randint(0, len(categories) - 1)]
+
+    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
+        pending = {}  # future -> cat
+        for _ in range(min(MAX_PARALLEL, items_to_generate)):
+            cat = _pick_cat()
+            pending[executor.submit(_generate_one, my_ai_client, cat, prompts[cat])] = cat
+
+        while total_count < items_to_generate and pending:
+            done, _ = wait(pending.keys(), return_when=FIRST_COMPLETED)
+            for future in done:
+                cat = pending.pop(future)
+                try:
+                    result_cat, response_text, qa_item = future.result()
+                    if total_count < items_to_generate:
+                        total_count += 1
+                        count_per_category[result_cat] += 1
+                        output_file = qa_folder / f"QA{total_count}_{result_cat}{count_per_category[result_cat]}.qa"
+                        output_file.write_text(response_text)
+                        print(f"[{total_count}/{items_to_generate}] Saved {output_file.name} (category: {result_cat})")
+                except Exception as e:
+                    print(f"============================={cat}: {e}")
+
+                # Submit a replacement if we still need more items
+                still_needed = items_to_generate - total_count - len(pending)
+                if still_needed > 0:
+                    new_cat = _pick_cat()
+                    pending[executor.submit(_generate_one, my_ai_client, new_cat, prompts[new_cat])] = new_cat
 
     batch_dedup_check(qa_folder, my_ai_client)
 
