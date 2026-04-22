@@ -14,7 +14,6 @@ from openai_client.openai_client import MyOpenAIClient
 
 JUDGE_PROMPT_VERSION = "v1"
 JUDGE_PROMPT_DIR = PROJECT_ROOT / f"prompts_llm_judge/{JUDGE_PROMPT_VERSION}"
-QA_FOLDER = PROJECT_ROOT / "qa_items/v1"
 MODEL = "gpt-4.1-nano"
 
 
@@ -272,17 +271,35 @@ def main():
         return
 
     # Interactive prompt
+    qa_items_root = PROJECT_ROOT / "qa_items"
+    versions = sorted(
+        (p for p in qa_items_root.iterdir() if p.is_dir()),
+        key=lambda p: int(p.name.lstrip("v")) if p.name.lstrip("v").isdigit() else 0,
+    )
+
     print("What would you like to evaluate?")
     print("  1) Training dataset (eval.jsonl)")
-    print(f"  2) Generated QA items ({QA_FOLDER})")
-    choice = input("Enter 1 or 2: ").strip()
+    for i, folder in enumerate(versions, start=2):
+        qa_count = len(list(folder.glob("*.qa")))
+        human_eval = folder / "QA_human_eval.json"
+        human_count = 0
+        if human_eval.exists():
+            try:
+                human_count = len(json.load(human_eval.open()))
+            except Exception:
+                pass
+        human_note = f", {human_count} human judge item(s)"
+        print(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}]")
+
+    max_choice = len(versions) + 1
+    choice = input(f"Enter 1-{max_choice}: ").strip()
 
     if choice == "1":
         evaluate_training_set(client)
-    elif choice == "2":
-        evaluate_qa_folder(client, QA_FOLDER)
+    elif choice.isdigit() and 2 <= int(choice) <= max_choice:
+        evaluate_qa_folder(client, versions[int(choice) - 2])
     else:
-        print(f"Unknown choice: {choice!r}. Please enter 1 or 2.")
+        print(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
 
 if __name__ == "__main__":
