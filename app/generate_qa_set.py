@@ -6,6 +6,7 @@ import re
 import shutil
 import sys
 import time
+import yaml
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from pathlib import Path
 from random import randint
@@ -219,16 +220,21 @@ def main():
         print("  Please enter a number between 1 and 1000.")
 
     # Setup prompts for each category
-    categories = ["appliance","electrical","general","hvac","plumbing"]
+    categories_file = PROJECT_ROOT / f"prompts/{prompt_version}/categories.yml"
+    with open(categories_file) as f:
+        category_defs = yaml.safe_load(f)
+    categories = list(category_defs.keys())
+
+    template_file = str(PROJECT_ROOT / f"prompts/{prompt_version}/gen_qa_items.template")
+    template = _read_file_content(template_file)
     prompts = {}
-    for cat in categories:
-        prompt_file = str(PROJECT_ROOT / f"prompts/{prompt_version}/gen_qa_items_{cat}.prompt")
-        prompt = _read_file_content(prompt_file)
+    for cat, vars in category_defs.items():
+        prompt = template.format_map(vars)
         prompt += "\n\n" + prompt_output_format_suffix
         prompts[cat] = prompt
     
     # Initialize the OpenAI client and generate QA items in parallel
-    my_ai_client = MyOpenAIClient(model="gpt-5.4-nano")
+    my_ai_client = MyOpenAIClient(model="gpt-5.4-nano", temperature=1.8)
     total_count = 0
     count_per_category = {cat: 0 for cat in categories}
 

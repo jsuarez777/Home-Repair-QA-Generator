@@ -1,0 +1,19 @@
+appliance:
+  repair_type: appliance
+  repair_examples: refrigerators, washing machines, dryers, dishwashers, and ovens
+
+electrical:
+  repair_type: electrical
+  repair_examples: outlets, circuit breakers, light switches, ceiling fans, and wiring
+
+general:
+  repair_type: general home
+  repair_examples: doors, windows, drywall, flooring, and painting
+
+hvac:
+  repair_type: HVAC
+  repair_examples: air conditioners, furnaces, heat pumps, thermostats, and ductwork
+
+plumbing:
+  repair_type: plumbing
+  repair_examples: faucets, pipes, toilets, water heaters, and drains

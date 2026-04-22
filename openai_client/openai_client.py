@@ -8,13 +8,22 @@ class MyOpenAIClient:
     Factory to produce a configured OpenAI client.
     Reads OPENAI_API_KEY and OPENAI_ORG from the environment if not provided.
     """
-    def __init__(self, model: str, api_key: Optional[str] = None):
+    def __init__(self, model: str, api_key: Optional[str] = None, temperature: Optional[float] = None):
         if not model:
             print("Error: 'model' is required to initialize MyOpenAIClient.", file=sys.stderr)
             raise ValueError("'model' parameter is required.")
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self._client: Optional[OpenAI] = None
         self.model: str = model
+        self._temperature: Optional[float] = temperature
+
+    @property
+    def temperature(self) -> Optional[float]:
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, value: Optional[float]) -> None:
+        self._temperature = value
 
     def get_client(self) ->OpenAI:
         if self._client is None:
@@ -36,4 +45,6 @@ class MyOpenAIClient:
         model_to_use = model or self.model
         if not model_to_use:
             raise ValueError("No model specified: pass `model=` or set `model` when constructing MyOpenAIClient.")
+        if self._temperature is not None:
+            kwargs.setdefault("temperature", self._temperature)
         return client.responses.create(model=model_to_use, input=input, **kwargs)
