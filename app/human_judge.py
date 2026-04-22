@@ -8,9 +8,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-QA_VERSION = "v1"
-QA_FOLDER = PROJECT_ROOT / f"qa_items/{QA_VERSION}"
+QA_ITEMS_ROOT = PROJECT_ROOT / "qa_items"
 EVAL_FILENAME = "QA_human_eval.json"
 
 # (qa_field_key, dimension_key, display_label)
@@ -30,8 +28,9 @@ DIMENSIONS = [dim for _, dim, _ in FIELDS if dim]
 app = Flask(__name__)
 
 state: dict = {
-    "qa_files": [],
-    "evaluations": {},   # trace_id -> eval dict
+    "qa_folder":   None,   # set when user picks a version
+    "qa_files":    [],
+    "evaluations": {},
 }
 
 
@@ -65,11 +64,51 @@ def _has_any_vote(e: dict) -> bool:
     return any(e.get(dim) is not None for dim in DIMENSIONS)
 
 
+def _detect_versions() -> list[dict]:
+    """Return sorted list of version dicts found under qa_items/."""
+    if not QA_ITEMS_ROOT.exists():
+        return []
+    versions = []
+    for d in sorted(QA_ITEMS_ROOT.iterdir()):
+        if d.is_dir() and not d.name.startswith("."):
+            qa_count = len(list(d.glob("*.qa")))
+            has_eval = (d / EVAL_FILENAME).exists()
+            versions.append({"version": d.name, "qa_count": qa_count, "has_eval": has_eval})
+    return versions
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
-    return HTML
+    return LANDING_HTML
+
+
+@app.route("/judge")
+def judge():
+    if not state["qa_folder"]:
+        return '<meta http-equiv="refresh" content="0;url=/">'
+    return JUDGE_HTML
+
+
+@app.route("/api/versions")
+def get_versions():
+    return jsonify(_detect_versions())
+
+
+@app.route("/api/select-version", methods=["POST"])
+def select_version():
+    version = (request.json or {}).get("version", "").strip()
+    folder = QA_ITEMS_ROOT / version
+    if not folder.is_dir():
+        return jsonify({"error": f"Version '{version}' not found"}), 404
+    files = sorted(folder.glob("*.qa"), key=lambda p: int(p.stem.split("_")[0][2:] or 0))
+    if not files:
+        return jsonify({"error": f"No .qa files in {folder}"}), 404
+    state["qa_folder"]   = folder
+    state["qa_files"]    = files
+    state["evaluations"] = _load_existing_evals(folder)
+    return jsonify({"ok": True, "version": version, "qa_count": len(files)})
 
 
 @app.route("/api/qa/<int:idx>")
@@ -126,14 +165,136 @@ def post_eval():
 @app.route("/api/save", methods=["POST"])
 def save_file():
     evals = [e for e in state["evaluations"].values() if _has_any_vote(e)]
-    out = QA_FOLDER / EVAL_FILENAME
+    out = state["qa_folder"] / EVAL_FILENAME
     out.write_text(json.dumps(evals, indent=2))
     return jsonify({"ok": True, "path": str(out), "count": len(evals)})
 
 
-# ── HTML/CSS/JS ───────────────────────────────────────────────────────────────
+# ── Landing page ─────────────────────────────────────────────────────────────
 
-HTML = """<!DOCTYPE html>
+LANDING_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QA Human Judge — Select Version</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #e2e8f0;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 40px 48px;
+      min-width: 420px;
+      max-width: 520px;
+      text-align: center;
+    }
+    h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 0.05em; color: #f1f5f9; margin-bottom: 6px; }
+    .subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 32px; }
+    #version-list { display: flex; flex-direction: column; gap: 12px; }
+    .version-btn {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+    .version-btn:hover { border-color: #3b82f6; background: #1a2744; }
+    .version-name { font-size: 1.1rem; font-weight: 800; color: #f1f5f9; letter-spacing: 0.06em; }
+    .version-meta { font-size: 0.78rem; color: #64748b; margin-top: 3px; }
+    .version-badges { display: flex; gap: 8px; align-items: center; }
+    .badge {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 8px;
+      border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .badge-qa    { background: #1e3a5f; color: #93c5fd; }
+    .badge-eval  { background: #14532d; color: #86efac; }
+    #error-msg { color: #f87171; font-size: 0.82rem; margin-top: 16px; display: none; }
+    #loading   { color: #64748b; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>QA HUMAN JUDGE</h1>
+  <p class="subtitle">Select a version to evaluate</p>
+  <div id="version-list"><span id="loading">Scanning for versions…</span></div>
+  <div id="error-msg"></div>
+</div>
+<script>
+function loadVersions() {
+  fetch("/api/versions")
+    .then(r => r.json())
+    .then(versions => {
+      const list = document.getElementById("version-list");
+      if (!versions.length) {
+        list.innerHTML = '<span style="color:#f87171">No versions found in qa_items/</span>';
+        return;
+      }
+      list.innerHTML = "";
+      versions.forEach(v => {
+        const btn = document.createElement("button");
+        btn.className = "version-btn";
+        btn.innerHTML = `
+          <div>
+            <div class="version-name">${v.version}</div>
+            <div class="version-meta">${v.qa_count} QA item${v.qa_count !== 1 ? "s" : ""}</div>
+          </div>
+          <div class="version-badges">
+            <span class="badge badge-qa">${v.qa_count} items</span>
+            ${v.has_eval ? '<span class="badge badge-eval">eval saved</span>' : ""}
+          </div>`;
+        btn.onclick = () => selectVersion(v.version);
+        list.appendChild(btn);
+      });
+    })
+    .catch(() => {
+      document.getElementById("version-list").innerHTML =
+        '<span style="color:#f87171">Error scanning versions.</span>';
+    });
+}
+
+function selectVersion(version) {
+  fetch("/api/select-version", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ version }),
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        const el = document.getElementById("error-msg");
+        el.textContent = data.error;
+        el.style.display = "block";
+      } else {
+        window.location.href = "/judge";
+      }
+    });
+}
+
+loadVersions();
+</script>
+</body>
+</html>
+"""
+
+# ── Judge app ─────────────────────────────────────────────────────────────────
+
+JUDGE_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -421,6 +582,39 @@ HTML = """<!DOCTYPE html>
     #btn-save { background: #059669; }
     #btn-save:hover { background: #047857; }
 
+    /* ── Dimension tooltip ── */
+    .has-tooltip {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #475569;
+    }
+    .has-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      line-height: 1.5;
+      white-space: normal;
+      width: 300px;
+      text-align: left;
+      text-transform: none;
+      letter-spacing: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 200;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      border: 1px solid #334155;
+    }
+    .has-tooltip:hover::after { opacity: 1; }
+
     /* ── Toast ── */
     #toast {
       position: fixed;
@@ -500,6 +694,15 @@ const FIELDS = [
 ];
 const DIMENSIONS = FIELDS.filter(f => f.dim).map(f => f.dim);
 
+const CRITERIA = {
+  answer_completeness:   "D1 · Answer Completeness — The answer contains enough detail for a homeowner to actually complete the repair end to end (tools, concrete steps, safety, a useful tip). Answers that stop short or omit key stages fail.",
+  safety_specificity:    "D2 · Safety Specificity — safety_info names the specific hazard of this repair and the specific precaution to take. Generic phrases (\\"be careful\\", \\"use caution\\", \\"stay safe\\") fail.",
+  tool_realism:          "D3 · Tool Realism — Every item in tools_required is something a typical homeowner already owns or could buy at a general hardware store for under $50. No professional, specialty, or trade-only tools.",
+  scope_appropriateness: "D4 · Scope Appropriateness — The repair is within realistic DIY capability. If professional help is genuinely needed (e.g., gas lines, panel work), the answer says so clearly rather than giving amateur instructions.",
+  context_clarity:       "D5 · Context Clarity — question and answer contain enough context to understand the problem, and the answer directly addresses the specific equipment_problem.",
+  tip_usefulness:        "D6 · Tip Usefulness — tips provide non-obvious, task-specific advice that adds value beyond the steps. Tips that merely restate a step or offer generic encouragement fail.",
+};
+
 let currentIndex  = 0;
 let currentTraceId = null;
 let currentEval   = {};
@@ -517,6 +720,24 @@ function formatValue(val) {
     return "<ul>" + val.map(v => `<li>${esc(v)}</li>`).join("") + "</ul>";
   }
   return esc(String(val));
+}
+
+function formatAnswer(val) {
+  let text = esc(String(val));
+
+  // Section headers on their own line (bold)
+  text = text.replace(/\\s*(plan\\s*:)/gi, "<br><strong>$1</strong>");
+  text = text.replace(/\\s*(safety(?:\\s+info)?\\s*:)/gi, "<br><strong>$1</strong>");
+  text = text.replace(/\\s*(tools?(?:\\s+required)?\\s*:)/gi, "<br><strong>$1</strong>");
+  text = text.replace(/\\s*(tips?\\s*:)/gi, "<br><strong>$1</strong>");
+
+  // Numbered steps on their own line (1. or 1))
+  text = text.replace(/\\s+(\\d+[.)]\\s)/g, "<br>$1");
+
+  // Tip sentence not already caught by header (e.g. "Tip," or "Tip —")
+  text = text.replace(/([.!?])\\s+([Tt]ip\\b(?!\\s*:))/g, "$1<br>$2");
+
+  return text;
 }
 
 function dimTitle(dim) {
@@ -600,7 +821,10 @@ function renderQA(data) {
 
     const fieldDiv = document.createElement("div");
     fieldDiv.className = "qa-field";
-    fieldDiv.innerHTML = `<h3>${esc(field.label)}</h3><div class="content">${formatValue(data.qa[field.key])}</div>`;
+    const content = field.key === "answer"
+      ? formatAnswer(data.qa[field.key])
+      : formatValue(data.qa[field.key]);
+    fieldDiv.innerHTML = `<h3>${esc(field.label)}</h3><div class="content">${content}</div>`;
 
     const btnsDiv = document.createElement("div");
     btnsDiv.className = "qa-buttons";
@@ -610,7 +834,7 @@ function renderQA(data) {
       const passActive = cur === 1 ? "active" : "";
       const failActive = cur === 0 ? "active" : "";
       btnsDiv.innerHTML = `
-        <span class="dim-label">${dimTitle(field.dim)}</span>
+        <span class="dim-label has-tooltip" data-tooltip="${esc(CRITERIA[field.dim] || '')}">${dimTitle(field.dim)}</span>
         <div class="btn-row">
           <button class="btn btn-pass ${passActive}" data-dim="${field.dim}"
                   onclick="setVote('${field.dim}', 1, this)">PASS</button>
@@ -731,16 +955,10 @@ loadQA(0);
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    state["qa_files"] = sorted(QA_FOLDER.glob("*.qa"))
-    if not state["qa_files"]:
-        print(f"No .qa files found in {QA_FOLDER}", file=sys.stderr)
+    versions = _detect_versions()
+    if not versions:
+        print(f"No version folders found in {QA_ITEMS_ROOT}", file=sys.stderr)
         sys.exit(1)
-
-    state["evaluations"] = _load_existing_evals(QA_FOLDER)
-
-    print(f"Loaded {len(state['qa_files'])} QA file(s).")
-    if state["evaluations"]:
-        print(f"Resumed {len(state['evaluations'])} existing evaluation(s).")
-
+    print(f"Found {len(versions)} version(s): {[v['version'] for v in versions]}")
     webbrowser.open("http://127.0.0.1:5000")
     app.run(host="127.0.0.1", port=5000, debug=False)
