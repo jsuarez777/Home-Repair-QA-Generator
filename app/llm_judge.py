@@ -2,7 +2,6 @@
 import argparse
 import json
 import sys
-from enum import IntEnum
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -12,153 +11,70 @@ from qa_item import QAItem
 from openai_client.openai_client import MyOpenAIClient
 
 
-JUDGE_PROMPT_VERSION = "v1"
-JUDGE_PROMPT_DIR = PROJECT_ROOT / f"prompts_llm_judge/{JUDGE_PROMPT_VERSION}"
+PROMPTS_ROOT = PROJECT_ROOT / "prompts_llm_judge"
 MODEL = "gpt-4.1-nano"
 
-
-class Result(IntEnum):
-    FAIL = 0
-    PASS = 1
-
-
-def _load_prompt(name: str) -> str:
-    path = JUDGE_PROMPT_DIR / f"{name}.prompt"
-    return path.read_text().strip()
-
-
-def _ask_judge(client: MyOpenAIClient, system_prompt: str, qa_item: QAItem) -> Result:
-    """Send the QAItem JSON + system prompt to the LLM and parse PASS/FAIL from the response."""
-    item_json = qa_item.model_dump_json(indent=2)
-    input_messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": item_json},
-    ]
-    response = client.query(input=input_messages)
-    verdict = response.output_text.strip().upper()
-    return Result.PASS if "PASS" in verdict else Result.FAIL
+DIMENSIONS = [
+    "answer_completeness",
+    "safety_specificity",
+    "tool_realism",
+    "scope_appropriateness",
+    "context_clarity",
+    "tip_usefulness",
+]
 
 
-# ---------------------------------------------------------------------------
-# Failure mode checks
-# ---------------------------------------------------------------------------
-
-def check_incomplete_answer(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("incomplete_answer"), qa_item)
-
-
-def check_safety_violations(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("safety_violations"), qa_item)
-
-
-def check_unrealistic_tools(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("unrealistic_tools"), qa_item)
-
-
-def check_overcomplicated_solution(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("overcomplicated_solution"), qa_item)
-
-
-def check_missing_context(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("missing_context"), qa_item)
+def _select_prompt_version() -> Path:
+    versions = sorted(
+        (p for p in PROMPTS_ROOT.iterdir() if p.is_dir()),
+        key=lambda p: int(p.name.lstrip("v")) if p.name.lstrip("v").isdigit() else 0,
+    )
+    if not versions:
+        raise RuntimeError(f"No prompt version folders found in {PROMPTS_ROOT}")
+    if len(versions) == 1:
+        return versions[0]
+    print("\nAvailable judge prompt versions:")
+    for i, v in enumerate(versions, start=1):
+        prompts = list(v.glob("*.prompt"))
+        print(f"  {i}) {v.name}  [{len(prompts)} prompt(s)]")
+    choice = input(f"Select prompt version (1-{len(versions)}): ").strip()
+    if choice.isdigit() and 1 <= int(choice) <= len(versions):
+        return versions[int(choice) - 1]
+    print(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
+    return versions[-1]
 
 
-def check_poor_quality_tips(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("poor_quality_tips"), qa_item)
-
-
-# ---------------------------------------------------------------------------
-# Quality dimension checks
-# ---------------------------------------------------------------------------
-
-def check_answer_coherence(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("answer_coherence"), qa_item)
-
-
-def check_step_actionability(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("step_actionability"), qa_item)
-
-
-def check_tool_realism(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("tool_realism"), qa_item)
-
-
-def check_safety_specificity(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    if len(qa_item.safety_info) < 80:
-        return Result.FAIL
-    return _ask_judge(client, _load_prompt("safety_specificity"), qa_item)
-
-
-def check_tip_usefulness(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("tip_usefulness"), qa_item)
-
-
-def check_problem_answer_alignment(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("problem_answer_alignment"), qa_item)
-
-
-def check_appropriate_scope(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("appropriate_scope"), qa_item)
-
-
-def check_category_accuracy(client: MyOpenAIClient, qa_item: QAItem) -> Result:
-    return _ask_judge(client, _load_prompt("category_accuracy"), qa_item)
+def _load_mono_prompt(prompt_dir: Path) -> str:
+    return (prompt_dir / "mono.prompt").read_text().strip()
 
 
 # ---------------------------------------------------------------------------
 # Per-item evaluation
 # ---------------------------------------------------------------------------
 
-def evaluate_qa_item(client: MyOpenAIClient, trace_id: str, qa_item: QAItem) -> dict:
-    incomplete_answer      = check_incomplete_answer(client, qa_item)
-    safety_violations      = check_safety_violations(client, qa_item)
-    unrealistic_tools      = check_unrealistic_tools(client, qa_item)
-    overcomplicated        = check_overcomplicated_solution(client, qa_item)
-    missing_context        = check_missing_context(client, qa_item)
-    poor_quality_tips      = check_poor_quality_tips(client, qa_item)
+def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa_item: QAItem) -> dict:
+    item_json = qa_item.model_dump_json(indent=2)
+    messages = [
+        {"role": "system", "content": mono_prompt},
+        {"role": "user", "content": item_json},
+    ]
+    response = client.query(input=messages)
+    raw_text = response.output_text.strip()
 
-    overall_failure = any(
-        score == Result.FAIL
-        for score in [
-            incomplete_answer, safety_violations, unrealistic_tools,
-            overcomplicated, missing_context, poor_quality_tips,
-        ]
-    )
+    try:
+        scores = json.loads(raw_text)
+    except json.JSONDecodeError:
+        # Strip markdown code fences if present
+        cleaned = raw_text.strip("`").strip()
+        if cleaned.startswith("json"):
+            cleaned = cleaned[4:].strip()
+        scores = json.loads(cleaned)
 
-    answer_coherence       = check_answer_coherence(client, qa_item)
-    step_actionability     = check_step_actionability(client, qa_item)
-    tool_realism           = check_tool_realism(client, qa_item)
-    safety_specificity     = check_safety_specificity(client, qa_item)
-    tip_usefulness         = check_tip_usefulness(client, qa_item)
-    problem_answer_align   = check_problem_answer_alignment(client, qa_item)
-    appropriate_scope      = check_appropriate_scope(client, qa_item)
-    category_accuracy      = check_category_accuracy(client, qa_item)
-
-    quality_scores = {
-        "answer_coherence":        int(answer_coherence),
-        "step_actionability":      int(step_actionability),
-        "tool_realism":            int(tool_realism),
-        "safety_specificity":      int(safety_specificity),
-        "tip_usefulness":          int(tip_usefulness),
-        "problem_answer_alignment": int(problem_answer_align),
-        "appropriate_scope":       int(appropriate_scope),
-        "category_accuracy":       int(category_accuracy),
-    }
-
-    quality_pass = all(v == Result.PASS for v in quality_scores.values())
-
-    return {
-        "trace_id":               trace_id,
-        "incomplete_answer":      int(incomplete_answer),
-        "safety_violations":      int(safety_violations),
-        "unrealistic_tools":      int(unrealistic_tools),
-        "overcomplicated_solution": int(overcomplicated),
-        "missing_context":        int(missing_context),
-        "poor_quality_tips":      int(poor_quality_tips),
-        "overall_failure":        overall_failure,
-        "quality_scores":         quality_scores,
-        "quality_pass":           quality_pass,
-    }
+    result = {"trace_id": trace_id}
+    for dim in DIMENSIONS:
+        result[dim] = int(scores.get(dim, 0))
+    result["overall_pass"] = all(result[d] == 1 for d in DIMENSIONS)
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +85,7 @@ EVAL_JSONL = PROJECT_ROOT / "eval.jsonl"
 _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
-def evaluate_training_set(client: MyOpenAIClient, eval_path: Path = EVAL_JSONL) -> list[dict]:
+def evaluate_training_set(client: MyOpenAIClient, mono_prompt: str, eval_path: Path = EVAL_JSONL) -> list[dict]:
     results = []
     with eval_path.open() as f:
         for line_num, line in enumerate(f, start=1):
@@ -191,11 +107,12 @@ def evaluate_training_set(client: MyOpenAIClient, eval_path: Path = EVAL_JSONL) 
                 continue
 
             print(f"Evaluating: {trace_id}")
-            result = evaluate_qa_item(client, trace_id, qa_item)
+            result = evaluate_qa_item(client, mono_prompt, trace_id, qa_item)
             results.append(result)
             print(json.dumps(result, indent=2))
 
     print(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
+    _write_eval_results(results, eval_path.parent)
     return results
 
 
@@ -203,7 +120,15 @@ def evaluate_training_set(client: MyOpenAIClient, eval_path: Path = EVAL_JSONL) 
 # Evaluation dispatch helpers
 # ---------------------------------------------------------------------------
 
-def evaluate_qa_folder(client: MyOpenAIClient, folder: Path) -> list[dict]:
+def _write_eval_results(results: list[dict], folder: Path) -> None:
+    if not results:
+        return
+    out_path = folder / "QA_llm_eval.json"
+    out_path.write_text(json.dumps(results, indent=2))
+    print(f"Results written to {out_path}")
+
+
+def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, folder: Path) -> list[dict]:
     qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
         print(f"No .qa files found in {folder}.")
@@ -217,32 +142,34 @@ def evaluate_qa_folder(client: MyOpenAIClient, folder: Path) -> list[dict]:
         except Exception as e:
             print(f"  Parse error: {e}")
             continue
-        result = evaluate_qa_item(client, trace_id, qa_item)
+        result = evaluate_qa_item(client, mono_prompt, trace_id, qa_item)
         results.append(result)
         print(json.dumps(result, indent=2))
     print(f"\nEvaluated {len(results)} item(s) from {folder}.")
+    _write_eval_results(results, folder)
     return results
 
 
-def evaluate_single_qa_file(client: MyOpenAIClient, path: Path) -> list[dict]:
+def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, path: Path) -> list[dict]:
     print(f"Evaluating: {path.name}")
     try:
         qa_item = QAItem.model_validate_json(path.read_text())
     except Exception as e:
         print(f"  Parse error: {e}")
         return []
-    result = evaluate_qa_item(client, path.stem, qa_item)
+    result = evaluate_qa_item(client, mono_prompt, path.stem, qa_item)
     print(json.dumps(result, indent=2))
+    _write_eval_results([result], path.parent)
     return [result]
 
 
-def _resolve_target(client: MyOpenAIClient, target: Path) -> list[dict]:
+def _resolve_target(client: MyOpenAIClient, mono_prompt: str, target: Path) -> list[dict]:
     if target.is_dir():
-        return evaluate_qa_folder(client, target)
+        return evaluate_qa_folder(client, mono_prompt, target)
     if target.suffix == ".jsonl":
-        return evaluate_training_set(client, target)
+        return evaluate_training_set(client, mono_prompt, target)
     if target.suffix == ".qa":
-        return evaluate_single_qa_file(client, target)
+        return evaluate_single_qa_file(client, mono_prompt, target)
     print(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
     return []
 
@@ -261,13 +188,16 @@ def main():
     args = parser.parse_args()
 
     client = MyOpenAIClient(model=MODEL)
+    prompt_dir = _select_prompt_version()
+    mono_prompt = _load_mono_prompt(prompt_dir)
+    print(f"Using judge prompts from: {prompt_dir.name}\n")
 
     if args.evaluate:
         target = Path(args.evaluate)
         if not target.exists():
             print(f"Error: path not found — {target}")
             return
-        _resolve_target(client, target)
+        _resolve_target(client, mono_prompt, target)
         return
 
     # Interactive prompt
@@ -295,9 +225,9 @@ def main():
     choice = input(f"Enter 1-{max_choice}: ").strip()
 
     if choice == "1":
-        evaluate_training_set(client)
+        evaluate_training_set(client, mono_prompt)
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
-        evaluate_qa_folder(client, versions[int(choice) - 2])
+        evaluate_qa_folder(client, mono_prompt, versions[int(choice) - 2])
     else:
         print(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
