@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
 import sys
+import time
+from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -13,6 +17,9 @@ from openai_client.openai_client import MyOpenAIClient
 
 PROMPTS_ROOT = PROJECT_ROOT / "prompts_llm_judge"
 MODEL = "gpt-4.1-nano"
+MAX_PARALLEL = 50
+MAX_RETRIES = 5
+RETRY_BASE_DELAY = 2.0
 
 DIMENSIONS = [
     "answer_completeness",
@@ -44,8 +51,22 @@ def _select_prompt_version() -> Path:
     return versions[-1]
 
 
+def _extract_trace_id(stem: str) -> str:
+    m = re.match(r"QA[^_]*", stem)
+    return m.group() if m else stem
+
+
 def _load_mono_prompt(prompt_dir: Path) -> str:
     return (prompt_dir / "mono.prompt").read_text().strip()
+
+
+def _next_eval_version(folder: Path) -> str:
+    nums = []
+    for f in folder.glob("QA_llm_eval_v*.json"):
+        m = re.search(r"QA_llm_eval_v(\d+)\.json", f.name)
+        if m:
+            nums.append(int(m.group(1)))
+    return f"v{max(nums) + 1}" if nums else "v1"
 
 
 # ---------------------------------------------------------------------------
@@ -53,28 +74,52 @@ def _load_mono_prompt(prompt_dir: Path) -> str:
 # ---------------------------------------------------------------------------
 
 def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa_item: QAItem) -> dict:
+    from openai import RateLimitError
     item_json = qa_item.model_dump_json(indent=2)
     messages = [
         {"role": "system", "content": mono_prompt},
         {"role": "user", "content": item_json},
     ]
-    response = client.query(input=messages)
-    raw_text = response.output_text.strip()
+    delay = RETRY_BASE_DELAY
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = client.query(input=messages)
+            raw_text = response.output_text.strip()
 
-    try:
-        scores = json.loads(raw_text)
-    except json.JSONDecodeError:
-        # Strip markdown code fences if present
-        cleaned = raw_text.strip("`").strip()
-        if cleaned.startswith("json"):
-            cleaned = cleaned[4:].strip()
-        scores = json.loads(cleaned)
+            try:
+                scores = json.loads(raw_text)
+            except json.JSONDecodeError:
+                cleaned = raw_text.strip("`").strip()
+                if cleaned.startswith("json"):
+                    cleaned = cleaned[4:].strip()
+                scores = json.loads(cleaned)
 
-    result = {"trace_id": trace_id}
-    for dim in DIMENSIONS:
-        result[dim] = int(scores.get(dim, 0))
-    result["overall_pass"] = all(result[d] == 1 for d in DIMENSIONS)
-    return result
+            missing = [d for d in DIMENSIONS if d not in scores]
+            if missing:
+                raise ValueError(f"LLM response missing dimensions: {missing}")
+
+            llm_trace_id = scores.get("trace_id")
+            if llm_trace_id != "[NA]":
+                print(f"  [warning] {trace_id}: expected trace_id '[NA]' from LLM, got {llm_trace_id!r}")
+
+            result = {"trace_id": trace_id}
+            for dim in DIMENSIONS:
+                result[dim] = int(scores[dim])
+            result["overall_pass"] = all(result[d] == 1 for d in DIMENSIONS)
+            return result
+
+        except RateLimitError:
+            if attempt == MAX_RETRIES:
+                raise
+            print(f"  [rate limit] {trace_id}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
+            time.sleep(delay)
+            delay *= 2
+        except (json.JSONDecodeError, ValueError) as e:
+            if attempt == MAX_RETRIES:
+                raise
+            print(f"  [parse error] {trace_id}: attempt {attempt}/{MAX_RETRIES}: {e}")
+            time.sleep(delay)
+            delay *= 2
 
 
 # ---------------------------------------------------------------------------
@@ -85,8 +130,10 @@ EVAL_JSONL = PROJECT_ROOT / "eval.jsonl"
 _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
-def evaluate_training_set(client: MyOpenAIClient, mono_prompt: str, eval_path: Path = EVAL_JSONL) -> list[dict]:
-    results = []
+def evaluate_training_set(
+    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL
+) -> list[dict]:
+    items: list[tuple[str, QAItem]] = []
     with eval_path.open() as f:
         for line_num, line in enumerate(f, start=1):
             line = line.strip()
@@ -97,22 +144,16 @@ def evaluate_training_set(client: MyOpenAIClient, mono_prompt: str, eval_path: P
             except json.JSONDecodeError as e:
                 print(f"  Line {line_num}: JSON parse error — {e}")
                 continue
-
-            trace_id = raw.get("id", f"line_{line_num}")
+            trace_id = _extract_trace_id(raw.get("id", f"line_{line_num}"))
             qa_fields = {k: v for k, v in raw.items() if k in _QA_ITEM_FIELDS}
             try:
-                qa_item = QAItem.model_validate(qa_fields)
+                items.append((trace_id, QAItem.model_validate(qa_fields)))
             except Exception as e:
                 print(f"  {trace_id}: validation error — {e}")
-                continue
 
-            print(f"Evaluating: {trace_id}")
-            result = evaluate_qa_item(client, mono_prompt, trace_id, qa_item)
-            results.append(result)
-            print(json.dumps(result, indent=2))
-
+    results = _evaluate_parallel(client, mono_prompt, items)
     print(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
-    _write_eval_results(results, eval_path.parent)
+    _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt)
     return results
 
 
@@ -120,56 +161,80 @@ def evaluate_training_set(client: MyOpenAIClient, mono_prompt: str, eval_path: P
 # Evaluation dispatch helpers
 # ---------------------------------------------------------------------------
 
-def _write_eval_results(results: list[dict], folder: Path) -> None:
+def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, items: list[tuple[str, QAItem]]) -> list[dict]:
+    results = []
+    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
+        pending = {
+            executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item): trace_id
+            for trace_id, qa_item in items
+        }
+        while pending:
+            done, _ = wait(pending.keys(), return_when=FIRST_COMPLETED)
+            for future in done:
+                trace_id = pending.pop(future)
+                try:
+                    result = future.result()
+                    results.append(result)
+                    print(f"Evaluated: {trace_id}")
+                    print(json.dumps(result, indent=2))
+                except Exception as e:
+                    print(f"  Error evaluating {trace_id}: {e}")
+    return results
+
+
+def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mono_prompt: str) -> None:
     if not results:
         return
-    out_path = folder / "QA_llm_eval.json"
-    out_path.write_text(json.dumps(results, indent=2))
+    eval_version = _next_eval_version(folder)
+    out_path = folder / f"QA_llm_eval_{eval_version}.json"
+    payload = {
+        "eval_version": eval_version,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "judge_prompt_version": prompt_dir.name,
+        "judge_prompt": mono_prompt,
+        "results": results,
+    }
+    out_path.write_text(json.dumps(payload, indent=2))
     print(f"Results written to {out_path}")
 
 
-def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, folder: Path) -> list[dict]:
+def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path) -> list[dict]:
     qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
         print(f"No .qa files found in {folder}.")
         return []
-    results = []
+    items: list[tuple[str, QAItem]] = []
     for qa_file in qa_files:
-        trace_id = qa_file.stem
-        print(f"Evaluating: {qa_file.name}")
         try:
-            qa_item = QAItem.model_validate_json(qa_file.read_text())
+            items.append((_extract_trace_id(qa_file.stem), QAItem.model_validate_json(qa_file.read_text())))
         except Exception as e:
-            print(f"  Parse error: {e}")
-            continue
-        result = evaluate_qa_item(client, mono_prompt, trace_id, qa_item)
-        results.append(result)
-        print(json.dumps(result, indent=2))
+            print(f"  Parse error {qa_file.name}: {e}")
+    results = _evaluate_parallel(client, mono_prompt, items)
     print(f"\nEvaluated {len(results)} item(s) from {folder}.")
-    _write_eval_results(results, folder)
+    _write_eval_results(results, folder, prompt_dir, mono_prompt)
     return results
 
 
-def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, path: Path) -> list[dict]:
+def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, path: Path) -> list[dict]:
     print(f"Evaluating: {path.name}")
     try:
         qa_item = QAItem.model_validate_json(path.read_text())
     except Exception as e:
         print(f"  Parse error: {e}")
         return []
-    result = evaluate_qa_item(client, mono_prompt, path.stem, qa_item)
+    result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
     print(json.dumps(result, indent=2))
-    _write_eval_results([result], path.parent)
+    _write_eval_results([result], path.parent, prompt_dir, mono_prompt)
     return [result]
 
 
-def _resolve_target(client: MyOpenAIClient, mono_prompt: str, target: Path) -> list[dict]:
+def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, target: Path) -> list[dict]:
     if target.is_dir():
-        return evaluate_qa_folder(client, mono_prompt, target)
+        return evaluate_qa_folder(client, mono_prompt, prompt_dir, target)
     if target.suffix == ".jsonl":
-        return evaluate_training_set(client, mono_prompt, target)
+        return evaluate_training_set(client, mono_prompt, prompt_dir, target)
     if target.suffix == ".qa":
-        return evaluate_single_qa_file(client, mono_prompt, target)
+        return evaluate_single_qa_file(client, mono_prompt, prompt_dir, target)
     print(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
     return []
 
@@ -197,7 +262,7 @@ def main():
         if not target.exists():
             print(f"Error: path not found — {target}")
             return
-        _resolve_target(client, mono_prompt, target)
+        _resolve_target(client, mono_prompt, prompt_dir, target)
         return
 
     # Interactive prompt
@@ -218,16 +283,18 @@ def main():
                 human_count = len(json.load(human_eval.open()))
             except Exception:
                 pass
-        human_note = f", {human_count} human judge item(s)"
-        print(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}]")
+        llm_eval_count = len(list(folder.glob("QA_llm_eval_v*.json")))
+        llm_note = f", {llm_eval_count} llm eval version(s)" if llm_eval_count else ""
+        human_note = f", {human_count} human judge item(s)" if human_count else ""
+        print(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]")
 
     max_choice = len(versions) + 1
     choice = input(f"Enter 1-{max_choice}: ").strip()
 
     if choice == "1":
-        evaluate_training_set(client, mono_prompt)
+        evaluate_training_set(client, mono_prompt, prompt_dir)
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
-        evaluate_qa_folder(client, mono_prompt, versions[int(choice) - 2])
+        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2])
     else:
         print(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
