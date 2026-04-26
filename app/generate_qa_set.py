@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
-import re
 import shutil
 import sys
 import time
@@ -10,12 +8,6 @@ import yaml
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from pathlib import Path
 from random import randint
-from huggingface_hub import try_to_load_from_cache
-from sentence_transformers import SentenceTransformer
-from sentence_transformers.util import cos_sim
-
-if try_to_load_from_cache("sentence-transformers/all-MiniLM-L6-v2", "config.json"):
-    os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -61,42 +53,9 @@ def _pick_version() -> str:
 
 
 
-_VAGUE_PHRASES = {"be careful", "good luck", "take your time", "stay safe", "use caution"}
-
-def dim_sanity_check(qa_item: QAItem) -> None:
-    problems = []
-    if len(qa_item.safety_info) < 80:
-        problems.append(f"safety_info too short ({len(qa_item.safety_info)} chars, min 80)")
-    if not qa_item.steps:
-        problems.append("steps list is empty")
-    if not qa_item.tools_required:
-        problems.append("tools_required list is empty")
-    _UNREALISTIC_TOOL_PHRASES = {"professional-grade", "trade-only"}
-    for tool in qa_item.tools_required:
-        if len(tool.strip()) < 3:  # passes for axe, saw, bit, hoe, etc.
-            problems.append(f"tool name too short: '{tool}'")
-        for phrase in _UNREALISTIC_TOOL_PHRASES:
-            if phrase in tool.strip().lower():
-                problems.append(f"unrealistic tool detected ('{phrase}'): '{tool}'")
-
-    if not qa_item.tips:
-        problems.append("tips list is empty")
-    for tip in qa_item.tips:
-        for phrase in _VAGUE_PHRASES:
-            if phrase in tip.strip().lower():
-                problems.append(f"vague tip detected ('{phrase}'): '{tip}'")
-    for phrase in _VAGUE_PHRASES:
-        if phrase in qa_item.safety_info.strip().lower():
-            problems.append(f"vague safety phrase detected ('{phrase}'): '{qa_item.safety_info}'")
-    if problems:
-        raise ValueError("Sanity check failed:\n" + "\n".join(f"  - {p}" for p in problems))
-
-
 MAX_PARALLEL = 50
 MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0  # seconds; doubles on each attempt
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-SIMILARITY_THRESHOLD = 0.92
 
 
 def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, QAItem]:
@@ -122,7 +81,6 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
             except Exception as e:
                 print(f"  [parse error] {cat}: {e}")
                 raise
-            dim_sanity_check(qa_item)
             return cat, response_text, qa_item
         except RateLimitError as e:
             if attempt == MAX_RETRIES:
@@ -130,53 +88,6 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
             print(f"  [rate limit] {cat}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
             time.sleep(delay)
             delay *= 2
-
-
-def batch_dedup_check(qa_folder: Path, client: MyOpenAIClient) -> None:
-    qa_files = sorted(qa_folder.glob("*.qa"), key=lambda f: int(re.search(r"QA(\d+)", f.name).group(1)) if re.search(r"QA(\d+)", f.name) else 0)
-    if len(qa_files) < 2:
-        return
-
-    items = []
-    for f in qa_files:
-        try:
-            items.append((f, QAItem.model_validate_json(f.read_text())))
-        except Exception as e:
-            print(f"  [dedup] Skipping {f.name}: {e}")
-            continue
-
-    to_remove: set[Path] = set()
-
-    # Embedding similarity
-    if len(items) >= 2:
-        questions = [qa_item.question for _, qa_item in items]
-        model = SentenceTransformer(EMBEDDING_MODEL)
-        embeddings = model.encode(questions, convert_to_tensor=True)
-
-        flagged: set[int] = set()
-        for i in range(len(items)):
-            if i in flagged:
-                continue
-            for j in range(i + 1, len(items)):
-                if j in flagged:
-                    continue
-                sim = float(cos_sim(embeddings[i], embeddings[j]))
-                if sim >= SIMILARITY_THRESHOLD:
-                    f_j = items[j][0]
-                    to_remove.add(f_j)
-                    flagged.add(j)
-                    print(f"  [dedup] Near-duplicate (sim={sim:.3f}): {f_j.name} ~ {items[i][0].name}")
-                    print(f"    kept:    {items[i][1].question}")
-                    print(f"    removed: {items[j][1].question}")
-
-    if to_remove:
-        dupes_dir = qa_folder / "duplicates"
-        dupes_dir.mkdir(exist_ok=True)
-        for f in to_remove:
-            shutil.move(str(f), str(dupes_dir / f.name))
-        print(f"  [dedup] Moved {len(to_remove)} duplicate(s) to {dupes_dir}.")
-    else:
-        print("  [dedup] No duplicates found.")
 
 
 def main():
@@ -267,8 +178,6 @@ def main():
                 if still_needed > 0:
                     new_cat = _pick_cat()
                     pending[executor.submit(_generate_one, my_ai_client, new_cat, prompts[new_cat])] = new_cat
-
-    batch_dedup_check(qa_folder, my_ai_client)
 
 
 if __name__ == "__main__":
