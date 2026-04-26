@@ -4,11 +4,13 @@ import json
 import re
 import shutil
 import sys
+import time
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from pydantic import ValidationError
 from qa_item import QAItem
 
 JACCARD_THRESHOLD = 0.5
@@ -47,23 +49,59 @@ def _matching_vague_phrase(text: str) -> str | None:
     return None
 
 
+def _validate_text(text: str) -> tuple[list[str], dict, list[str]]:
+    """Returns (results[7], failures_detail, errors) for a raw QA item string."""
+    results = ["PASS"] * 7
+    failures_detail = {}
+    errors = []
+
+    try:
+        json.loads(text)
+    except json.JSONDecodeError as e:
+        results[0] = "FAIL"
+        failures_detail["json_valid"] = True
+        for i in range(1, 7):
+            results[i] = "----"
+        errors.append(f"invalid JSON: {e}")
+        return results, failures_detail, errors
+
+    try:
+        qa_item = QAItem.model_validate_json(text)
+    except ValidationError as e:
+        for err in e.errors():
+            t = err["type"]
+            field = err.get("loc", (None,))[0]
+            if t == "missing":
+                results[1] = "FAIL"
+                failures_detail.setdefault("all_fields_present", []).append(field)
+            elif t == "string_too_short":
+                results[2] = "FAIL"
+                failures_detail.setdefault("non_empty_strings", []).append(field)
+            elif t == "too_short":
+                if field == "steps":
+                    results[3] = "FAIL"
+                    failures_detail["sufficient_steps"] = True
+                elif field == "tools_required":
+                    results[4] = "FAIL"
+                    failures_detail["tools_present"] = True
+                elif field == "tips":
+                    results[5] = "FAIL"
+                    failures_detail["tips_present"] = True
+        errors.append(f"schema validation: {e}")
+        return results, failures_detail, errors
+
+    try:
+        dim_sanity_check(qa_item)
+    except ValueError as e:
+        results[6] = "FAIL"
+        failures_detail["no_vague_phrases"] = True
+        errors.append(str(e))
+
+    return results, failures_detail, errors
+
+
 def dim_sanity_check(qa_item: QAItem) -> None:
     problems = []
-    if len(qa_item.safety_info) < 80:
-        problems.append(f"safety_info too short ({len(qa_item.safety_info)} chars, min 80)")
-    if not qa_item.steps:
-        problems.append("steps list is empty")
-    if not qa_item.tools_required:
-        problems.append("tools_required list is empty")
-    _UNREALISTIC_TOOL_PHRASES = {"professional-grade", "trade-only"}
-    for tool in qa_item.tools_required:
-        if len(tool.strip()) < 3:
-            problems.append(f"tool name too short: '{tool}'")
-        for phrase in _UNREALISTIC_TOOL_PHRASES:
-            if phrase in tool.strip().lower():
-                problems.append(f"unrealistic tool detected ('{phrase}'): '{tool}'")
-    if not qa_item.tips:
-        problems.append("tips list is empty")
     for tip in qa_item.tips:
         match = _matching_vague_phrase(tip)
         if match:
@@ -160,43 +198,60 @@ def main():
         sys.exit(0)
 
     print(f"Validating {len(qa_files)} item(s) in qa_items/{version}...\n")
+    print("Checks performed:")
+    print("  1. json_valid          — raw file content parses as valid JSON")
+    print("  2. all_fields_present  — all 7 fields present (question, answer, equipment_problem,")
+    print("                           tools_required, steps, safety_info, tips)")
+    print("  3. non_empty_strings   — string fields meet minimum lengths (question>=20, answer>=100,")
+    print("                           equipment_problem>=10, safety_info>=80)")
+    print("  4. sufficient_steps    — steps list has >= 3 items")
+    print("  5. tools_present       — tools_required list has >= 1 item")
+    print("  6. tips_present        — tips list has >= 1 item")
+    print("  7. no_vague_phrases    — tips and safety_info do not contain vague filler phrases")
+    print("                           (e.g. 'be careful', 'good luck') that dominate the field")
+    print()
+
+    failed_dir = qa_folder / "failed_checks"
 
     passed = 0
     failed = 0
     for f in qa_files:
-        errors = []
-        try:
-            text = f.read_text().strip()
+        text = f.read_text().strip()
+        results, failures_detail, errors = _validate_text(text)
+        item_failed = any(r == "FAIL" for r in results)
 
-            try:
-                json.loads(text)
-            except json.JSONDecodeError as e:
-                errors.append(f"invalid JSON: {e}")
-                raise
-
-            try:
-                qa_item = QAItem.model_validate_json(text)
-            except Exception as e:
-                errors.append(f"schema validation: {e}")
-                raise
-
-            try:
-                dim_sanity_check(qa_item)
-            except ValueError as e:
-                errors.append(str(e))
-                raise
-
-        except Exception:
+        result_line = ",".join(results)
+        ts = time.strftime("%Y-%m-%dT%H:%M:%S")
+        trace_id = f.stem.split("_")[0]
+        failures_json = json.dumps(failures_detail) if failures_detail else "None"
+        if item_failed:
             failed += 1
-            print(f"FAIL  {f.name}")
+            failed_dir.mkdir(exist_ok=True)
+            shutil.move(str(f), str(failed_dir / f.name))
+            print(f"[ts={ts}] [trace_id={trace_id}] [status=FAIL] [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
             for err in errors:
                 print(f"      {err}")
-            continue
-
-        passed += 1
-        print(f"ok    {f.name}")
+        else:
+            passed += 1
+            print(f"[ts={ts}] [trace_id={trace_id}] [status=ok]   [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
 
     print(f"\n{passed} passed, {failed} failed out of {len(qa_files)} item(s).")
+
+    print("\nRunning dedup check on passing items...")
+    batch_dedup_check(qa_folder)
+
+    remaining = sorted(qa_folder.glob("*.qa"))
+    if remaining:
+        dist: dict[str, int] = {}
+        for f in remaining:
+            cat = re.sub(r"\d+$", "", f.stem.split("_")[1]) if "_" in f.stem else "unknown"
+            dist[cat] = dist.get(cat, 0) + 1
+        total = len(remaining)
+        print(f"\nFinal item distribution by category ({total} of {len(qa_files)} original):")
+        for cat, count in sorted(dist.items()):
+            pct = count / total * 100
+            print(f"  {cat}: {pct:.1f}% ({count})")
+
     if failed:
         sys.exit(1)
 

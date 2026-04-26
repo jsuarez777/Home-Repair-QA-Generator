@@ -57,14 +57,15 @@ MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0  # seconds; doubles on each attempt
 
 
-def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, None]:
+def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, str]:
     from openai import RateLimitError
     delay = RETRY_BASE_DELAY
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = client.query(input=prompt)
+            raw_response = response.output_text
             try:
-                response_text = response.output_text.strip(' `\n')
+                response_text = raw_response.strip(' `\n')
                 brace = response_text.find("{")
                 bracket = response_text.find("[")
                 json_start = min(brace, bracket) if brace != -1 and bracket != -1 else max(brace, bracket)
@@ -81,7 +82,7 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
                 sep = "=" * 80
                 print(f"\n  [parse error] {cat}: {e}\n  {sep}\n{response_text}\n  {sep}\n")
                 raise
-            return cat, response_text, None
+            return cat, response_text, raw_response
         except RateLimitError as e:
             if attempt == MAX_RETRIES:
                 raise
@@ -143,7 +144,15 @@ def main():
         prompt = template.format_map(vars)
         prompt += "\n\n" + prompt_output_format_suffix
         prompts[cat] = prompt
-    
+
+    sep = "=" * 80
+    print(f"\n{sep}\nTEMPLATE ({template_file}):\n{sep}\n{template}")
+    print(f"\n{sep}\nOUTPUT FORMAT SUFFIX ({prompt_output_format_suffix_file}):\n{sep}\n{prompt_output_format_suffix}")
+    print(f"\n{sep}\nCATEGORIES ({categories_file}):\n{sep}")
+    with open(categories_file) as f:
+        print(f.read())
+    print(sep)
+
     # Initialize the OpenAI client and generate QA items in parallel
     my_ai_client = MyOpenAIClient(model="gpt-5.4-nano", temperature=1.8)
     total_count = 0
@@ -163,13 +172,22 @@ def main():
             for future in done:
                 cat = pending.pop(future)
                 try:
-                    result_cat, response_text, qa_item = future.result()
+                    result_cat, response_text, raw_response = future.result()
                     if total_count < items_to_generate:
                         total_count += 1
                         count_per_category[result_cat] += 1
                         output_file = qa_folder / f"QA{total_count}_{result_cat}{count_per_category[result_cat]}.qa"
                         output_file.write_text(response_text)
                         print(f"[{total_count}/{items_to_generate}] Saved {output_file.name} (category: {result_cat})")
+                        ts = time.strftime("%Y-%m-%dT%H:%M:%S")
+                        trace_id = output_file.stem.split("_")[0]
+                        vars = category_defs[result_cat]
+                        examples_str = " ".join(
+                            f'category={v}' if k == "repair_type" else f'{k}="{v}"'
+                            for k, v in vars.items()
+                        )
+                        escaped_raw = raw_response.replace('\n', '\\n')
+                        print(f"  ts={ts} trace_id={trace_id} filename={output_file.name} model={my_ai_client.model} {examples_str} raw_response={escaped_raw}")
                 except Exception as e:
                     print(f"============================={cat}: {e}")
 
