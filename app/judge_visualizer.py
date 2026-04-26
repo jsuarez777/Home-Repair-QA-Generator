@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 import json
 import os
+import re
 import sys
+from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
-QA_ITEMS_DIR = Path(__file__).parent.parent / "qa_items"
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+PROJECT_ROOT = Path(__file__).parent.parent
+QA_ITEMS_DIR = PROJECT_ROOT / "qa_items"
 HUMAN_FILE = "QA_human_eval.json"
 LLM_FILE_PATTERN = "QA_llm_eval_*.json"
 DIMENSIONS = [
@@ -37,12 +45,19 @@ def load_eval(path: Path) -> list[dict]:
     return data.get("results", [])
 
 
-def load_llm_evals(version_dir: Path) -> dict[str, list[dict]]:
+def load_llm_evals(version_dir: Path) -> dict[str, dict]:
+    """Returns {eval_version: {"records": [...], "model": str}} for all LLM eval files."""
     evals = {}
     for f in sorted(version_dir.glob(LLM_FILE_PATTERN)):
         key = f.stem.replace("QA_llm_eval_", "")
         try:
-            evals[key] = load_eval(f)
+            raw = json.load(open(f))
+            if isinstance(raw, list):
+                records, model = raw, "unknown"
+            else:
+                records = raw.get("results", [])
+                model = raw.get("model", "unknown")
+            evals[key] = {"records": records, "model": model}
         except Exception as e:
             print(f"  Warning: could not load {f.name}: {e}")
     return evals
@@ -108,10 +123,213 @@ def compare_section(human: list[dict], llm: list[dict], label: str = "HUMAN vs L
             print(f"  {dim:<25}: n/a")
 
 
+def _dim_agreement(human: list[dict], llm: list[dict], dim: str) -> float:
+    """Agreement rate (0-100) between human and LLM for one dimension on shared traces."""
+    hm = {r["trace_id"]: r for r in human}
+    lm = {r["trace_id"]: r for r in llm}
+    shared = set(hm) & set(lm)
+    matches = sum(1 for t in shared if hm[t].get(dim) == lm[t].get(dim) and hm[t].get(dim) is not None)
+    total = sum(1 for t in shared if hm[t].get(dim) is not None and lm[t].get(dim) is not None)
+    return matches / total * 100 if total else float("nan")
+
+
+def plot_human_llm_agreement(
+    version_name: str, human_records: list[dict], llm_evals: dict[str, dict], out_dir: Path
+) -> None:
+    if not human_records or not llm_evals:
+        return
+
+    hm = {r["trace_id"] for r in human_records}
+    n_shared = max(
+        len(hm & {r["trace_id"] for r in entry["records"]})
+        for entry in llm_evals.values()
+    )
+
+    all_dims = DIMENSIONS + ["overall_pass"]
+    dim_labels = [d.replace("_", " ").title() for d in all_dims]
+    rows = []
+    for llm_ver, entry in llm_evals.items():
+        legend_label = f"{llm_ver} ({entry['model']})"
+        for dim, label in zip(all_dims, dim_labels):
+            rows.append({
+                "LLM Version": legend_label,
+                "Dimension": label,
+                "Agreement (%)": _dim_agreement(human_records, entry["records"], dim),
+            })
+
+    df = pd.DataFrame(rows)
+
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(13, 6))
+    sns.barplot(data=df, x="Dimension", y="Agreement (%)", hue="LLM Version", ax=ax)
+
+    ax.set_title(f"Human vs LLM Agreement by Dimension — QA version {version_name}", fontsize=13)
+    ax.set_xlabel("")
+    ax.set_ylabel("Agreement (%)")
+    ax.set_ylim(0, 105)
+    ax.tick_params(axis="x", labelrotation=20)
+    ax.legend(title="LLM Judge Version")
+    ax.axhline(y=80, color="grey", linestyle="--", linewidth=0.8, label="80% reference")
+    _add_item_axis(ax, n_shared)
+
+    plt.tight_layout()
+    out_path = out_dir / "human_llm_agreement.png"
+    fig.savefig(out_path, dpi=150)
+    print(f"  Agreement chart saved to {out_path}")
+    plt.show()
+
+
+def _add_item_axis(ax, n_items: int) -> None:
+    """Add a right-side y-axis showing item counts proportional to the left % axis."""
+    ax2 = ax.twinx()
+    ax2.set_ylim(0, ax.get_ylim()[1] * n_items / 100)
+    ax2.set_ylabel(f"Items  (100% = {n_items})")
+    ax2.grid(False)
+
+
+def _build_trace_category_map(version_dir: Path) -> dict[str, str]:
+    """Maps trace_id (e.g. 'QA13') to category (e.g. 'general') from .qa filenames."""
+    mapping = {}
+    for f in version_dir.glob("*.qa"):
+        parts = f.stem.split("_", 1)
+        if len(parts) == 2:
+            trace_id = parts[0]
+            category = re.sub(r"\d+$", "", parts[1])
+            mapping[trace_id] = category
+    return mapping
+
+
+def plot_qa_category_distribution(version_name: str, version_dir: Path, out_dir: Path) -> None:
+    trace_cat = _build_trace_category_map(version_dir)
+    if not trace_cat:
+        print("  No .qa files found — skipping category distribution chart.")
+        return
+
+    counts = Counter(trace_cat.values())
+    categories = sorted(counts.keys())
+    values = [counts[c] for c in categories]
+    total = sum(values)
+    percentages = [v / total * 100 for v in values]
+
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(max(6, len(categories) * 0.9 + 1), 5))
+    sns.barplot(x=categories, y=percentages, ax=ax, palette="tab10")
+    ax.set_axisbelow(True)
+
+    ax.set_title(f"QA Items by Category — QA version {version_name}", fontsize=13)
+    ax.set_xlabel("Category")
+    ax.set_ylabel("Share (%)")
+    y_top = max(percentages) * 1.18
+    ax.set_ylim(0, y_top)
+    ax.tick_params(axis="x", labelrotation=20)
+    for patch, pct in zip(ax.patches, percentages):
+        ax.text(
+            patch.get_x() + patch.get_width() / 2,
+            patch.get_height() + y_top * 0.01,
+            f"{pct:.1f}%",
+            ha="center", va="bottom", fontsize=9,
+        )
+
+    ax2 = ax.twinx()
+    ax2.set_ylim(0, y_top * total / 100)
+    ax2.set_ylabel("Item Count")
+    ax2.grid(False)
+
+    plt.tight_layout()
+    out_path = out_dir / "qa_category_distribution.png"
+    fig.savefig(out_path, dpi=150)
+    print(f"  Category distribution chart saved to {out_path}")
+    plt.show()
+
+
+def plot_llm_heatmap(version_name: str, version_dir: Path, llm_evals: dict[str, dict], out_dir: Path) -> None:
+    trace_cat = _build_trace_category_map(version_dir)
+    if not trace_cat:
+        print("  No .qa files found for category mapping — skipping heatmap.")
+        return
+
+    dim_labels = [d.replace("_", " ").title() for d in DIMENSIONS]
+
+    for llm_ver, entry in llm_evals.items():
+        records = entry["records"]
+        model = entry["model"]
+
+        cat_records: dict[str, list[dict]] = {}
+        for r in records:
+            cat = trace_cat.get(r["trace_id"], "unknown")
+            cat_records.setdefault(cat, []).append(r)
+
+        categories = sorted(cat_records.keys())
+        data = [
+            [dim_score(cat_records[cat], dim) for dim in DIMENSIONS]
+            for cat in categories
+        ]
+        df = pd.DataFrame(data, index=categories, columns=dim_labels)
+
+        fig, ax = plt.subplots(figsize=(11, max(4, len(categories) * 0.6 + 1.5)))
+        sns.heatmap(
+            df, ax=ax, annot=True, fmt=".0f", cmap="RdYlGn",
+            vmin=0, vmax=100, linewidths=0.5,
+            cbar_kws={"label": "Pass Rate (%)"},
+        )
+        ax.set_title(
+            f"Pass Rate by Category & Dimension\n"
+            f"QA {version_name}  —  LLM Judge {llm_ver} ({model})",
+            fontsize=12,
+        )
+        ax.set_xlabel("")
+        ax.set_ylabel("Category")
+        ax.tick_params(axis="x", labelrotation=20)
+        plt.tight_layout()
+
+        out_path = out_dir / f"llm_heatmap_{llm_ver}.png"
+        fig.savefig(out_path, dpi=150)
+        print(f"  Heatmap saved to {out_path}")
+        plt.show()
+
+
+def plot_llm_pass_rates(version_name: str, llm_evals: dict[str, dict], out_dir: Path) -> None:
+    if not llm_evals:
+        return
+
+    n_items = max(len(entry["records"]) for entry in llm_evals.values())
+    dim_labels = [d.replace("_", " ").title() for d in DIMENSIONS]
+    rows = []
+    for llm_ver, entry in llm_evals.items():
+        records = entry["records"]
+        model = entry["model"]
+        legend_label = f"{llm_ver} ({model})"
+        for dim, label in zip(DIMENSIONS, dim_labels):
+            rows.append({"LLM Version": legend_label, "Dimension": label, "Pass Rate (%)": dim_score(records, dim)})
+
+    df = pd.DataFrame(rows)
+
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(data=df, x="Dimension", y="Pass Rate (%)", hue="LLM Version", ax=ax)
+
+    ax.set_title(f"LLM Judge Pass Rate by Dimension — QA version {version_name}", fontsize=13)
+    ax.set_xlabel("")
+    ax.set_ylabel("Pass Rate (%)")
+    ax.set_ylim(0, 105)
+    ax.tick_params(axis="x", labelrotation=20)
+    ax.legend(title="LLM Judge Version")
+    _add_item_axis(ax, n_items)
+
+    plt.tight_layout()
+    out_path = out_dir / "llm_pass_rates.png"
+    fig.savefig(out_path, dpi=150)
+    print(f"\n  Chart saved to {out_path}")
+    plt.show()
+
+
 def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: int):
     print(f"\n{'═' * 60}")
     print(f"  Version: {version_name}")
     print(f"{'═' * 60}")
+
+    out_dir = PROJECT_ROOT / "visualizations" / datetime.now().strftime("%Y%m%d_%H%M")
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     human_records = load_eval(version_dir / HUMAN_FILE) if has_human else None
     llm_evals = load_llm_evals(version_dir)  # dict[str, list[dict]]
@@ -119,13 +337,19 @@ def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: 
     if human_records:
         print_section("HUMAN EVAL", human_records, "Human Judge")
 
-    for llm_ver, llm_records in llm_evals.items():
-        print_section(f"LLM EVAL ({llm_ver})", llm_records, f"LLM Judge {llm_ver}")
+    for llm_ver, entry in llm_evals.items():
+        llm_records = entry["records"]
+        model = entry["model"]
+        print_section(f"LLM EVAL ({llm_ver})", llm_records, f"LLM Judge {llm_ver} — {model}")
         if human_records:
             print(f"\n{'─' * 60}")
-            compare_section(human_records, llm_records, f"Human vs LLM {llm_ver} Agreement")
+            compare_section(human_records, llm_records, f"Human vs LLM {llm_ver} ({model}) Agreement")
 
     print()
+    plot_qa_category_distribution(version_name, version_dir, out_dir)
+    plot_llm_pass_rates(version_name, llm_evals, out_dir)
+    plot_llm_heatmap(version_name, version_dir, llm_evals, out_dir)
+    plot_human_llm_agreement(version_name, human_records, llm_evals, out_dir)
 
 
 def main():

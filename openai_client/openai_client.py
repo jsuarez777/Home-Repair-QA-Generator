@@ -2,6 +2,7 @@
 from openai import OpenAI
 import os, sys
 from typing import Optional
+from openai_client.pricing import PRICES
 
 class MyOpenAIClient:
     """
@@ -16,6 +17,7 @@ class MyOpenAIClient:
         self._client: Optional[OpenAI] = None
         self.model: str = model
         self._temperature: Optional[float] = temperature
+        self.pricing: Optional[dict] = PRICES.get(model)
 
     @property
     def temperature(self) -> Optional[float]:
@@ -32,6 +34,11 @@ class MyOpenAIClient:
                 kwargs["api_key"] = self.api_key
             self._client = OpenAI(**kwargs)
         return self._client
+
+    @staticmethod
+    def available_models() -> dict[str, dict]:
+        """Return models and their pricing info from the pricing CSV."""
+        return dict(PRICES)
 
     def query(self, *, input: str | list, model: Optional[str] = None, **kwargs):
         """Convenience wrapper that uses the configured default model unless overridden.

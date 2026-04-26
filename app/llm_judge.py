@@ -16,7 +16,7 @@ from openai_client.openai_client import MyOpenAIClient
 
 
 PROMPTS_ROOT = PROJECT_ROOT / "prompts_llm_judge"
-MODEL = "gpt-4.1-nano"
+DEFAULT_MODEL = "gpt-4.1-nano"
 MAX_PARALLEL = 50
 MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0
@@ -131,7 +131,7 @@ _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
 def evaluate_training_set(
-    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL
+    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL,
 ) -> list[dict]:
     items: list[tuple[str, QAItem]] = []
     with eval_path.open() as f:
@@ -153,7 +153,7 @@ def evaluate_training_set(
 
     results = _evaluate_parallel(client, mono_prompt, items)
     print(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
-    _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt)
+    _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
     return results
 
 
@@ -182,7 +182,7 @@ def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, items: list[tup
     return results
 
 
-def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mono_prompt: str) -> None:
+def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mono_prompt: str, model: str) -> None:
     if not results:
         return
     eval_version = _next_eval_version(folder)
@@ -190,6 +190,7 @@ def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mon
     payload = {
         "eval_version": eval_version,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "model": model,
         "judge_prompt_version": prompt_dir.name,
         "judge_prompt": mono_prompt,
         "results": results,
@@ -211,7 +212,7 @@ def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Pat
             print(f"  Parse error {qa_file.name}: {e}")
     results = _evaluate_parallel(client, mono_prompt, items)
     print(f"\nEvaluated {len(results)} item(s) from {folder}.")
-    _write_eval_results(results, folder, prompt_dir, mono_prompt)
+    _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
     return results
 
 
@@ -224,7 +225,7 @@ def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir
         return []
     result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
     print(json.dumps(result, indent=2))
-    _write_eval_results([result], path.parent, prompt_dir, mono_prompt)
+    _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model)
     return [result]
 
 
@@ -243,6 +244,30 @@ def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, 
 # Main
 # ---------------------------------------------------------------------------
 
+def _select_model() -> str:
+    catalog = MyOpenAIClient.available_models()
+    models = list(catalog.keys())
+    default_idx = models.index(DEFAULT_MODEL) + 1 if DEFAULT_MODEL in models else 1
+
+    print("\nAvailable models:")
+    print(f"  {'#':<4} {'Model':<30} {'Input/1M':>10} {'Cached/1M':>10} {'Output/1M':>10}")
+    print(f"  {'─' * 68}")
+    for i, m in enumerate(models, start=1):
+        p = catalog[m]
+        cached = f"${p['cached_input']:.4f}" if p["cached_input"] is not None else "—"
+        marker = " *" if m == DEFAULT_MODEL else ""
+        print(f"  {i:<4} {m + marker:<30} ${p['input']:>9.4f} {cached:>10} ${p['output']:>9.4f}")
+    print(f"  * = default")
+
+    choice = input(f"\nSelect model (1-{len(models)}) [{default_idx}]: ").strip()
+    if choice == "":
+        return models[default_idx - 1]
+    if choice.isdigit() and 1 <= int(choice) <= len(models):
+        return models[int(choice) - 1]
+    print(f"Invalid choice {choice!r}, using default ({DEFAULT_MODEL}).")
+    return DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
+
+
 def main():
     parser = argparse.ArgumentParser(description="LLM judge for DIY repair QA items.")
     parser.add_argument(
@@ -252,7 +277,8 @@ def main():
     )
     args = parser.parse_args()
 
-    client = MyOpenAIClient(model=MODEL)
+    model = _select_model()
+    client = MyOpenAIClient(model=model)
     prompt_dir = _select_prompt_version()
     mono_prompt = _load_mono_prompt(prompt_dir)
     print(f"Using judge prompts from: {prompt_dir.name}\n")
