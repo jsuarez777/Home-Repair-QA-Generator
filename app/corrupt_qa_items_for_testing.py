@@ -18,13 +18,31 @@ Usage:
 
 import argparse
 import json
+import logging
 import random
 import shutil
+import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 QA_ITEMS_ROOT = PROJECT_ROOT / "qa_items"
+
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_corrupt_qa_items_for_testing.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
+log.info(f"Logging to {_log_file}")
 
 
 BAD_SAFETY = (
@@ -75,14 +93,14 @@ def _select_version_folder() -> Path:
     )
     if not versions:
         raise RuntimeError(f"No version folders found in {QA_ITEMS_ROOT}")
-    print("Select a QA items version to corrupt:")
+    log.info("Select a QA items version to corrupt:")
     for i, v in enumerate(versions, start=1):
         qa_count = len(list(v.glob("*.qa")))
-        print(f"  {i}) {v.name}  [{qa_count} QA item(s)]")
+        log.info(f"  {i}) {v.name}  [{qa_count} QA item(s)]")
     choice = input(f"Enter 1-{len(versions)}: ").strip()
     if choice.isdigit() and 1 <= int(choice) <= len(versions):
         return versions[int(choice) - 1]
-    print(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
+    log.info(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
     return versions[-1]
 
 
@@ -96,7 +114,7 @@ def _preserve(folder: Path, files: list[Path]) -> Path:
     backup_dir.mkdir(parents=True, exist_ok=True)
     for f in files:
         shutil.copy2(f, backup_dir / f.name)
-    print(f"Preserved {len(files)} file(s) to {backup_dir}\n")
+    log.info(f"Preserved {len(files)} file(s) to {backup_dir}\n")
     return backup_dir
 
 
@@ -141,7 +159,7 @@ def corrupt_safety_info(files: list[Path]) -> None:
         data = json.loads(f.read_text())
         data["safety_info"] = BAD_SAFETY
         f.write_text(json.dumps(data, indent=2))
-        print(f"  [safety_info] {f.name}")
+        log.info(f"  [safety_info] {f.name}")
 
 
 def corrupt_tips(files: list[Path]) -> None:
@@ -149,7 +167,7 @@ def corrupt_tips(files: list[Path]) -> None:
         data = json.loads(f.read_text())
         data["tips"] = BAD_TIPS
         f.write_text(json.dumps(data, indent=2))
-        print(f"  [tips] {f.name}")
+        log.info(f"  [tips] {f.name}")
 
 
 def corrupt_tools(files: list[Path]) -> None:
@@ -157,7 +175,7 @@ def corrupt_tools(files: list[Path]) -> None:
         data = json.loads(f.read_text())
         data["tools_required"] = data["tools_required"] + [random.choice(EXPENSIVE_TOOLS)]
         f.write_text(json.dumps(data, indent=2))
-        print(f"  [tools_required] {f.name} -> {data['tools_required'][-1]}")
+        log.info(f"  [tools_required] {f.name} -> {data['tools_required'][-1]}")
 
 
 def _steps_embedded_in_answer(data: dict) -> bool:
@@ -175,7 +193,7 @@ def corrupt_steps(selected: list[Path], pool: list[Path]) -> None:
         f = targets[i]
         data = json.loads(f.read_text())
         if not _steps_embedded_in_answer(data):
-            print(f"  [steps] SKIP {f.name}  (steps not fully present in answer field)")
+            log.info(f"  [steps] SKIP {f.name}  (steps not fully present in answer field)")
             if remaining_pool:
                 replacement = random.choice(remaining_pool)
                 remaining_pool.remove(replacement)
@@ -193,7 +211,7 @@ def corrupt_steps(selected: list[Path], pool: list[Path]) -> None:
         data["steps"] = new_steps
         data["answer"] = _rebuild_answer_steps(data["answer"], original_steps, new_steps)
         f.write_text(json.dumps(data, indent=2))
-        print(f"  [steps] {f.name}  (+{len(bad)} irrelevant step(s) at random positions)")
+        log.info(f"  [steps] {f.name}  (+{len(bad)} irrelevant step(s) at random positions)")
         corrupted += 1
         i += 1
 
@@ -211,10 +229,10 @@ def _prompt_percentage(total: int) -> int:
             if not (0 < pct <= 100):
                 raise ValueError
             n = max(1, round(total * pct / 100))
-            print(f"  → {pct}% of {total} = {n} item(s) per category")
+            log.info(f"  → {pct}% of {total} = {n} item(s) per category")
             return n
         except ValueError:
-            print("  Please enter a number between 1 and 100.")
+            log.info("  Please enter a number between 1 and 100.")
 
 
 def main() -> None:
@@ -227,14 +245,14 @@ def main() -> None:
     if args.folder:
         folder = Path(args.folder)
         if not folder.is_dir():
-            print(f"Error: {folder} is not a directory.")
+            log.error(f"Error: {folder} is not a directory.")
             return
     else:
         folder = _select_version_folder()
 
     files = sorted(folder.glob("*.qa"))
     if not files:
-        print(f"Error: no .qa files found in {folder}.")
+        log.error(f"Error: no .qa files found in {folder}.")
         return
 
     n = max(1, round(len(files) * args.pct / 100)) if args.pct is not None else _prompt_percentage(len(files))
@@ -247,16 +265,16 @@ def main() -> None:
     group_tools  = random.sample(files, n)
     group_steps  = random.sample(files, n)
 
-    print(f"\nCorrupting {n} item(s) per category in {folder.name} (seed={args.seed})\n")
+    log.info(f"\nCorrupting {n} item(s) per category in {folder.name} (seed={args.seed})\n")
 
     corrupt_safety_info(group_safety)
-    print()
+    log.info("")
     corrupt_tips(group_tips)
-    print()
+    log.info("")
     corrupt_tools(group_tools)
-    print()
+    log.info("")
     corrupt_steps(group_steps, files)
-    print("\nDone.")
+    log.info("\nDone.")
 
 
 if __name__ == "__main__":

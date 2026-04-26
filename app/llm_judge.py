@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import logging
 import re
 import sys
 import time
@@ -10,6 +11,21 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_llm_judge.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
+log.info(f"Logging to {_log_file}")
 
 from qa_item import QAItem
 from openai_client.openai_client import MyOpenAIClient
@@ -40,14 +56,14 @@ def _select_prompt_version() -> Path:
         raise RuntimeError(f"No prompt version folders found in {PROMPTS_ROOT}")
     if len(versions) == 1:
         return versions[0]
-    print("\nAvailable judge prompt versions:")
+    log.info("\nAvailable judge prompt versions:")
     for i, v in enumerate(versions, start=1):
         prompts = list(v.glob("*.prompt"))
-        print(f"  {i}) {v.name}  [{len(prompts)} prompt(s)]")
+        log.info(f"  {i}) {v.name}  [{len(prompts)} prompt(s)]")
     choice = input(f"Select prompt version (1-{len(versions)}): ").strip()
     if choice.isdigit() and 1 <= int(choice) <= len(versions):
         return versions[int(choice) - 1]
-    print(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
+    log.info(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
     return versions[-1]
 
 
@@ -100,7 +116,7 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
 
             llm_trace_id = scores.get("trace_id")
             if llm_trace_id != "[NA]":
-                print(f"  [warning] {trace_id}: expected trace_id '[NA]' from LLM, got {llm_trace_id!r}")
+                log.warning(f"  [warning] {trace_id}: expected trace_id '[NA]' from LLM, got {llm_trace_id!r}")
 
             result = {"trace_id": trace_id}
             for dim in DIMENSIONS:
@@ -111,13 +127,13 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
         except RateLimitError:
             if attempt == MAX_RETRIES:
                 raise
-            print(f"  [rate limit] {trace_id}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
+            log.warning(f"  [rate limit] {trace_id}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
             time.sleep(delay)
             delay *= 2
         except (json.JSONDecodeError, ValueError) as e:
             if attempt == MAX_RETRIES:
                 raise
-            print(f"  [parse error] {trace_id}: attempt {attempt}/{MAX_RETRIES}: {e}")
+            log.warning(f"  [parse error] {trace_id}: attempt {attempt}/{MAX_RETRIES}: {e}")
             time.sleep(delay)
             delay *= 2
 
@@ -142,17 +158,17 @@ def evaluate_training_set(
             try:
                 raw = json.loads(line)
             except json.JSONDecodeError as e:
-                print(f"  Line {line_num}: JSON parse error — {e}")
+                log.warning(f"  Line {line_num}: JSON parse error — {e}")
                 continue
             trace_id = _extract_trace_id(raw.get("id", f"line_{line_num}"))
             qa_fields = {k: v for k, v in raw.items() if k in _QA_ITEM_FIELDS}
             try:
                 items.append((trace_id, QAItem.model_validate(qa_fields)))
             except Exception as e:
-                print(f"  {trace_id}: validation error — {e}")
+                log.warning(f"  {trace_id}: validation error — {e}")
 
     results = _evaluate_parallel(client, mono_prompt, items)
-    print(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
+    log.info(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
     _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
     return results
 
@@ -175,10 +191,10 @@ def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, items: list[tup
                 try:
                     result = future.result()
                     results.append(result)
-                    print(f"Evaluated: {trace_id}")
-                    print(json.dumps(result, indent=2))
+                    log.info(f"Evaluated: {trace_id}")
+                    log.info(json.dumps(result, indent=2))
                 except Exception as e:
-                    print(f"  Error evaluating {trace_id}: {e}")
+                    log.warning(f"  Error evaluating {trace_id}: {e}")
     return results
 
 
@@ -196,35 +212,35 @@ def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mon
         "results": results,
     }
     out_path.write_text(json.dumps(payload, indent=2))
-    print(f"Results written to {out_path}")
+    log.info(f"Results written to {out_path}")
 
 
 def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path) -> list[dict]:
     qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
-        print(f"No .qa files found in {folder}.")
+        log.info(f"No .qa files found in {folder}.")
         return []
     items: list[tuple[str, QAItem]] = []
     for qa_file in qa_files:
         try:
             items.append((_extract_trace_id(qa_file.stem), QAItem.model_validate_json(qa_file.read_text())))
         except Exception as e:
-            print(f"  Parse error {qa_file.name}: {e}")
+            log.warning(f"  Parse error {qa_file.name}: {e}")
     results = _evaluate_parallel(client, mono_prompt, items)
-    print(f"\nEvaluated {len(results)} item(s) from {folder}.")
+    log.info(f"\nEvaluated {len(results)} item(s) from {folder}.")
     _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
     return results
 
 
 def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, path: Path) -> list[dict]:
-    print(f"Evaluating: {path.name}")
+    log.info(f"Evaluating: {path.name}")
     try:
         qa_item = QAItem.model_validate_json(path.read_text())
     except Exception as e:
-        print(f"  Parse error: {e}")
+        log.warning(f"  Parse error: {e}")
         return []
     result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
-    print(json.dumps(result, indent=2))
+    log.info(json.dumps(result, indent=2))
     _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model)
     return [result]
 
@@ -236,7 +252,7 @@ def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, 
         return evaluate_training_set(client, mono_prompt, prompt_dir, target)
     if target.suffix == ".qa":
         return evaluate_single_qa_file(client, mono_prompt, prompt_dir, target)
-    print(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
+    log.warning(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
     return []
 
 
@@ -249,22 +265,22 @@ def _select_model() -> str:
     models = list(catalog.keys())
     default_idx = models.index(DEFAULT_MODEL) + 1 if DEFAULT_MODEL in models else 1
 
-    print("\nAvailable models:")
-    print(f"  {'#':<4} {'Model':<30} {'Input/1M':>10} {'Cached/1M':>10} {'Output/1M':>10}")
-    print(f"  {'─' * 68}")
+    log.info("\nAvailable models:")
+    log.info(f"  {'#':<4} {'Model':<30} {'Input/1M':>10} {'Cached/1M':>10} {'Output/1M':>10}")
+    log.info(f"  {'─' * 68}")
     for i, m in enumerate(models, start=1):
         p = catalog[m]
         cached = f"${p['cached_input']:.4f}" if p["cached_input"] is not None else "—"
         marker = " *" if m == DEFAULT_MODEL else ""
-        print(f"  {i:<4} {m + marker:<30} ${p['input']:>9.4f} {cached:>10} ${p['output']:>9.4f}")
-    print(f"  * = default")
+        log.info(f"  {i:<4} {m + marker:<30} ${p['input']:>9.4f} {cached:>10} ${p['output']:>9.4f}")
+    log.info("  * = default")
 
     choice = input(f"\nSelect model (1-{len(models)}) [{default_idx}]: ").strip()
     if choice == "":
         return models[default_idx - 1]
     if choice.isdigit() and 1 <= int(choice) <= len(models):
         return models[int(choice) - 1]
-    print(f"Invalid choice {choice!r}, using default ({DEFAULT_MODEL}).")
+    log.info(f"Invalid choice {choice!r}, using default ({DEFAULT_MODEL}).")
     return DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
 
 
@@ -281,12 +297,12 @@ def main():
     client = MyOpenAIClient(model=model)
     prompt_dir = _select_prompt_version()
     mono_prompt = _load_mono_prompt(prompt_dir)
-    print(f"Using judge prompts from: {prompt_dir.name}\n")
+    log.info(f"Using judge prompts from: {prompt_dir.name}\n")
 
     if args.evaluate:
         target = Path(args.evaluate)
         if not target.exists():
-            print(f"Error: path not found — {target}")
+            log.info(f"Error: path not found — {target}")
             return
         _resolve_target(client, mono_prompt, prompt_dir, target)
         return
@@ -298,8 +314,8 @@ def main():
         key=lambda p: int(p.name.lstrip("v")) if p.name.lstrip("v").isdigit() else 0,
     )
 
-    print("What would you like to evaluate?")
-    print("  1) Training dataset (eval.jsonl)")
+    log.info("What would you like to evaluate?")
+    log.info("  1) Training dataset (eval.jsonl)")
     for i, folder in enumerate(versions, start=2):
         qa_count = len(list(folder.glob("*.qa")))
         human_eval = folder / "QA_human_eval.json"
@@ -312,7 +328,7 @@ def main():
         llm_eval_count = len(list(folder.glob("QA_llm_eval_v*.json")))
         llm_note = f", {llm_eval_count} llm eval version(s)" if llm_eval_count else ""
         human_note = f", {human_count} human judge item(s)" if human_count else ""
-        print(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]")
+        log.info(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]")
 
     max_choice = len(versions) + 1
     choice = input(f"Enter 1-{max_choice}: ").strip()
@@ -322,7 +338,7 @@ def main():
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
         evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2])
     else:
-        print(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
+        log.warning(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
 
 if __name__ == "__main__":

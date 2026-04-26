@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import logging
 import re
 import shutil
 import sys
@@ -9,6 +10,21 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_data_validation_checks.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
+log.info(f"Logging to {_log_file}")
 
 from pydantic import ValidationError
 from qa_item import QAItem
@@ -123,7 +139,7 @@ def batch_dedup_check(qa_folder: Path) -> None:
         try:
             items.append((f, QAItem.model_validate_json(f.read_text())))
         except Exception as e:
-            print(f"  [dedup] Skipping {f.name}: {e}")
+            log.warning(f"  [dedup] Skipping {f.name}: {e}")
             continue
 
     to_remove: set[Path] = set()
@@ -142,18 +158,18 @@ def batch_dedup_check(qa_folder: Path) -> None:
                     f_j = items[j][0]
                     to_remove.add(f_j)
                     flagged.add(j)
-                    print(f"  [dedup] Near-duplicate (jaccard={sim:.3f}): {f_j.name} ~ {items[i][0].name}")
-                    print(f"    kept:    {items[i][1].question}")
-                    print(f"    removed: {items[j][1].question}")
+                    log.info(f"  [dedup] Near-duplicate (jaccard={sim:.3f}): {f_j.name} ~ {items[i][0].name}")
+                    log.info(f"    kept:    {items[i][1].question}")
+                    log.info(f"    removed: {items[j][1].question}")
 
     if to_remove:
         dupes_dir = qa_folder / "duplicates"
         dupes_dir.mkdir(exist_ok=True)
         for f in to_remove:
             shutil.move(str(f), str(dupes_dir / f.name))
-        print(f"  [dedup] Moved {len(to_remove)} duplicate(s) to {dupes_dir}.")
+        log.info(f"  [dedup] Moved {len(to_remove)} duplicate(s) to {dupes_dir}.")
     else:
-        print("  [dedup] No duplicates found.")
+        log.info("  [dedup] No duplicates found.")
 
 
 def _pick_version() -> str:
@@ -166,19 +182,19 @@ def _pick_version() -> str:
         raise RuntimeError(f"No version folders found in {qa_items_root}")
     default = versions[-1]
     if len(versions) == 1:
-        print(f"Using QA items version: {default.name}")
+        log.info(f"Using QA items version: {default.name}")
         return default.name
-    print("Available QA item versions:")
+    log.info("Available QA item versions:")
     for i, v in enumerate(versions, start=1):
         count = len(list(v.glob("*.qa")))
-        print(f"  {i}) {v.name}  [{count} item(s)]")
+        log.info(f"  {i}) {v.name}  [{count} item(s)]")
     while True:
         choice = input(f"Select version (1-{len(versions)}) [{default.name}]: ").strip()
         if choice == "":
             return default.name
         if choice.isdigit() and 1 <= int(choice) <= len(versions):
             return versions[int(choice) - 1].name
-        print(f"  Please enter a number between 1 and {len(versions)}.")
+        log.info(f"  Please enter a number between 1 and {len(versions)}.")
 
 
 def main():
@@ -189,27 +205,27 @@ def main():
     version = args.version if args.version else _pick_version()
     qa_folder = PROJECT_ROOT / "qa_items" / version
     if not qa_folder.exists():
-        print(f"Error: folder not found — {qa_folder}")
+        log.error(f"Error: folder not found — {qa_folder}")
         sys.exit(1)
 
     qa_files = sorted(qa_folder.glob("*.qa"))
     if not qa_files:
-        print(f"No .qa files found in {qa_folder}")
+        log.info(f"No .qa files found in {qa_folder}")
         sys.exit(0)
 
-    print(f"Validating {len(qa_files)} item(s) in qa_items/{version}...\n")
-    print("Checks performed:")
-    print("  1. json_valid          — raw file content parses as valid JSON")
-    print("  2. all_fields_present  — all 7 fields present (question, answer, equipment_problem,")
-    print("                           tools_required, steps, safety_info, tips)")
-    print("  3. non_empty_strings   — string fields meet minimum lengths (question>=20, answer>=100,")
-    print("                           equipment_problem>=10, safety_info>=80)")
-    print("  4. sufficient_steps    — steps list has >= 3 items")
-    print("  5. tools_present       — tools_required list has >= 1 item")
-    print("  6. tips_present        — tips list has >= 1 item")
-    print("  7. no_vague_phrases    — tips and safety_info do not contain vague filler phrases")
-    print("                           (e.g. 'be careful', 'good luck') that dominate the field")
-    print()
+    log.info(f"Validating {len(qa_files)} item(s) in qa_items/{version}...\n")
+    log.info("Checks performed:")
+    log.info("  1. json_valid          — raw file content parses as valid JSON")
+    log.info("  2. all_fields_present  — all 7 fields present (question, answer, equipment_problem,")
+    log.info("                           tools_required, steps, safety_info, tips)")
+    log.info("  3. non_empty_strings   — string fields meet minimum lengths (question>=20, answer>=100,")
+    log.info("                           equipment_problem>=10, safety_info>=80)")
+    log.info("  4. sufficient_steps    — steps list has >= 3 items")
+    log.info("  5. tools_present       — tools_required list has >= 1 item")
+    log.info("  6. tips_present        — tips list has >= 1 item")
+    log.info("  7. no_vague_phrases    — tips and safety_info do not contain vague filler phrases")
+    log.info("                           (e.g. 'be careful', 'good luck') that dominate the field")
+    log.info("")
 
     failed_dir = qa_folder / "failed_checks"
 
@@ -228,16 +244,16 @@ def main():
             failed += 1
             failed_dir.mkdir(exist_ok=True)
             shutil.move(str(f), str(failed_dir / f.name))
-            print(f"[ts={ts}] [trace_id={trace_id}] [status=FAIL] [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
+            log.info(f"[ts={ts}] [trace_id={trace_id}] [status=FAIL] [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
             for err in errors:
-                print(f"      {err}")
+                log.info(f"      {err}")
         else:
             passed += 1
-            print(f"[ts={ts}] [trace_id={trace_id}] [status=ok]   [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
+            log.info(f"[ts={ts}] [trace_id={trace_id}] [status=ok]   [filename={f.name}]  [checks={result_line}]  [FAILURES={failures_json}]")
 
-    print(f"\n{passed} passed, {failed} failed out of {len(qa_files)} item(s).")
+    log.info(f"\n{passed} passed, {failed} failed out of {len(qa_files)} item(s).")
 
-    print("\nRunning dedup check on passing items...")
+    log.info("\nRunning dedup check on passing items...")
     batch_dedup_check(qa_folder)
 
     remaining = sorted(qa_folder.glob("*.qa"))
@@ -247,10 +263,10 @@ def main():
             cat = re.sub(r"\d+$", "", f.stem.split("_")[1]) if "_" in f.stem else "unknown"
             dist[cat] = dist.get(cat, 0) + 1
         total = len(remaining)
-        print(f"\nFinal item distribution by category ({total} of {len(qa_files)} original):")
+        log.info(f"\nFinal item distribution by category ({total} of {len(qa_files)} original):")
         for cat, count in sorted(dist.items()):
             pct = count / total * 100
-            print(f"  {cat}: {pct:.1f}% ({count})")
+            log.info(f"  {cat}: {pct:.1f}% ({count})")
 
     if failed:
         sys.exit(1)

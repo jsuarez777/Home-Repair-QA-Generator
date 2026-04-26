@@ -2,7 +2,9 @@
 """Human judge Flask web app for evaluating QA items."""
 
 import json
+import logging
 import sys
+import time
 import webbrowser
 from pathlib import Path
 from flask import Flask, jsonify, request
@@ -10,6 +12,20 @@ from flask import Flask, jsonify, request
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 QA_ITEMS_ROOT = PROJECT_ROOT / "qa_items"
 EVAL_FILENAME = "QA_human_eval.json"
+
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_human_judge.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
 
 # (qa_field_key, dimension_key, display_label)
 # dimension_key is None for fields that are display-only (no PASS/FAIL)
@@ -955,10 +971,11 @@ loadQA(0);
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    log.info(f"Logging to {_log_file}")
     versions = _detect_versions()
     if not versions:
-        print(f"No version folders found in {QA_ITEMS_ROOT}", file=sys.stderr)
+        log.error(f"No version folders found in {QA_ITEMS_ROOT}")
         sys.exit(1)
-    print(f"Found {len(versions)} version(s): {[v['version'] for v in versions]}")
+    log.info(f"Found {len(versions)} version(s): {[v['version'] for v in versions]}")
     webbrowser.open("http://127.0.0.1:5000")
     app.run(host="127.0.0.1", port=5000, debug=False)

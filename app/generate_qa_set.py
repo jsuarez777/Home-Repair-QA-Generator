@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import logging
 import shutil
 import sys
 import time
@@ -14,6 +15,21 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from openai_client.openai_client import MyOpenAIClient
 
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_generate_qa_set.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
+log.info(f"Logging to {_log_file}")
+
 
 def _read_file_content(file_path: str) -> str:
     try:
@@ -23,7 +39,7 @@ def _read_file_content(file_path: str) -> str:
                 raise ValueError(f"File {file_path} is empty.")
             return content
     except Exception as e:
-        print(f"Error reading file {file_path}: {e}")
+        log.info(f"Error reading file {file_path}: {e}")
         raise
 
 
@@ -37,18 +53,18 @@ def _pick_version() -> str:
         raise RuntimeError(f"No version folders found in {prompts_dir}")
     default = versions[-1]
     if len(versions) == 1:
-        print(f"Using prompt version: {default}")
+        log.info(f"Using prompt version: {default}")
         return default
-    print("Available prompt versions:")
+    log.info("Available prompt versions:")
     for i, v in enumerate(versions, start=1):
-        print(f"  {i}) {v}")
+        log.info(f"  {i}) {v}")
     while True:
         choice = input(f"Select version (1-{len(versions)}) [{default}]: ").strip()
         if choice == "":
             return default
         if choice.isdigit() and 1 <= int(choice) <= len(versions):
             return versions[int(choice) - 1]
-        print(f"  Please enter a number between 1 and {len(versions)}.")
+        log.info(f"  Please enter a number between 1 and {len(versions)}.")
 
 
 
@@ -80,13 +96,13 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
                 json.loads(response_text)
             except Exception as e:
                 sep = "=" * 80
-                print(f"\n  [parse error] {cat}: {e}\n  {sep}\n{response_text}\n  {sep}\n")
+                log.warning(f"\n  [parse error] {cat}: {e}\n  {sep}\n{response_text}\n  {sep}\n")
                 raise
             return cat, response_text, raw_response
         except RateLimitError as e:
             if attempt == MAX_RETRIES:
                 raise
-            print(f"  [rate limit] {cat}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
+            log.warning(f"  [rate limit] {cat}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
             time.sleep(delay)
             delay *= 2
 
@@ -129,7 +145,7 @@ def main():
         if raw.isdigit() and 1 <= int(raw) <= 1000:
             items_to_generate = int(raw)
             break
-        print("  Please enter a number between 1 and 1000.")
+        log.info("  Please enter a number between 1 and 1000.")
 
     # Setup prompts for each category
     categories_file = PROJECT_ROOT / f"prompts/{prompt_version}/categories.yml"
@@ -146,12 +162,12 @@ def main():
         prompts[cat] = prompt
 
     sep = "=" * 80
-    print(f"\n{sep}\nTEMPLATE ({template_file}):\n{sep}\n{template}")
-    print(f"\n{sep}\nOUTPUT FORMAT SUFFIX ({prompt_output_format_suffix_file}):\n{sep}\n{prompt_output_format_suffix}")
-    print(f"\n{sep}\nCATEGORIES ({categories_file}):\n{sep}")
+    log.info(f"\n{sep}\nTEMPLATE ({template_file}):\n{sep}\n{template}")
+    log.info(f"\n{sep}\nOUTPUT FORMAT SUFFIX ({prompt_output_format_suffix_file}):\n{sep}\n{prompt_output_format_suffix}")
+    log.info(f"\n{sep}\nCATEGORIES ({categories_file}):\n{sep}")
     with open(categories_file) as f:
-        print(f.read())
-    print(sep)
+        log.info(f.read())
+    log.info(sep)
 
     # Initialize the OpenAI client and generate QA items in parallel
     my_ai_client = MyOpenAIClient(model="gpt-5.4-nano", temperature=1.8)
@@ -178,7 +194,7 @@ def main():
                         count_per_category[result_cat] += 1
                         output_file = qa_folder / f"QA{total_count}_{result_cat}{count_per_category[result_cat]}.qa"
                         output_file.write_text(response_text)
-                        print(f"[{total_count}/{items_to_generate}] Saved {output_file.name} (category: {result_cat})")
+                        log.info(f"[{total_count}/{items_to_generate}] Saved {output_file.name} (category: {result_cat})")
                         ts = time.strftime("%Y-%m-%dT%H:%M:%S")
                         trace_id = output_file.stem.split("_")[0]
                         vars = category_defs[result_cat]
@@ -187,9 +203,9 @@ def main():
                             for k, v in vars.items()
                         )
                         escaped_raw = raw_response.replace('\n', '\\n')
-                        print(f"  ts={ts} trace_id={trace_id} filename={output_file.name} model={my_ai_client.model} {examples_str} raw_response={escaped_raw}")
+                        log.info(f"  ts={ts} trace_id={trace_id} filename={output_file.name} model={my_ai_client.model} {examples_str} raw_response={escaped_raw}")
                 except Exception as e:
-                    print(f"============================={cat}: {e}")
+                    log.warning(f"============================={cat}: {e}")
 
                 # Submit a replacement if we still need more items
                 still_needed = items_to_generate - total_count - len(pending)
