@@ -2,8 +2,8 @@ The output of a QA pair will be JSON format with the fields in the JSON_example.
 All fields must be present and each item is a string or list of strings as in the example.
 Of particular importance:
 <constraints>
-- The "steps" field consists exactly of at least 3 steps addressing how to diagnose or fix the original question.
-- The "answer" field should contain must include a short intro briefly explaining the plan,safety_info, listing required tools, and the same steps from the "steps" section listed verbatim, but numbered starting with 1.  It will conclude with a tip after the numbered steps, which will be a verbatim copy of the "tips" section.
+- The "steps" field must contain 3 or more steps addressing how to diagnose or fix the original question.
+- The "answer" field must contain a short intro briefly explaining the plan, safety_info, listing required tools, and the same steps from the "steps" section listed verbatim, but numbered starting with 1.  It will conclude with a tip after the numbered steps, which will be a verbatim copy of the "tips" section.
 - The "tool_required" field will contain the same tools listed in the "answer" section.
 - The output JSON needs to contain all keys listed in the example and exactly as they are spelled.
 - You need to doublecheck the output before responding and make sure it will be valid json and the fields match the example (eg. "tools_required" is valid, but "tool_required" is invalid due to missing 's')

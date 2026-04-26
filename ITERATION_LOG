@@ -1,0 +1,35 @@
+### Iteration 1: Initial prompt setup
+- **Date**: 2026-04-13
+- **Change**: Inital prompt per category taken from project requirements, plus added singel shot example for output format.  The script will concat a category prompt and the output example before passing to LLM.
+- **Hypothesis**: NA
+- **Result**: Generates initial QA pairs
+- **Decision**: Keep
+- **Next step**: 
+### Iteration 2: Refine example output with constraints
+- **Date**: 2026-04-19
+- **Change**: Add contraints to generate get the output items to contain the minimum sufficient values expected (eg, steps must be at least 3 and match the steps stated in the answer, and output must contain all keys shows in the example).
+- **Hypothesis**: Improved output quality and fewer items removed due to data issues.
+- **Result**: Significant drop in screened items.  Quantitative output not captured.
+- **Decision**: Keep
+- **Next step**: 
+### Iteration 3: Improve consitency of tools_required field output
+- **Date**: 2026-04-19
+- **Change**: Add contraint asking LLM to double-check JSON output for validity and that key names must match exactly, so that tool_required is not a valid replacement for tools_required (must be plural)
+- **Hypothesis**: LLM will produce proper field for tools_required and not drop "s".
+- **Result**: tools_required field now always properly returned.  Quantitative output not captured becuase failed checks were done inline with genearted items and immediately re-generated if invalid.
+- **Decision**: Keep
+- **Next step**: Templetize category prompts into a sinlge one where category and examples can be passed in.
+### Iteration 4: Templetize QA Item prompt and Fix issues with steps being different between answer and steps sections, and answer missing key data.
+- **Date**: 2026-04-22
+- **Change**: Place steps constraint first and then have answer contraint reference it and add numbers. Remove use of word "should" so that LLM does not perceive it as a soft goal. Add use of "verbatim" to tips section reproduction and define verbatim to mean exact reproduction of a section with some allowance for formatting.
+- **Hypothesis**: Improved output quality and fewer items removed due to data issues.  Asnwer will now contains all required sections and content will be verbatin (eg, no longer different set of steps/tips/safety in answer section vs individual sections).
+- **Result**: Asnwer sections now displays the same content that invidual sections display, with steps being numbered in the answer.
+- **Decision**: Keep
+- **Next step**: Find out why there are so many JSON errors that need to have items regenerated.
+### Iteration 5: Remind LLM to escape any quotes in JSON values
+- **Date**: 2026-04-26
+- **Change**: Add contraint to output that field values must contain escaped characters, and ask that a check for invalid JSON be done before printing output.  Explicitly states the escable characters and remind it that single-quote is not escable under strict JSON since it tried to do that while testing changes.
+- **Hypothesis**: Use of quotes in output will now be escaped and result in fewer JSON parsing exceptions.
+- **Result**: No JSON parsing issues on sets 200 or less.  1 error occurred on 300 at the item where rate-limiting responses began (presumably it cutt-off the response due to rate limit).
+- **Decision**: Keep
+- **Next step**: Move on to focus on LLM judge prompts before further refinement.

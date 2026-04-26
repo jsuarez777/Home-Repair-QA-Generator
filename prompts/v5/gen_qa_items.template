@@ -1,0 +1,6 @@
+<goal> 
+Please generate 1 home repair Question/Answer pair for the category of {repair_type}. 
+The question will touch upon a distinct repair type in that category could be anything a home owner would ask or post about seeking help.
+The question could be eithr from one of the provided examples, or something within the realm of the repair category.  Examples include {repair_examples}.
+The question does not conflate or try to pick from multiple examples together and should randomly use either a provided example type or sometime else related to the repair category and can include common questions or unique less likely choices.
+</goal>

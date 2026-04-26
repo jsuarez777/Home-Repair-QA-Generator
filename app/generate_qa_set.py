@@ -13,7 +13,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from openai_client.openai_client import MyOpenAIClient
-from qa_item import QAItem
 
 
 def _read_file_content(file_path: str) -> str:
@@ -58,7 +57,7 @@ MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0  # seconds; doubles on each attempt
 
 
-def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, QAItem]:
+def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, str, None]:
     from openai import RateLimitError
     delay = RETRY_BASE_DELAY
     for attempt in range(1, MAX_RETRIES + 1):
@@ -77,11 +76,12 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
                     if not isinstance(parsed, list) or len(parsed) != 1:
                         raise ValueError(f"Expected a JSON array with exactly 1 item, got {len(parsed) if isinstance(parsed, list) else 'non-list'}")
                     response_text = json.dumps(parsed[0])
-                qa_item = QAItem.model_validate_json(response_text)
+                json.loads(response_text)
             except Exception as e:
-                print(f"  [parse error] {cat}: {e}")
+                sep = "=" * 80
+                print(f"\n  [parse error] {cat}: {e}\n  {sep}\n{response_text}\n  {sep}\n")
                 raise
-            return cat, response_text, qa_item
+            return cat, response_text, None
         except RateLimitError as e:
             if attempt == MAX_RETRIES:
                 raise
