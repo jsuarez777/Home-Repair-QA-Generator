@@ -2,6 +2,7 @@
 import argparse
 import json
 import logging
+import os
 import shutil
 import sys
 import time
@@ -28,6 +29,8 @@ logging.basicConfig(
     ],
 )
 log = logging.getLogger(__name__)
+if os.getenv("LOG_HTTP") != "1":
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 log.info(f"Logging to {_log_file}")
 
 

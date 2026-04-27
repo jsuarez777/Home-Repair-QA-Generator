@@ -2,6 +2,7 @@
 import argparse
 import json
 import logging
+import os
 import re
 import sys
 import time
@@ -25,6 +26,8 @@ logging.basicConfig(
     ],
 )
 log = logging.getLogger(__name__)
+if os.getenv("LOG_HTTP") != "1":
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 log.info(f"Logging to {_log_file}")
 
 from qa_item import QAItem
@@ -167,7 +170,7 @@ def evaluate_training_set(
             except Exception as e:
                 log.warning(f"  {trace_id}: validation error — {e}")
 
-    results = _evaluate_parallel(client, mono_prompt, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
     log.info(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
     _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
     return results
@@ -177,7 +180,14 @@ def evaluate_training_set(
 # Evaluation dispatch helpers
 # ---------------------------------------------------------------------------
 
-def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, items: list[tuple[str, QAItem]]) -> list[dict]:
+def _log_result(result: dict, prompt_version: str) -> None:
+    ts = time.strftime("%Y-%m-%dT%H:%M:%S")
+    dims = "  ".join(f"{d}={'PASS' if result[d] == 1 else 'FAIL'}" for d in DIMENSIONS)
+    overall = "PASS" if result["overall_pass"] else "FAIL"
+    log.info(f"ts={ts} trace_id={result['trace_id']} prompt_version={prompt_version} | {dims} | overall={overall}")
+
+
+def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]]) -> list[dict]:
     results = []
     with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
         pending = {
@@ -191,8 +201,7 @@ def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, items: list[tup
                 try:
                     result = future.result()
                     results.append(result)
-                    log.info(f"Evaluated: {trace_id}")
-                    log.info(json.dumps(result, indent=2))
+                    _log_result(result, prompt_version)
                 except Exception as e:
                     log.warning(f"  Error evaluating {trace_id}: {e}")
     return results
@@ -226,7 +235,7 @@ def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Pat
             items.append((_extract_trace_id(qa_file.stem), QAItem.model_validate_json(qa_file.read_text())))
         except Exception as e:
             log.warning(f"  Parse error {qa_file.name}: {e}")
-    results = _evaluate_parallel(client, mono_prompt, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
     log.info(f"\nEvaluated {len(results)} item(s) from {folder}.")
     _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
     return results
@@ -240,7 +249,7 @@ def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir
         log.warning(f"  Parse error: {e}")
         return []
     result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
-    log.info(json.dumps(result, indent=2))
+    _log_result(result, prompt_dir.name)
     _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model)
     return [result]
 
