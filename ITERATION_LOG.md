@@ -71,7 +71,14 @@
 ### Iteration 4: Refine answer_completeness, context_clarity, tip_usefulness.
 - **Date**: 2026-05-02
 - **Change**: Add more detailed pass/fail criteria to worsened dimensions.  Change example output to no longer be a list per input, instead provide separate output sections pertaining only to the like named input sections.
-- **Hypothesis**: Improve human-llm agreement.
-- **Result**: Output example reformatting fixed the gpt-3.5-turbo issue where some outputs had 2 responses, mimicking the original examples in v3 prompts.
+- **Hypothesis**: Improve human-llm agreement.  Fewer problems with gpt-3.5-turbo output.
+- **Result**: Output example reformatting fixed the gpt-3.5-turbo issue where some outputs had 2 responses (mimicking the original examples in v3 prompts).  But human-llm agreement had a slight regression in both 3.5-turbo and 4.1-nano.
+- **Decision**: Keep formatting change as 3.5-turbo output is fixed, but iterate again on criteria.
+- **Next step**: Refine criteria
+### Iteration 5: Refine answer_completeness, tool_realism, tip_usefulness, scope
+- **Date**: 2026-05-03
+- **Change**: 
+- **Hypothesis**: Improve human-llm agreement.  
+- **Result**: 
 - **Decision**: 
-- **Next step**: 
+- **Next step**: Refine criteria

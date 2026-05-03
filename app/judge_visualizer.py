@@ -155,7 +155,8 @@ def plot_human_llm_agreement(
     all_dims = DIMENSIONS + ["overall_pass"]
     dim_labels = [d.replace("_", " ").title() for d in all_dims]
     rows = []
-    for llm_ver, entry in llm_evals.items():
+    sorted_evals = sorted(llm_evals.items(), key=lambda x: (x[1]["model"], x[1]["judge_prompt_version"]))
+    for llm_ver, entry in sorted_evals:
         legend_label = f"Prompt {entry['judge_prompt_version']} ({entry['model']})"
         for dim, label in zip(all_dims, dim_labels):
             rows.append({
@@ -303,7 +304,8 @@ def plot_llm_pass_rates(version_name: str, llm_evals: dict[str, dict], out_dir: 
     n_items = max(len(entry["records"]) for entry in llm_evals.values())
     dim_labels = [d.replace("_", " ").title() for d in DIMENSIONS]
     rows = []
-    for _, entry in llm_evals.items():
+    sorted_evals = sorted(llm_evals.items(), key=lambda x: (x[1]["model"], x[1]["judge_prompt_version"]))
+    for _, entry in sorted_evals:
         records = entry["records"]
         model = entry["model"]
         legend_label = f"Prompt {entry['judge_prompt_version']} ({model})"
@@ -343,7 +345,7 @@ def print_dimension_agreement_table(human_records: list[dict], llm_evals: dict[s
     for dim in all_dims:
         dim_label = dim.replace("_", " ").title()
         print(f"\n{dim_label}")
-        for _, entry in sorted(llm_evals.items()):
+        for _, entry in sorted(llm_evals.items(), key=lambda x: (x[1]["model"], x[1]["judge_prompt_version"])):
             prompt_version = entry["judge_prompt_version"]
             model = entry["model"]
             llm_records = entry["records"]
