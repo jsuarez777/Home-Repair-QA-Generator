@@ -1,0 +1,109 @@
+{
+  "eval_version": "test_partial_agreement",
+  "generated_at": "2026-05-02T22:05:00+00:00",
+  "model": "gpt-3.5-turbo",
+  "judge_prompt_version": "v2",
+  "judge_prompt": "Test prompt",
+  "results": [
+    {
+      "trace_id": "QA1",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "safety_specificity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA2",
+      "answer_completeness": 1,
+      "context_clarity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA3",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA4",
+      "answer_completeness": 0,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA5",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA6",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA7",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 0,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA8",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA9",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA10",
+      "answer_completeness": 1,
+      "context_clarity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "safety_specificity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    }
+  ]
+}

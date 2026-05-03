@@ -1,0 +1,102 @@
+[
+  {
+    "trace_id": "QA1",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA2",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA3",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA4",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA5",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA6",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA7",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA8",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA9",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  },
+  {
+    "trace_id": "QA10",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": 1
+  }
+]
