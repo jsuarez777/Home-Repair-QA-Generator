@@ -46,18 +46,19 @@ def load_eval(path: Path) -> list[dict]:
 
 
 def load_llm_evals(version_dir: Path) -> dict[str, dict]:
-    """Returns {eval_version: {"records": [...], "model": str}} for all LLM eval files."""
+    """Returns {eval_key: {"records": [...], "model": str, "judge_prompt_version": str}} for all LLM eval files."""
     evals = {}
     for f in sorted(version_dir.glob(LLM_FILE_PATTERN)):
-        key = f.stem.replace("QA_llm_eval_", "")
         try:
             raw = json.load(open(f))
             if isinstance(raw, list):
-                records, model = raw, "unknown"
+                records, model, prompt_version = raw, "unknown", "unknown"
             else:
                 records = raw.get("results", [])
                 model = raw.get("model", "unknown")
-            evals[key] = {"records": records, "model": model}
+                prompt_version = raw.get("judge_prompt_version", "unknown")
+            safe_key = f"{prompt_version}_{re.sub(r'[^a-zA-Z0-9]', '', model)}"
+            evals[safe_key] = {"records": records, "model": model, "judge_prompt_version": prompt_version}
         except Exception as e:
             print(f"  Warning: could not load {f.name}: {e}")
     return evals
@@ -97,6 +98,12 @@ def print_section(title: str, records: list[dict], labeler_label: str):
 
 
 def compare_section(human: list[dict], llm: list[dict], label: str = "HUMAN vs LLM AGREEMENT"):
+    """Print agreement rate between human and LLM evaluations for each dimension on shared traces.
+
+    Args:
+        human: list of dicts with keys: trace_id, dimension scores, overall_pass
+        llm: list of dicts with keys: trace_id, dimension scores, overall_pass
+    """
     human_map = {r["trace_id"]: r for r in human}
     llm_map = {r["trace_id"]: r for r in llm}
     shared = set(human_map) & set(llm_map)
@@ -149,10 +156,10 @@ def plot_human_llm_agreement(
     dim_labels = [d.replace("_", " ").title() for d in all_dims]
     rows = []
     for llm_ver, entry in llm_evals.items():
-        legend_label = f"{llm_ver} ({entry['model']})"
+        legend_label = f"Prompt {entry['judge_prompt_version']} ({entry['model']})"
         for dim, label in zip(all_dims, dim_labels):
             rows.append({
-                "LLM Version": legend_label,
+                "Judge Prompt & Model": legend_label,
                 "Dimension": label,
                 "Agreement (%)": _dim_agreement(human_records, entry["records"], dim),
             })
@@ -161,14 +168,14 @@ def plot_human_llm_agreement(
 
     sns.set_theme(style="whitegrid")
     fig, ax = plt.subplots(figsize=(13, 6))
-    sns.barplot(data=df, x="Dimension", y="Agreement (%)", hue="LLM Version", ax=ax)
+    sns.barplot(data=df, x="Dimension", y="Agreement (%)", hue="Judge Prompt & Model", ax=ax)
 
     ax.set_title(f"Human vs LLM Agreement by Dimension — QA version {version_name}", fontsize=13)
     ax.set_xlabel("")
     ax.set_ylabel("Agreement (%)")
     ax.set_ylim(0, 105)
     ax.tick_params(axis="x", labelrotation=20)
-    ax.legend(title="LLM Judge Version")
+    ax.legend(title="Judge Prompt & Model")
     ax.axhline(y=80, color="grey", linestyle="--", linewidth=0.8, label="80% reference")
     _add_item_axis(ax, n_shared)
 
@@ -253,6 +260,7 @@ def plot_llm_heatmap(version_name: str, version_dir: Path, llm_evals: dict[str, 
     for llm_ver, entry in llm_evals.items():
         records = entry["records"]
         model = entry["model"]
+        prompt_version = entry["judge_prompt_version"]
 
         cat_records: dict[str, list[dict]] = {}
         for r in records:
@@ -274,7 +282,7 @@ def plot_llm_heatmap(version_name: str, version_dir: Path, llm_evals: dict[str, 
         )
         ax.set_title(
             f"Pass Rate by Category & Dimension\n"
-            f"QA {version_name}  —  LLM Judge {llm_ver} ({model})",
+            f"QA {version_name}  —  LLM Judge Prompt {prompt_version} ({model})",
             fontsize=12,
         )
         ax.set_xlabel("")
@@ -295,25 +303,25 @@ def plot_llm_pass_rates(version_name: str, llm_evals: dict[str, dict], out_dir: 
     n_items = max(len(entry["records"]) for entry in llm_evals.values())
     dim_labels = [d.replace("_", " ").title() for d in DIMENSIONS]
     rows = []
-    for llm_ver, entry in llm_evals.items():
+    for _, entry in llm_evals.items():
         records = entry["records"]
         model = entry["model"]
-        legend_label = f"{llm_ver} ({model})"
+        legend_label = f"Prompt {entry['judge_prompt_version']} ({model})"
         for dim, label in zip(DIMENSIONS, dim_labels):
-            rows.append({"LLM Version": legend_label, "Dimension": label, "Pass Rate (%)": dim_score(records, dim)})
+            rows.append({"Judge Prompt & Model": legend_label, "Dimension": label, "Pass Rate (%)": dim_score(records, dim)})
 
     df = pd.DataFrame(rows)
 
     sns.set_theme(style="whitegrid")
     fig, ax = plt.subplots(figsize=(12, 6))
-    sns.barplot(data=df, x="Dimension", y="Pass Rate (%)", hue="LLM Version", ax=ax)
+    sns.barplot(data=df, x="Dimension", y="Pass Rate (%)", hue="Judge Prompt & Model", ax=ax)
 
     ax.set_title(f"LLM Judge Pass Rate by Dimension — QA version {version_name}", fontsize=13)
     ax.set_xlabel("")
     ax.set_ylabel("Pass Rate (%)")
     ax.set_ylim(0, 105)
     ax.tick_params(axis="x", labelrotation=20)
-    ax.legend(title="LLM Judge Version")
+    ax.legend(title="Judge Prompt & Model")
     _add_item_axis(ax, n_items)
 
     plt.tight_layout()
@@ -321,6 +329,38 @@ def plot_llm_pass_rates(version_name: str, llm_evals: dict[str, dict], out_dir: 
     fig.savefig(out_path, dpi=150)
     print(f"\n  Chart saved to {out_path}")
     plt.show()
+
+
+def print_dimension_agreement_table(human_records: list[dict], llm_evals: dict[str, dict]) -> None:
+    """Print human vs LLM agreement broken down by dimension."""
+    if not human_records or not llm_evals:
+        return
+
+    all_dims = DIMENSIONS + ["overall_pass"]
+    print(f"\n{'HUMAN vs LLM JUDGE AGREEMENT BY DIMENSION'}")
+    print(f"{'═' * 66}")
+
+    for dim in all_dims:
+        dim_label = dim.replace("_", " ").title()
+        print(f"\n{dim_label}")
+        for _, entry in sorted(llm_evals.items()):
+            prompt_version = entry["judge_prompt_version"]
+            model = entry["model"]
+            llm_records = entry["records"]
+
+            agreement_pct = _dim_agreement(human_records, llm_records, dim)
+            hm = {r["trace_id"]: r for r in human_records}
+            lm = {r["trace_id"]: r for r in llm_records}
+            shared = set(hm) & set(lm)
+            matches = sum(1 for t in shared if hm[t].get(dim) == lm[t].get(dim) and hm[t].get(dim) is not None)
+            total = sum(1 for t in shared if hm[t].get(dim) is not None and lm[t].get(dim) is not None)
+
+            label = f"Prompt {prompt_version} ({model})"
+            if agreement_pct != agreement_pct:  # nan
+                print(f"  {label:<30}: n/a")
+            else:
+                bar_str = bar(agreement_pct, 20)
+                print(f"  {label:<30}: {bar_str} {agreement_pct:5.1f}% agree  ({matches}/{total})")
 
 
 def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: int):
@@ -337,13 +377,17 @@ def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: 
     if human_records:
         print_section("HUMAN EVAL", human_records, "Human Judge")
 
-    for llm_ver, entry in llm_evals.items():
+    for _, entry in llm_evals.items():
         llm_records = entry["records"]
         model = entry["model"]
-        print_section(f"LLM EVAL ({llm_ver})", llm_records, f"LLM Judge {llm_ver} — {model}")
+        prompt_version = entry["judge_prompt_version"]
+        print_section(f"LLM EVAL (Prompt {prompt_version})", llm_records, f"LLM Judge Prompt {prompt_version} — {model}")
         if human_records:
             print(f"\n{'─' * 60}")
-            compare_section(human_records, llm_records, f"Human vs LLM {llm_ver} ({model}) Agreement")
+            compare_section(human_records, llm_records, f"Human vs LLM Prompt {prompt_version} ({model}) Agreement")
+
+    if human_records:
+        print_dimension_agreement_table(human_records, llm_evals)
 
     print()
     plot_qa_category_distribution(version_name, version_dir, out_dir)

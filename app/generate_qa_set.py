@@ -122,10 +122,11 @@ def main():
     qa_folder.mkdir(parents=True, exist_ok=True)
 
     # Archive any existing .qa files (and duplicates/) before generating new ones
-    existing_qa_files = list(qa_folder.glob("*.qa")) if qa_folder.exists() else []
-    duplicates_dir = qa_folder / "duplicates"
-    existing_duplicates = list(duplicates_dir.glob("*.qa")) if duplicates_dir.exists() else []
-    if existing_qa_files or existing_duplicates:
+    items_to_archive = [
+        f for f in qa_folder.iterdir()
+        if not f.name.startswith(".") and f.name != "archive"
+    ] if qa_folder.exists() else []
+    if items_to_archive:
         archive_base = qa_folder / "archive"
         archive_base.mkdir(parents=True, exist_ok=True)
         existing_counts = [
@@ -135,10 +136,8 @@ def main():
         next_count = max(existing_counts, default=0) + 1
         archive_dest = archive_base / str(next_count)
         archive_dest.mkdir()
-        for qa_file in existing_qa_files:
-            shutil.move(str(qa_file), str(archive_dest / qa_file.name))
-        for qa_file in existing_duplicates:
-            shutil.move(str(qa_file), str(archive_dest / qa_file.name))
+        for item in items_to_archive:
+            shutil.move(str(item), str(archive_dest / item.name))
 
     while True:
         raw = input("How many items to generate? [50]: ").strip()

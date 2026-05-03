@@ -1,6 +1,30 @@
 #!/usr/bin/env python3
-from openai import OpenAI
 import json
+import logging
+import os
+import sys
+import time
+from pathlib import Path
+
+from openai import OpenAI
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_LOGS_DIR = PROJECT_ROOT / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+_log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_openai_api_test.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[
+        logging.FileHandler(_log_file),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+log = logging.getLogger(__name__)
+if os.getenv("LOG_HTTP") != "1":
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+log.info(f"Logging to {_log_file}")
 
 client = OpenAI()  # Assumes OPENAI_API_KEY is set in the environment variables
 
@@ -27,7 +51,7 @@ def _to_json_serializable(obj):
     except Exception:
         return repr(obj)
 
-print(json.dumps(_to_json_serializable(response), indent=2))
+log.info(json.dumps(_to_json_serializable(response), indent=2))
 
 # Try to locate usage information (prompt/completion/total tokens) and print it
 def _extract_usage(response_obj, serialized):
@@ -70,11 +94,11 @@ if usage:
         output_cost = out_toks * (OUTPUT_COST_PER_MILLION / 1_000_000)
         total_cost = input_cost + output_cost
 
-        print("Model usage:")
-        print(f" - Input tokens: {in_toks} (cost: ${input_cost:.6f})")
-        print(f" - Output tokens: {out_toks} (cost: ${output_cost:.6f})")
-        print(f" - Total tokens: {tot_toks} (Input cost: ${input_cost:.6f} + Output cost: ${output_cost:.6f} = ${total_cost:.6f})")
+        log.info("Model usage:")
+        log.info(f" - Input tokens: {in_toks} (cost: ${input_cost:.6f})")
+        log.info(f" - Output tokens: {out_toks} (cost: ${output_cost:.6f})")
+        log.info(f" - Total tokens: {tot_toks} (Input cost: ${input_cost:.6f} + Output cost: ${output_cost:.6f} = ${total_cost:.6f})")
     except Exception:
-        print("Model usage: could not parse usage fields")
+        log.warning("Model usage: could not parse usage fields")
 else:
-    print("Model usage: not available in the response")
+    log.info("Model usage: not available in the response")

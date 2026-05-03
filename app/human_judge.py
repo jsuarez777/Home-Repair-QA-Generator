@@ -80,6 +80,13 @@ def _has_any_vote(e: dict) -> bool:
     return any(e.get(dim) is not None for dim in DIMENSIONS)
 
 
+def _vote_state(e: dict) -> str:
+    voted = sum(1 for dim in DIMENSIONS if e.get(dim) is not None)
+    if voted == 0:
+        return "none"
+    return "full" if voted == len(DIMENSIONS) else "partial"
+
+
 def _detect_versions() -> list[dict]:
     """Return sorted list of version dicts found under qa_items/."""
     if not QA_ITEMS_ROOT.exists():
@@ -158,12 +165,14 @@ def list_qa():
             question = qa_data.get("question", "")
         except Exception:
             question = ""
+        trace_id = _trace_id(qa_file)
         items.append({
             "index":    i,
-            "trace_id": _trace_id(qa_file),
+            "trace_id": trace_id,
             "category": _category(qa_file),
             "filename": qa_file.name,
             "question": question,
+            "vote_state": _vote_state(state["evaluations"].get(trace_id, {})),
         })
     return jsonify(items)
 
@@ -428,6 +437,7 @@ JUDGE_HTML = """<!DOCTYPE html>
     #sidebar-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
     .sidebar-item {
+      position: relative;
       padding: 10px 12px;
       cursor: pointer;
       border-bottom: 1px solid #0f172a;
@@ -435,6 +445,18 @@ JUDGE_HTML = """<!DOCTYPE html>
     }
     .sidebar-item:hover   { background: #273548; }
     .sidebar-item.active  { background: #1d4ed8; }
+
+    .item-check {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .item-check.checked, .item-check.partial { color: #4ade80; }
+    .item-check.unchecked { color: #334155; }
 
     .item-meta {
       display: flex;
@@ -738,17 +760,37 @@ function formatValue(val) {
   return esc(String(val));
 }
 
-function formatAnswer(val) {
+function formatAnswer(val, steps) {
   let text = esc(String(val));
+  const stepSet = new Set((steps || []).map(s => esc(String(s)).trim()));
 
   // Section headers on their own line (bold)
   text = text.replace(/\\s*(plan\\s*:)/gi, "<br><strong>$1</strong>");
   text = text.replace(/\\s*(safety(?:\\s+info)?\\s*:)/gi, "<br><strong>$1</strong>");
   text = text.replace(/\\s*(tools?(?:\\s+required)?\\s*:)/gi, "<br><strong>$1</strong>");
   text = text.replace(/\\s*(tips?\\s*:)/gi, "<br><strong>$1</strong>");
+  text = text.replace(/\\s*(steps?\\s*:)/gi, "<br><strong>$1</strong>");
 
-  // Numbered steps on their own line (1. or 1))
-  text = text.replace(/\\s+(\\d+[.)]\\s)/g, "<br>$1");
+  // Highlight numbered steps only inside the Steps: section
+  const HBREAK = '<br><strong>';
+  const parts = text.split(HBREAK);
+  for (let i = 1; i < parts.length; i++) {
+    if (/^steps?\\s*:/i.test(parts[i])) {
+      const closeTag = '</strong>';
+      const closeIdx = parts[i].indexOf(closeTag);
+      if (closeIdx !== -1) {
+        const headerInner = parts[i].slice(0, closeIdx + closeTag.length);
+        let sectionContent = parts[i].slice(closeIdx + closeTag.length);
+        sectionContent = sectionContent.replace(/(?:<br>|\\s+)(\\d+[.)]\\s)([^]*?)(?=<br>|\\s+\\d+[.)]\\s|$)/g, function(_, num, content) {
+          const stepText = content.trim();
+          const bg = stepSet.has(stepText) ? '#dcfce7' : '#fee2e2';
+          return '<br><span style="display:block;padding-left:1em;background:' + bg + '">' + num + stepText + '</span>';
+        });
+        parts[i] = headerInner + sectionContent;
+      }
+    }
+  }
+  text = parts.join(HBREAK);
 
   // Tip sentence not already caught by header (e.g. "Tip," or "Tip —")
   text = text.replace(/([.!?])\\s+([Tt]ip\\b(?!\\s*:))/g, "$1<br>$2");
@@ -758,6 +800,19 @@ function formatAnswer(val) {
 
 function dimTitle(dim) {
   return dim.replace(/_/g," ").replace(/\\b\\w/g, c => c.toUpperCase());
+}
+
+function countFullyEvaluated() {
+  return sidebarItems.filter(item => item.vote_state === 'full').length;
+}
+
+function updateProgressBar() {
+  const currentData = document.getElementById("progress");
+  if (currentData.textContent === "— / —") return; // Not yet loaded
+  const match = currentData.textContent.match(/^(\d+) \/ (\d+)/);
+  if (!match) return;
+  const fullyEvaluated = countFullyEvaluated();
+  currentData.textContent = `${match[1]} / ${match[2]}  [${fullyEvaluated} fully evaluated]`;
 }
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -786,9 +841,12 @@ function renderSidebar() {
         <span class="item-trace">${esc(item.trace_id)}</span>
         <span class="item-cat ${catClass}">${esc(item.category)}</span>
       </div>
-      <div class="item-question">${esc(item.question)}</div>`;
+      <div class="item-question">${esc(item.question)}</div>
+      <span class="item-check ${item.vote_state === 'full' ? 'checked' : item.vote_state === 'partial' ? 'partial' : 'unchecked'}">${item.vote_state === 'full' ? '✓' : item.vote_state === 'partial' ? '⧄' : '☐'}</span>`;
+
     list.appendChild(div);
   });
+  updateProgressBar();
 }
 
 function updateSidebarActive() {
@@ -823,6 +881,7 @@ function renderQA(data) {
   document.getElementById("trace-id").textContent  = data.trace_id;
   document.getElementById("filename").textContent   = data.filename;
   document.getElementById("progress").textContent   = `${data.index + 1} / ${data.total}`;
+  updateProgressBar();
   document.getElementById("btn-back").disabled      = data.index === 0;
   document.getElementById("btn-next").disabled      = data.index + 1 >= data.total;
   document.getElementById("done-msg").style.display = "none";
@@ -838,7 +897,7 @@ function renderQA(data) {
     const fieldDiv = document.createElement("div");
     fieldDiv.className = "qa-field";
     const content = field.key === "answer"
-      ? formatAnswer(data.qa[field.key])
+      ? formatAnswer(data.qa[field.key], data.qa.steps)
       : formatValue(data.qa[field.key]);
     fieldDiv.innerHTML = `<h3>${esc(field.label)}</h3><div class="content">${content}</div>`;
 
@@ -891,6 +950,23 @@ function autoSave() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(buildPayload()),
+  }).then(() => {
+    const voted = DIMENSIONS.filter(d => currentEval[d] !== undefined).length;
+    const state = voted === 0 ? 'none' : voted < DIMENSIONS.length ? 'partial' : 'full';
+    const el = document.querySelector(`.sidebar-item[data-index="${currentIndex}"]`);
+    if (el) {
+      const check = el.querySelector('.item-check');
+      if (check) {
+        check.textContent = state === 'full' ? '✓' : state === 'partial' ? '⧄' : '☐';
+        check.className = 'item-check ' + (state === 'full' ? 'checked' : state === 'partial' ? 'partial' : 'unchecked');
+      }
+    }
+    // Update the sidebar state in memory and refresh progress bar
+    const item = sidebarItems.find(i => i.index === currentIndex);
+    if (item) {
+      item.vote_state = state;
+      updateProgressBar();
+    }
   });
 }
 
@@ -977,5 +1053,5 @@ if __name__ == "__main__":
         log.error(f"No version folders found in {QA_ITEMS_ROOT}")
         sys.exit(1)
     log.info(f"Found {len(versions)} version(s): {[v['version'] for v in versions]}")
-    webbrowser.open("http://127.0.0.1:5000")
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    webbrowser.open("http://127.0.0.1:5001")
+    app.run(host="127.0.0.1", port=5001, debug=False)

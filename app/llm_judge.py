@@ -80,12 +80,7 @@ def _load_mono_prompt(prompt_dir: Path) -> str:
 
 
 def _next_eval_version(folder: Path) -> str:
-    nums = []
-    for f in folder.glob("QA_llm_eval_v*.json"):
-        m = re.search(r"QA_llm_eval_v(\d+)\.json", f.name)
-        if m:
-            nums.append(int(m.group(1)))
-    return f"v{max(nums) + 1}" if nums else "v1"
+    return datetime.now().strftime("%y%m%d_%H%M%S")
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +108,13 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
                     cleaned = cleaned[4:].strip()
                 scores = json.loads(cleaned)
 
+            if isinstance(scores, list):
+                if len(scores) == 0:
+                    raise ValueError("LLM response is empty list")
+                if len(scores) > 1:
+                    raise ValueError(f"LLM response contains {len(scores)} objects, expected exactly 1")
+                scores = scores[0]
+
             missing = [d for d in DIMENSIONS if d not in scores]
             if missing:
                 raise ValueError(f"LLM response missing dimensions: {missing}")
@@ -137,6 +139,7 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
             if attempt == MAX_RETRIES:
                 raise
             log.warning(f"  [parse error] {trace_id}: attempt {attempt}/{MAX_RETRIES}: {e}")
+            log.warning(f"    Raw response received: {raw_text[:500]}")
             time.sleep(delay)
             delay *= 2
 
@@ -303,7 +306,8 @@ def main():
     args = parser.parse_args()
 
     model = _select_model()
-    client = MyOpenAIClient(model=model)
+    client = MyOpenAIClient(model=model, temperature=0.1)
+    client.validate_api_key()
     prompt_dir = _select_prompt_version()
     mono_prompt = _load_mono_prompt(prompt_dir)
     log.info(f"Using judge prompts from: {prompt_dir.name}\n")

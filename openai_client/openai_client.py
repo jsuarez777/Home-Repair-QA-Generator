@@ -27,6 +27,14 @@ class MyOpenAIClient:
     def temperature(self, value: Optional[float]) -> None:
         self._temperature = value
 
+    def validate_api_key(self) -> None:
+        """Raise an error if API key is missing."""
+        if not self.api_key:
+            raise ValueError(
+                "OPENAI_API_KEY environment variable is not set. "
+                "Please set it before running: export OPENAI_API_KEY='sk-...'"
+            )
+
     def get_client(self) ->OpenAI:
         if self._client is None:
             kwargs = {}
