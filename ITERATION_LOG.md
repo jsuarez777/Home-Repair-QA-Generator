@@ -75,10 +75,11 @@
 - **Result**: Output example reformatting fixed the gpt-3.5-turbo issue where some outputs had 2 responses (mimicking the original examples in v3 prompts).  But human-llm agreement had a slight regression in both 3.5-turbo and 4.1-nano.
 - **Decision**: Keep formatting change as 3.5-turbo output is fixed, but iterate again on criteria.
 - **Next step**: Refine criteria
-### Iteration 5: Refine answer_completeness, tool_realism, tip_usefulness, scope
+### Iteration 5: Enhance llm_judge.py variant to produce reasoning and base changes of that
 - **Date**: 2026-05-03
-- **Change**: 
-- **Hypothesis**: Improve human-llm agreement.  
-- **Result**: 
-- **Decision**: 
-- **Next step**: Refine criteria
+- **Change**: Created a new enhanced_llm_judge.py that asks the LLM judge to produce an extra output explaining the reasoning for its output.  I used this to tweak my prompt and also added a UI to compare human judge and enhanced LLM output.  This lead to the realization that I overlooked bad data and some of the disagreements were due to my error.  
+- **Hypothesis**: Improve human-llm agreement with higher precision.
+- **Result**: I ran the new prompt through multiple models and it resulted in improvements in almost all dimension across all models.  One surprising find was that gpt-3.5-turbo improved markedly in all categories except answer_completeness, which did significanltly worse. With the highest performing being the original v1 prompt.  I was unable to find the reason for this and no matter how I tried to tweak the prompt I remained bad.  It appeared as if the LLM was unable to process targetted criteria.  My definition of answer_completeness was that the individual fields that get combined into a narative had to be explicitly restated in the answer field.  Regardless of how I tried to frame the instructions, it would not recognize obviously bad data, only that there was a mention of the field (eg, if some "safety info" was present in the answer, it didn't care that the text did not match the safety_info field; same with only a partial list of tools).  gpt-4.1-nano and gpt-5.4-mini both improved in almost all categories, or otherwise staid the same. 
+Agreement on 5.4-mini exceeded the 80% threshold.  4.1-nano exceeded 80% in all dimensions except answer_completeness, where it was at aprpox 75%.
+- **Decision**: Keep
+- **Next step**: Use LLM judge to improve generative prompt.

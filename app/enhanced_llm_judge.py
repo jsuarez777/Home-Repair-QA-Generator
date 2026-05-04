@@ -89,6 +89,7 @@ def _next_eval_version(folder: Path) -> str:
 def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa_item: QAItem) -> dict:
     from openai import RateLimitError
     item_json = qa_item.model_dump_json(indent=2)
+    input_data = json.loads(item_json)
     messages = [
         {"role": "system", "content": mono_prompt},
         {"role": "user", "content": item_json},
@@ -126,7 +127,7 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
             if llm_trace_id != "[NA]":
                 log.warning(f"  [warning] {trace_id}: expected trace_id '[NA]' from LLM, got {llm_trace_id!r}")
 
-            result = {"trace_id": trace_id}
+            result = {"trace_id": trace_id, "input": input_data}
             for dim in DIMENSIONS:
                 result[dim] = int(scores[dim])
             result["overall_pass"] = all(result[d] == 1 for d in DIMENSIONS)
@@ -160,10 +161,34 @@ EVAL_JSONL = PROJECT_ROOT / "eval.jsonl"
 _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
+def _load_human_eval_ids(folder: Path) -> set[str]:
+    """Load trace IDs from QA_human_eval.json if it exists."""
+    human_eval_file = folder / "QA_human_eval.json"
+    if not human_eval_file.exists():
+        return set()
+    try:
+        data = json.load(human_eval_file.open())
+        if isinstance(data, dict):
+            return set(data.keys())
+        elif isinstance(data, list):
+            ids = set()
+            for item in data:
+                if isinstance(item, dict):
+                    trace_id = item.get("trace_id") or item.get("id")
+                    if trace_id:
+                        ids.add(trace_id)
+            return ids
+    except Exception as e:
+        log.warning(f"  Error loading human eval IDs from {human_eval_file}: {e}")
+    return set()
+
+
 def evaluate_training_set(
-    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL,
+    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL, max_parallel: int = MAX_PARALLEL, only_human_eval: bool = False,
 ) -> list[dict]:
     items: list[tuple[str, QAItem]] = []
+    human_eval_ids = _load_human_eval_ids(eval_path.parent) if only_human_eval else set()
+
     with eval_path.open() as f:
         for line_num, line in enumerate(f, start=1):
             line = line.strip()
@@ -175,13 +200,15 @@ def evaluate_training_set(
                 log.warning(f"  Line {line_num}: JSON parse error — {e}")
                 continue
             trace_id = _extract_trace_id(raw.get("id", f"line_{line_num}"))
+            if only_human_eval and trace_id not in human_eval_ids:
+                continue
             qa_fields = {k: v for k, v in raw.items() if k in _QA_ITEM_FIELDS}
             try:
                 items.append((trace_id, QAItem.model_validate(qa_fields)))
             except Exception as e:
                 log.warning(f"  {trace_id}: validation error — {e}")
 
-    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_parallel)
     log.info(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
     _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
     return results
@@ -198,9 +225,9 @@ def _log_result(result: dict, prompt_version: str) -> None:
     log.info(f"ts={ts} trace_id={result['trace_id']} prompt_version={prompt_version} | {dims} | overall={overall}")
 
 
-def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]]) -> list[dict]:
+def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]], max_parallel: int = MAX_PARALLEL) -> list[dict]:
     results = []
-    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
+    with ThreadPoolExecutor(max_workers=max_parallel) as executor:
         pending = {
             executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item): trace_id
             for trace_id, qa_item in items
@@ -235,43 +262,53 @@ def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mon
     log.info(f"Results written to {out_path}")
 
 
-def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path) -> list[dict]:
+def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path, max_parallel: int = MAX_PARALLEL, only_human_eval: bool = False) -> list[dict]:
     qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
         log.info(f"No .qa files found in {folder}.")
         return []
+    human_eval_ids = _load_human_eval_ids(folder) if only_human_eval else set()
     items: list[tuple[str, QAItem]] = []
     for qa_file in qa_files:
+        trace_id = _extract_trace_id(qa_file.stem)
+        if only_human_eval and trace_id not in human_eval_ids:
+            continue
         try:
-            items.append((_extract_trace_id(qa_file.stem), QAItem.model_validate_json(qa_file.read_text())))
+            items.append((trace_id, QAItem.model_validate_json(qa_file.read_text())))
         except Exception as e:
             log.warning(f"  Parse error {qa_file.name}: {e}")
-    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_parallel)
     log.info(f"\nEvaluated {len(results)} item(s) from {folder}.")
     _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
     return results
 
 
-def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, path: Path) -> list[dict]:
+def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, path: Path, max_parallel: int = MAX_PARALLEL, only_human_eval: bool = False) -> list[dict]:
+    trace_id = _extract_trace_id(path.stem)
+    if only_human_eval:
+        human_eval_ids = _load_human_eval_ids(path.parent)
+        if trace_id not in human_eval_ids:
+            log.info(f"Skipping {path.name} (not in human eval)")
+            return []
     log.info(f"Evaluating: {path.name}")
     try:
         qa_item = QAItem.model_validate_json(path.read_text())
     except Exception as e:
         log.warning(f"  Parse error: {e}")
         return []
-    result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
+    result = evaluate_qa_item(client, mono_prompt, trace_id, qa_item)
     _log_result(result, prompt_dir.name)
     _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model)
     return [result]
 
 
-def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, target: Path) -> list[dict]:
+def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, target: Path, max_parallel: int = MAX_PARALLEL, only_human_eval: bool = False) -> list[dict]:
     if target.is_dir():
-        return evaluate_qa_folder(client, mono_prompt, prompt_dir, target)
+        return evaluate_qa_folder(client, mono_prompt, prompt_dir, target, max_parallel, only_human_eval)
     if target.suffix == ".jsonl":
-        return evaluate_training_set(client, mono_prompt, prompt_dir, target)
+        return evaluate_training_set(client, mono_prompt, prompt_dir, target, max_parallel, only_human_eval)
     if target.suffix == ".qa":
-        return evaluate_single_qa_file(client, mono_prompt, prompt_dir, target)
+        return evaluate_single_qa_file(client, mono_prompt, prompt_dir, target, max_parallel, only_human_eval)
     log.warning(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
     return []
 
@@ -311,6 +348,17 @@ def main():
         metavar="OBJECT",
         help="Path to evaluate: a directory of .qa files, a .jsonl file, or a single .qa file.",
     )
+    parser.add_argument(
+        "--max-parallel",
+        type=int,
+        default=MAX_PARALLEL,
+        help=f"Maximum number of parallel evaluations (default: {MAX_PARALLEL})",
+    )
+    parser.add_argument(
+        "--only-human-eval",
+        action="store_true",
+        help="Only evaluate items that have human judgments (requires QA_human_eval.json)",
+    )
     args = parser.parse_args()
 
     model = _select_model()
@@ -325,7 +373,7 @@ def main():
         if not target.exists():
             log.info(f"Error: path not found — {target}")
             return
-        _resolve_target(client, mono_prompt, prompt_dir, target)
+        _resolve_target(client, mono_prompt, prompt_dir, target, args.max_parallel, args.only_human_eval)
         return
 
     # Interactive prompt
@@ -355,9 +403,9 @@ def main():
     choice = input(f"Enter 1-{max_choice}: ").strip()
 
     if choice == "1":
-        evaluate_training_set(client, mono_prompt, prompt_dir)
+        evaluate_training_set(client, mono_prompt, prompt_dir, max_parallel=args.max_parallel, only_human_eval=args.only_human_eval)
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
-        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2])
+        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2], args.max_parallel, args.only_human_eval)
     else:
         log.warning(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
