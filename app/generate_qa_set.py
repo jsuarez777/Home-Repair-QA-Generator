@@ -16,6 +16,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from openai_client.openai_client import MyOpenAIClient
 
+DEFAULT_MODEL = "gpt-5.4-mini"
+
 _LOGS_DIR = PROJECT_ROOT / "logs"
 _LOGS_DIR.mkdir(exist_ok=True)
 _log_file = _LOGS_DIR / f"{time.strftime('%Y%m%d_%H%M%S')}_generate_qa_set.log"
@@ -46,6 +48,30 @@ def _read_file_content(file_path: str) -> str:
         raise
 
 
+def _select_model() -> str:
+    catalog = MyOpenAIClient.available_models()
+    models = list(catalog.keys())
+    default_idx = models.index(DEFAULT_MODEL) + 1 if DEFAULT_MODEL in models else 1
+
+    log.info("\nAvailable models:")
+    log.info(f"  {'#':<4} {'Model':<30} {'Input/1M':>10} {'Cached/1M':>10} {'Output/1M':>10}")
+    log.info(f"  {'─' * 68}")
+    for i, m in enumerate(models, start=1):
+        p = catalog[m]
+        cached = f"${p['cached_input']:.4f}" if p["cached_input"] is not None else "—"
+        marker = " *" if m == DEFAULT_MODEL else ""
+        log.info(f"  {i:<4} {m + marker:<30} ${p['input']:>9.4f} {cached:>10} ${p['output']:>9.4f}")
+    log.info("  * = default")
+
+    choice = input(f"\nSelect model (1-{len(models)}) [{default_idx}]: ").strip()
+    if choice == "":
+        return models[default_idx - 1]
+    if choice.isdigit() and 1 <= int(choice) <= len(models):
+        return models[int(choice) - 1]
+    log.info(f"Invalid choice {choice!r}, using default ({DEFAULT_MODEL}).")
+    return DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
+
+
 def _pick_version() -> str:
     prompts_dir = PROJECT_ROOT / "prompts"
     versions = sorted(
@@ -71,7 +97,7 @@ def _pick_version() -> str:
 
 
 
-MAX_PARALLEL = 50
+DEFAULT_MAX_PARALLEL = 50
 MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0  # seconds; doubles on each attempt
 
@@ -113,8 +139,13 @@ def _generate_one(client: MyOpenAIClient, cat: str, prompt: str) -> tuple[str, s
 def main():
     parser = argparse.ArgumentParser(description="Generate QA items.")
     parser.add_argument("--version", metavar="VERSION", help="Prompt version folder (e.g. v1, v2).")
+    parser.add_argument("--model", metavar="MODEL", help="LLM model to use for generation.")
+    parser.add_argument("--num-items", type=int, metavar="NUM", help="Number of items to generate (1-1000).")
+    parser.add_argument("--temperature", type=float, metavar="TEMP", default=1.8, help="Temperature for generation (default: 1.8).")
+    parser.add_argument("--max-parallel", type=int, metavar="N", default=DEFAULT_MAX_PARALLEL, help=f"Maximum parallel workers (default: {DEFAULT_MAX_PARALLEL}).")
     args = parser.parse_args()
 
+    model = args.model if args.model else _select_model()
     prompt_version = args.version if args.version else _pick_version()
     prompt_output_format_suffix_file = PROJECT_ROOT / f"prompts/{prompt_version}/gen_qa_output_format_suffix.prompt"
     prompt_output_format_suffix = _read_file_content(str(prompt_output_format_suffix_file))
@@ -139,15 +170,22 @@ def main():
         for item in items_to_archive:
             shutil.move(str(item), str(archive_dest / item.name))
 
-    while True:
-        raw = input("How many items to generate? [50]: ").strip()
-        if raw == "":
-            items_to_generate = 50
-            break
-        if raw.isdigit() and 1 <= int(raw) <= 1000:
-            items_to_generate = int(raw)
-            break
-        log.info("  Please enter a number between 1 and 1000.")
+    if args.num_items:
+        if 1 <= args.num_items <= 1000:
+            items_to_generate = args.num_items
+        else:
+            log.error("Number of items must be between 1 and 1000")
+            sys.exit(1)
+    else:
+        while True:
+            raw = input("How many items to generate? [50]: ").strip()
+            if raw == "":
+                items_to_generate = 50
+                break
+            if raw.isdigit() and 1 <= int(raw) <= 1000:
+                items_to_generate = int(raw)
+                break
+            log.info("  Please enter a number between 1 and 1000.")
 
     # Setup prompts for each category
     categories_file = PROJECT_ROOT / f"prompts/{prompt_version}/categories.yml"
@@ -172,16 +210,16 @@ def main():
     log.info(sep)
 
     # Initialize the OpenAI client and generate QA items in parallel
-    my_ai_client = MyOpenAIClient(model="gpt-5.4-nano", temperature=1.8)
+    my_ai_client = MyOpenAIClient(model=model, temperature=args.temperature)
     total_count = 0
     count_per_category = {cat: 0 for cat in categories}
 
     def _pick_cat():
         return categories[randint(0, len(categories) - 1)]
 
-    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
+    with ThreadPoolExecutor(max_workers=args.max_parallel) as executor:
         pending = {}  # future -> cat
-        for _ in range(min(MAX_PARALLEL, items_to_generate)):
+        for _ in range(min(args.max_parallel, items_to_generate)):
             cat = _pick_cat()
             pending[executor.submit(_generate_one, my_ai_client, cat, prompts[cat])] = cat
 

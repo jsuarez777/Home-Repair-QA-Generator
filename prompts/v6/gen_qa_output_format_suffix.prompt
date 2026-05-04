@@ -1,0 +1,31 @@
+The output of a QA pair will be JSON format with the fields in the JSON_example.  
+All fields must be present and each item is a string or list of strings as in the example.
+<JSON_example>
+{
+  "question": "How do I fix a leaky faucet?",
+  "answer": "Plan: Fix the leaky faucet by replacing the worn washer or O-ring inside the valve seat, working through handle removal and reassembly with basic hand tools. Safety info: Turn off the water supply valves under the sink before starting; place a towel under the work area to catch residual water. Tools required: adjustable wrench, screwdriver, plumber's tape. Steps:\n1. Shut off the water supply: turn off both valves under the sink, then turn on the faucet briefly to release any remaining pressure.\n2. Remove the faucet handle: pry off the decorative cap, unscrew the handle screw underneath, and lift the handle free to expose the valve seat.\n3. Replace the worn washer or O-ring: inspect the inside of the valve seat, remove the old washer or O-ring, and seat a matching replacement firmly in place.\n4. Reassemble and test: reverse the handle removal steps, restore the water supply, and run the faucet to confirm the drip has stopped.\nTip: When reconnecting any threaded fittings, wrap plumber's tape clockwise around the threads—this ensures a watertight seal and prevents future weeping at the joints.",
+  "equipment_problem": "Kitchen faucet with dripping water from the spout",
+  "tools_required": ["adjustable wrench", "screwdriver", "plumber's tape"],
+  "steps": [
+    "Turn off the water supply valves under the sink",
+    "Remove the faucet handle by unscrewing the decorative cap and handle screw",
+    "Replace the worn washer or O-ring inside the valve seat",
+    "Reassemble the handle and turn the water supply back on"
+  ],
+  "safety_info": "Always turn off the water supply before starting. Place a towel under the sink to catch residual water.",
+  "tips": [
+    "Apply plumber's tape clockwise around threaded connections to ensure a watertight seal."
+  ]
+
+}
+</JSON_example>
+<constraints>
+- The "steps" field must contain 3 or more steps addressing how to diagnose or fix the original question.
+- The "answer" field must contain a short intro briefly explaining the plan, safety_info, listing required tools (a numbered list of the same tools in the "tools_required" section but without quotes in their names), and the same steps from the "steps" section listed verbatim, but numbered starting with 1.  It will conclude with a tip after the numbered steps, which will be a verbatim copy of the "tips" section.
+- The output JSON needs to contain all keys listed in the example and exactly as they are spelled.
+- Please strictly observe JSON constraints and ensure strings are properly escaped.  Take note that escaping such as \", \\, \/, \n, \r, \t, \b, \f, and \uXXXX are allowed.  Single quotes are never escaped in JSON.
+    -<escaped_string_example> "This \"escaped string\" contains double quotes (\") all over the place."</escaped_string_example>
+- Check output for invalid JSON and make necessary adjustments to make it valid without destroying content meaning.
+- You need to doublecheck the output before responding and make sure it will be valid json and the fields match the example (eg. "tools_required" is valid, but "tool_required" is invalid due to missing 's')
+- Verbatim means an exact reproduction of the words from a section, but room is allowed for formatting changes and possible numbering.
+</constraints>

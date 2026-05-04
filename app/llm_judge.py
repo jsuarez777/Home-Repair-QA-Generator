@@ -35,8 +35,8 @@ from openai_client.openai_client import MyOpenAIClient
 
 
 PROMPTS_ROOT = PROJECT_ROOT / "prompts_llm_judge"
-DEFAULT_MODEL = "gpt-4.1-nano"
-MAX_PARALLEL = 50
+DEFAULT_MODEL = "gpt-5.4-mini"
+DEFAULT_MAX_PARALLEL = 50
 MAX_RETRIES = 5
 RETRY_BASE_DELAY = 2.0
 
@@ -153,7 +153,7 @@ _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
 def evaluate_training_set(
-    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL,
+    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL, max_workers: int = DEFAULT_MAX_PARALLEL,
 ) -> list[dict]:
     items: list[tuple[str, QAItem]] = []
     with eval_path.open() as f:
@@ -173,7 +173,7 @@ def evaluate_training_set(
             except Exception as e:
                 log.warning(f"  {trace_id}: validation error — {e}")
 
-    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_workers=max_workers)
     log.info(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
     _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
     return results
@@ -190,9 +190,9 @@ def _log_result(result: dict, prompt_version: str) -> None:
     log.info(f"ts={ts} trace_id={result['trace_id']} prompt_version={prompt_version} | {dims} | overall={overall}")
 
 
-def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]]) -> list[dict]:
+def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]], max_workers: int = DEFAULT_MAX_PARALLEL) -> list[dict]:
     results = []
-    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as executor:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         pending = {
             executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item): trace_id
             for trace_id, qa_item in items
@@ -227,7 +227,7 @@ def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mon
     log.info(f"Results written to {out_path}")
 
 
-def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path) -> list[dict]:
+def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, folder: Path, max_workers: int = DEFAULT_MAX_PARALLEL) -> list[dict]:
     qa_files = sorted(folder.glob("*.qa"))
     if not qa_files:
         log.info(f"No .qa files found in {folder}.")
@@ -238,7 +238,7 @@ def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Pat
             items.append((_extract_trace_id(qa_file.stem), QAItem.model_validate_json(qa_file.read_text())))
         except Exception as e:
             log.warning(f"  Parse error {qa_file.name}: {e}")
-    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items)
+    results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_workers=max_workers)
     log.info(f"\nEvaluated {len(results)} item(s) from {folder}.")
     _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
     return results
@@ -257,11 +257,11 @@ def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir
     return [result]
 
 
-def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, target: Path) -> list[dict]:
+def _resolve_target(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, target: Path, max_workers: int = DEFAULT_MAX_PARALLEL) -> list[dict]:
     if target.is_dir():
-        return evaluate_qa_folder(client, mono_prompt, prompt_dir, target)
+        return evaluate_qa_folder(client, mono_prompt, prompt_dir, target, max_workers=max_workers)
     if target.suffix == ".jsonl":
-        return evaluate_training_set(client, mono_prompt, prompt_dir, target)
+        return evaluate_training_set(client, mono_prompt, prompt_dir, target, max_workers=max_workers)
     if target.suffix == ".qa":
         return evaluate_single_qa_file(client, mono_prompt, prompt_dir, target)
     log.warning(f"Unsupported file type: {target.suffix}. Expected a directory, .jsonl, or .qa file.")
@@ -303,12 +303,23 @@ def main():
         metavar="OBJECT",
         help="Path to evaluate: a directory of .qa files, a .jsonl file, or a single .qa file.",
     )
+    parser.add_argument("--model", metavar="MODEL", help="LLM model to use for judging.")
+    parser.add_argument("--prompt-version", metavar="VERSION", help="Judge prompt version folder (e.g. v1, v2).")
+    parser.add_argument("--max-parallel", type=int, metavar="N", default=DEFAULT_MAX_PARALLEL, help=f"Maximum parallel workers (default: {DEFAULT_MAX_PARALLEL}).")
     args = parser.parse_args()
 
-    model = _select_model()
+    model = args.model if args.model else _select_model()
     client = MyOpenAIClient(model=model, temperature=0.1)
     client.validate_api_key()
-    prompt_dir = _select_prompt_version()
+
+    if args.prompt_version:
+        prompt_dir = PROMPTS_ROOT / args.prompt_version
+        if not prompt_dir.exists():
+            log.error(f"Error: prompt version not found — {prompt_dir}")
+            sys.exit(1)
+    else:
+        prompt_dir = _select_prompt_version()
+
     mono_prompt = _load_mono_prompt(prompt_dir)
     log.info(f"Using judge prompts from: {prompt_dir.name}\n")
 
@@ -317,7 +328,7 @@ def main():
         if not target.exists():
             log.info(f"Error: path not found — {target}")
             return
-        _resolve_target(client, mono_prompt, prompt_dir, target)
+        _resolve_target(client, mono_prompt, prompt_dir, target, max_workers=args.max_parallel)
         return
 
     # Interactive prompt
@@ -347,9 +358,9 @@ def main():
     choice = input(f"Enter 1-{max_choice}: ").strip()
 
     if choice == "1":
-        evaluate_training_set(client, mono_prompt, prompt_dir)
+        evaluate_training_set(client, mono_prompt, prompt_dir, max_workers=args.max_parallel)
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
-        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2])
+        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2], max_workers=args.max_parallel)
     else:
         log.warning(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
 
