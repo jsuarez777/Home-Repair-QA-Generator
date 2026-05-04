@@ -1,0 +1,814 @@
+{
+  "eval_version": "260503_203402",
+  "generated_at": "2026-05-04T00:34:02.185277+00:00",
+  "model": "gpt-3.5-turbo",
+  "judge_prompt_version": "v5",
+  "judge_prompt": "You are a DIY home repair quality judge.\nPlease review a Question/Answer (QA) pair input in JSON format against 6 quality dimensions.\nThose 6 output quality dimensions are: 'answer_completeness', 'safety_specificity', 'tool_realism', 'scope_appropriateness', 'context_clarity', 'tip_usefulness'.\nFor each QA Item evaluated, output MUST be a valid JSON array with exactly 2 objects, wrapped in square brackets [ ]:\n  1. First object: integer indicators (0 for fail, 1 for pass) for each quality dimension, plus 'trace_id' field.\n  2. Second object: same dimension fields with string values explaining the reasoning for each PASS or FAIL.\nOutput format: [{\"trace_id\":\"...\", \"answer_completeness\":0/1, \"safety_specificity\":0/1, ...}, {\"trace_id\":\"...\", \"answer_completeness\":\"reason\", \"safety_specificity\":\"reason\", ...}]\nAlways add 'trace_id' to both objects which will contain \"[NA]\".\n\nCriteria for each of the 6 dimensions is below:\n<answer_completeness>\n    - 0 if value string from \"safety_info\" field is not a substring of \"answer\".\n</answer_completeness>\n\n<safety_specificity>\n    1. Evaluate whether the \"safety_info\" field names specific hazards and specific precautions relevant to this exact repair.\n    2. Do not compare data in the \"answer\", only look at the \"safety_info\" field.\n    3. Fail if \"safety_info\" is generic without specific details for the repair type (\"use caution\", \"be careful\", \"stay safe\", \"wear protective equipment\" without specifying what or why)\n    4. Fail if \"safety_info\" does not state a specific precaution to take for each hazard.\n    5. Fail if \"safety_info\" does not apply to the current repair type.\n</safety_specificity>\n\n<tool_realism>\n    1. Evaluate whether the \"tools_required\" field lists only tools a typical homeowner would realistically own or have easy access to and which are useful to the repair.\n    2. Fail if any tool would cost more than $150 for a basic version, or requires a license.\n    3. Fail if a tool is required, but does not make sense and would not be used.\n</tool_realism>\n\n<scope_appropriateness>\n    1. Evaluate whether the repair described is within realistic DIY capability for a typical homeowner, and whether the answer handles the scope correctly.\n    2. Fail if the repair involves work that is dangerous for an amateur to perform (e.g., natural gas lines, main electrical panel, load-bearing structural modifications) but the answer provides instructions without recommending consulting a professional.\n    3. Pass if the repair is simple and can be done by anyone with minor skill.\n</scope_appropriateness>\n\n<context_clarity>\n    1. The question and answer contain enough context to understand the problem, and the answer directly addresses the specific equipment_problem with all steps individually pertaining to the repair type.\n    2. Fail if steps are not coherent and do not follow logically in chronological order.\n    3. Fail if steps mention instruct the user to do something unrelated to the repair type or category, such as \"Make sure the door is level\" when dealing with a clogged drain issue.\n    4. Fail if steps are out of order.\n    5. Pass if each step flows logically from one to the next.\n    6. Pass if each step is related to the prior step or to the problem being solved.\n</context_clarity>\n\n<tip_usefulness>\n    1. Evaluate the input json field \"tips\" to ensure they provides non-obvious, task-specific advice that adds value beyond what is already covered in the \"steps\" field, do not consider the \"answer\" json field.\n    2. Only look at the \"tips\" field in json input, do not look at the \"answer\" json field`.\n    3. Fail if any tip offers generic encouragement or advice that applies to all repairs without mentioning repair-specific advice (\"measure twice, cut once\", \"take your time\", \"ask for help if needed\")\n    4. Fail if any tip is unrelated to the problem being solved. (eg, make sure to cut the power when repairing a standard door)\n    5. Pass if all tips provides specific guidance that is distinct from the steps and pertains directly to the repair job type only.\n</tip_usefulness>",
+  "results": [
+    {
+      "trace_id": "QA2",
+      "input": {
+        "question": "Why is my toilet running even after I flush, and how can I fix it?",
+        "answer": "Plan: Diagnose a continuous-running toilet by checking the flapper, tank water level, and fill tube operation, then replace worn parts if needed and adjust to stop the flow. Safety info: Turn off the water supply to the toilet at the shutoff valve before you remove the tank lid or adjust components, and keep the flush tank cover handled carefully to avoid damage. Tools required:\n1. adjustable wrench\n2. pliers\n3. toilet flapper or fill valve (replacement)\nSteps:\n1. Lift the toilet tank lid carefully and watch where the water is coming from (under the flapper into the bowl or from the overflow tube area).\n2. Inspect the flapper for wear or debris: check whether it closes completely and replace the flapper if it looks stretched, warped, or hardened.\n3. Check the fill tube and water level: ensure the fill valve shuts off properly and adjust the float/water level so it stops at the marked level, typically just below the overflow tube.\n4. If adjusting doesn\u2019t stop the flow, shut off the supply, remove the old fill valve or flapper (as needed), install the correct replacement part, then turn the water back on and test with a full flush.\nTip: Apply a new toilet flapper of the exact size/model for a watertight seal, and don\u2019t overfill the tank\u2014keep the water level below the overflow tube to prevent continuous running.",
+        "equipment_problem": "Toilet runs continuously or keeps refilling after flushing",
+        "tools_required": [
+          "adjustable wrench",
+          "pliers",
+          "toilet flapper or fill valve (replacement)"
+        ],
+        "steps": [
+          "Lift the toilet tank lid carefully and watch where the water is coming from (under the flapper into the bowl or from the overflow tube area).",
+          "Inspect the flapper for wear or debris: check whether it closes completely and replace the flapper if it looks stretched, warped, or hardened.",
+          "Check the fill tube and water level: ensure the fill valve shuts off properly and adjust the float/water level so it stops at the marked level, typically just below the overflow tube.",
+          "If adjusting doesn\u2019t stop the flow, shut off the supply, remove the old fill valve or flapper (as needed), install the correct replacement part, then turn the water back on and test with a full flush."
+        ],
+        "safety_info": "Turn off the water supply to the toilet at the shutoff valve before you remove the tank lid or adjust components, and keep the flush tank cover handled carefully to avoid damage.",
+        "tips": [
+          "Apply a new toilet flapper of the exact size/model for a watertight seal, and don\u2019t overfill the tank\u2014keep the water level below the overflow tube to prevent continuous running."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a substring of the answer.",
+        "safety_specificity": "Pass: Specific hazards and precautions mentioned for the repair.",
+        "tool_realism": "Pass: Tools required are realistic and easily accessible for a homeowner.",
+        "scope_appropriateness": "Pass: Repair is within DIY capability and safety is addressed.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered.",
+        "tip_usefulness": "Pass: Tip provides specific guidance related to the repair."
+      }
+    },
+    {
+      "trace_id": "QA37",
+      "input": {
+        "question": "Why is my bathroom sink drain backing up when I run the faucet, and how can I fix it?",
+        "answer": "Plan: Diagnose whether the clog is in the P-trap, the trap arm, or deeper in the drain line, then clear the blockage using safe mechanical methods first. Safety info: Stop water use immediately and use a drain bucket to contain debris; avoid using chemical drain cleaners on the trap while you\u2019re working. Tools required: 1. plunger 2. drain auger (toilet/hand) 3. bucket  Steps:\n1. Check the symptom and confirm where it\u2019s failing: run a little water and watch if it drains slowly, backs up in the sink, or gurgles.\n2. Use a bucket to catch water and debris: loosen the slip nuts under the sink (P-trap side connections) and gently pull the P-trap down over the bucket.\n3. Clear the clog locally: inspect the P-trap and remove any hair/soap buildup, then rinse and reassemble loosely.\n4. Test flow before reinstalling everything: run water briefly to see if it drains normally; if it still backs up, the clog is further down.\n5. Use a drain auger to clear deeper: feed the auger into the drain from the sink outlet and rotate/advance until resistance clears, then pull back and flush with water.\n6. Reassemble and confirm the fix: fully tighten connections and run water again to ensure the sink drains without backup or gurgling.\nTip: Use a drain auger instead of aggressive chemicals for clogs you can reach, since chemicals can react unpredictably with existing residue and may damage plumbing surfaces.\nTip: Use a drain auger instead of aggressive chemicals for clogs you can reach, since chemicals can react unpredictably with existing residue and may damage plumbing surfaces.",
+        "equipment_problem": "Bathroom sink draining slowly and backing up in the basin when the faucet runs",
+        "tools_required": [
+          "plunger",
+          "drain auger (toilet/hand)",
+          "bucket"
+        ],
+        "steps": [
+          "Check the symptom and confirm where it\u2019s failing: run a little water and watch if it drains slowly, backs up in the sink, or gurgles.",
+          "Use a bucket to catch water and debris: loosen the slip nuts under the sink (P-trap side connections) and gently pull the P-trap down over the bucket.",
+          "Clear the clog locally: inspect the P-trap and remove any hair/soap buildup, then rinse and reassemble loosely.",
+          "Test flow before reinstalling everything: run water briefly to see if it drains normally; if it still backs up, the clog is further down.",
+          "Use a drain auger to clear deeper: feed the auger into the drain from the sink outlet and rotate/advance until resistance clears, then pull back and flush with water.",
+          "Reassemble and confirm the fix: fully tighten connections and run water again to ensure the sink drains without backup or gurgling."
+        ],
+        "safety_info": "Stop water use immediately and use a drain bucket to contain debris; avoid using chemical drain cleaners on the trap while you\u2019re working.",
+        "tips": [
+          "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety information is included in the answer.",
+        "safety_specificity": "Pass: Safety information is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are realistic and easily accessible for a typical homeowner.",
+        "scope_appropriateness": "Pass: Repair is within DIY capability and instructions are appropriate.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered, directly addressing the repair.",
+        "tip_usefulness": "Fail: The tip provided is unrelated to the problem being solved."
+      }
+    },
+    {
+      "trace_id": "QA3",
+      "input": {
+        "question": "Why does the circuit breaker trip when I turn on my microwave, and how can I fix it safely?",
+        "answer": "Plan: Diagnose the breaker trip cause by checking for overload, identifying a damaged outlet or power cord, then resetting and testing while ruling out short circuits and wiring issues. Safety info: Turn off/unplug the microwave and any other devices on that circuit, keep hands away from the panel while covers are in place, and if you see signs of heat, burning, or repeated tripping immediately upon reset, stop and contact a qualified electrician. Tools required: 1) non-contact voltage tester, 2) multimeter, 3) insulated screwdriver. Steps:\n1. Unplug the microwave and remove any other loads from the breaker\u2019s circuit so you can tell whether the problem is specific to the microwave or the circuit wiring.\n2. Locate the tripping breaker and note how often it trips; then switch it fully to OFF, and disconnect power by keeping the breaker OFF before further checks.\n3. Inspect the microwave plug, power cord, and the receptacle for damage, looseness, discoloration, or signs of scorching; replace any clearly damaged component before retesting.\n4. Test the receptacle wiring safely using a non-contact voltage tester and, if readings seem abnormal, verify voltage/continuity with a multimeter (follow your meter instructions).\n5. Reset the breaker to ON, then plug in only the microwave and run it briefly to see if it trips; if it trips immediately even with no other devices plugged in, the circuit (or breaker) likely has a fault and needs professional evaluation.\nTip: Label breaker circuits before testing so you can track what was changed, and replace damaged outlets or cords before using the microwave again.",
+        "equipment_problem": "Microwave trips the circuit breaker immediately after turning it on",
+        "tools_required": [
+          "non-contact voltage tester",
+          "multimeter",
+          "insulated screwdriver",
+          "cordless rotary hammer drill"
+        ],
+        "steps": [
+          "Unplug the microwave and remove any other loads from the breaker\u2019s circuit so you can tell whether the problem is specific to the microwave or the circuit wiring.",
+          "Locate the tripping breaker and note how often it trips; then switch it fully to OFF, and disconnect power by keeping the breaker OFF before further checks.",
+          "Inspect the microwave plug, power cord, and the receptacle for damage, looseness, discoloration, or signs of scorching; replace any clearly damaged component before retesting.",
+          "Test the receptacle wiring safely using a non-contact voltage tester and, if readings seem abnormal, verify voltage/continuity with a multimeter (follow your meter instructions).",
+          "Reset the breaker to ON, then plug in only the microwave and run it briefly to see if it trips; if it trips immediately even with no other devices plugged in, the circuit (or breaker) likely has a fault and needs professional evaluation."
+        ],
+        "safety_info": "Turn off/unplug the microwave and any other devices on that circuit, keep hands away from the panel while covers are in place, and if you see signs of heat, burning, or repeated tripping immediately upon reset, stop and contact a qualified electrician.",
+        "tips": [
+          "Label breaker circuits before testing so you can track what was changed, and replace damaged outlets or cords before using the microwave again."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety information provided in the answer is not a direct substring of the safety information field. The tool 'cordless rotary hammer drill' is not realistic for this repair. The scope of the repair is appropriate for a typical homeowner. The steps are coherent and logically ordered. The tip provided is useful and specific to the repair.",
+        "safety_specificity": "",
+        "tool_realism": "",
+        "scope_appropriateness": "",
+        "context_clarity": "",
+        "tip_usefulness": ""
+      }
+    },
+    {
+      "trace_id": "QA33",
+      "input": {
+        "question": "My furnace won\u2019t blow warm air\u2014what should I check first?",
+        "answer": "Plan: Troubleshoot common furnace airflow and ignition issues step-by-step, then restore safe operation by correcting any failed filters, improper thermostat settings, or burner/limit problems. Safety info: Shut off power to the furnace at the switch (or breaker) before opening the blower compartment, and never bypass the rollout/limit switches. Tools required: 1) multimeter 2) flathead screwdriver 3) needle-nose pliers 4) flashlight. Steps:\n1. Check thermostat and mode settings: confirm it is set to Heat, the fan is set to Auto (not On), and raise the setpoint above the current room temperature.\n2. Inspect the air filter and returns: turn off the furnace, replace a dirty/fully blocked filter, and verify supply/return vents aren\u2019t obstructed.\n3. Verify power and blower start: reset the furnace (using the control board reset button if present) and confirm the furnace has electrical power; then test whether the blower motor runs when there\u2019s a call for heat.\n4. If there is still no heat, check ignition sequence basics: look for an ignition attempt (hot surface igniter glowing or burner ignition), and confirm gas shutoff valve is fully open.\n5. Check limit/lockout condition and correct the fault: look for LED/status codes on the furnace control board; clear a nuisance lockout only if airflow issues are resolved, then restart and observe the ignition/operation.\nTip: When reconnecting electrical/low-voltage leads, take a clear photo before removing wires so you can return them to the same terminals correctly.",
+        "equipment_problem": "Furnace blowing cool or no air when calling for heat",
+        "tools_required": [
+          "multimeter",
+          "flathead screwdriver",
+          "needle-nose pliers",
+          "flashlight"
+        ],
+        "steps": [
+          "Check thermostat and mode settings: confirm it is set to Heat, the fan is set to Auto (not On), and raise the setpoint above the current room temperature.",
+          "Inspect the air filter and returns: turn off the furnace, replace a dirty/fully blocked filter, and verify supply/return vents aren\u2019t obstructed.",
+          "Verify power and blower start: reset the furnace (using the control board reset button if present) and confirm the furnace has electrical power; then test whether the blower motor runs when there\u2019s a call for heat.",
+          "If there is still no heat, check ignition sequence basics: look for an ignition attempt (hot surface igniter glowing or burner ignition), and confirm gas shutoff valve is fully open.",
+          "Check limit/lockout condition and correct the fault: look for LED/status codes on the furnace control board; clear a nuisance lockout only if airflow issues are resolved, then restart and observe the ignition/operation."
+        ],
+        "safety_info": "Shut off power to the furnace at the switch (or breaker) before opening the blower compartment, and never bypass the rollout/limit switches.",
+        "tips": [
+          "When reconnecting electrical/low-voltage leads, take a clear photo before removing wires so you can return them to the same terminals correctly."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a clear part of the answer.",
+        "safety_specificity": "Pass: Safety info is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are common and realistic for a homeowner to have.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability and safety is emphasized.",
+        "context_clarity": "Pass: Steps are coherent, in order, and directly related to the repair.",
+        "tip_usefulness": "Pass: Tip provides additional specific guidance for the repair."
+      }
+    },
+    {
+      "trace_id": "QA12",
+      "input": {
+        "question": "Why is my wall outlet not working even though the lights on the same circuit still turn on, and how can I safely fix it?",
+        "answer": "Plan: Diagnose common outlet faults like a tripped GFCI, loose wiring, or a failed outlet, then replace the receptacle or reset/repair as needed. Safety info: Turn off the breaker before removing the outlet cover, verify power is off using a non-contact voltage tester, and never bypass grounding/neutral issues. Tools required: 1) voltage tester 2) screwdrivers 3) needle-nose pliers. Steps:\n1. Check for obvious issues first, including a GFCI outlet/trip switch upstream and whether any reset button has been pressed.\n2. Top-dress garden beds with two inches of compost and work it in lightly.\n3. Shut off the power at the breaker for the affected circuit, then confirm power is off with a non-contact voltage tester.\n4. Remove the outlet cover and faceplate, inspect for loose or burnt wires, and reseat any loose conductors using needle-nose pliers.\n5. Test and, if needed, replace the outlet receptacle by loosening the screw terminals, transferring the wires to the same terminal locations, and securing them tightly before reassembly.\n6. Run a dishwasher cleaning tablet through an empty hot-water cycle to remove buildup.\nTip: If you find any wire discoloration, scorching, or repeated tripping, stop and have a qualified electrician inspect the circuit for a loose connection or overheating.",
+        "equipment_problem": "Electrical wall outlet stopped working but nearby lights still work",
+        "tools_required": [
+          "voltage tester",
+          "screwdrivers",
+          "needle-nose pliers"
+        ],
+        "steps": [
+          "Check for obvious issues first, including a GFCI outlet/trip switch upstream and whether any reset button has been pressed.",
+          "Top-dress garden beds with two inches of compost and work it in lightly.",
+          "Shut off the power at the breaker for the affected circuit, then confirm power is off with a non-contact voltage tester.",
+          "Remove the outlet cover and faceplate, inspect for loose or burnt wires, and reseat any loose conductors using needle-nose pliers.",
+          "Test and, if needed, replace the outlet receptacle by loosening the screw terminals, transferring the wires to the same terminal locations, and securing them tightly before reassembly.",
+          "Run a dishwasher cleaning tablet through an empty hot-water cycle to remove buildup."
+        ],
+        "safety_info": "Turn off the breaker before removing the outlet cover, verify power is off using a non-contact voltage tester, and never bypass grounding/neutral issues.",
+        "tips": [
+          "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "Pass - Safety information provided is a substring of the answer.",
+        "safety_specificity": "Pass - Safety information is specific to the repair and provides relevant precautions for the repair type.",
+        "tool_realism": "Pass - Tools required are common and realistic for a homeowner to have.",
+        "scope_appropriateness": "Pass - Repair is within typical DIY capability.",
+        "context_clarity": "Fail - Steps are not coherent and include unrelated tasks.",
+        "tip_usefulness": "Fail - Tip is unrelated to the repair and does not provide specific guidance."
+      }
+    },
+    {
+      "trace_id": "QA17",
+      "input": {
+        "question": "How do I repair a small crack in a drywall wall?",
+        "answer": "Plan: Fix the drywall crack by cleaning out debris, applying joint compound, embedding tape, and finishing with sanding and paint-ready smoothing for a flat repair. Safety info: Wear eye protection and a dust mask when sanding dried compound, and cover nearby surfaces with a drop cloth to control dust. Tools required: 1) drywall knife 2) joint compound 3) sanding block. Steps:\n1. Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.\n2. Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.\n3. Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.\n4. Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.\n5. Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge.\nTip: Use thin coats and feather the edges so the patch becomes harder to notice after painting.",
+        "equipment_problem": "Hairline crack running along an interior drywall wall",
+        "tools_required": [
+          "drywall knife",
+          "joint compound",
+          "sanding block"
+        ],
+        "steps": [
+          "Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.",
+          "Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.",
+          "Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.",
+          "Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.",
+          "Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge."
+        ],
+        "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+        "tips": [
+          "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety information provided is not related to the repair of a drywall crack.",
+        "safety_specificity": "The safety information is not specific to the repair and includes generic advice unrelated to the task.",
+        "tool_realism": "The tools required are realistic and commonly owned by homeowners.",
+        "scope_appropriateness": "The repair is within the DIY capability of a typical homeowner.",
+        "context_clarity": "The steps are clear and relevant, but one step about calibrating oven temperature is unrelated to the drywall crack repair.",
+        "tip_usefulness": "The tip provided is not relevant to the drywall crack repair."
+      }
+    },
+    {
+      "trace_id": "QA30",
+      "input": {
+        "question": "Why is my furnace short-cycling (turning on and off) and how can I fix it?",
+        "answer": "Plan: Diagnose common causes of furnace short-cycling by checking airflow and safety switches, then clean/repair easy items like the air filter and verify the thermostat and blower operation. Safety info: Turn off power to the furnace at the switch or breaker before opening the access panel, and keep the flame and burners areas clear of dust while working. Tools required: (1) multimeter, (2) screwdriver, (3) flashlight. Steps:\n1. Check the air filter and airflow: replace a clogged filter, confirm supply/return vents are open and not blocked.\n2. Observe and verify what\u2019s triggering the shutdown: watch the furnace\u2019s behavior for how quickly it restarts, then locate any fault code from the control board or the status LEDs.\n3. Check thermostat settings and wiring: set thermostat to Heat, verify correct mode, ensure the fan is set properly, and inspect visible thermostat wiring for looseness or damage.\n4. Inspect the limit/safety devices and clean nearby components: ensure blower compartment area is clean and confirm doors/assemblies are fully latched; if available, clean intake and exhaust components per manufacturer guidance.\n5. Test the thermostat/control signal with a multimeter: measure for proper call-for-heat behavior and continuity to identify whether the furnace is being commanded to shut off prematurely.\n6. Confirm blower operation timing: listen for blower motor starts/ramps correctly on call for heat, and ensure the blower runs for the correct cycle duration; a failing capacitor or motor can contribute to short cycling.\nTip: Replace the filter if dirty, since restricted airflow is one of the most frequent causes of short-cycling and shutdowns.",
+        "equipment_problem": "Gas furnace turns on briefly, then shuts off, then turns back on repeatedly (short-cycling).",
+        "tools_required": [
+          "multimeter",
+          "screwdriver",
+          "flashlight"
+        ],
+        "steps": [
+          "Check the air filter and airflow: replace a clogged filter, confirm supply/return vents are open and not blocked.",
+          "Observe and verify what\u2019s triggering the shutdown: watch the furnace\u2019s behavior for how quickly it restarts, then locate any fault code from the control board or the status LEDs.",
+          "Check thermostat settings and wiring: set thermostat to Heat, verify correct mode, ensure the fan is set properly, and inspect visible thermostat wiring for looseness or damage.",
+          "Inspect the limit/safety devices and clean nearby components: ensure blower compartment area is clean and confirm doors/assemblies are fully latched; if available, clean intake and exhaust components per manufacturer guidance.",
+          "Test the thermostat/control signal with a multimeter: measure for proper call-for-heat behavior and continuity to identify whether the furnace is being commanded to shut off prematurely.",
+          "Confirm blower operation timing: listen for blower motor starts/ramps correctly on call for heat, and ensure the blower runs for the correct cycle duration; a failing capacitor or motor can contribute to short cycling."
+        ],
+        "safety_info": "Turn off power to the furnace at the switch or breaker before opening the access panel, and keep the flame and burners areas clear of dust while working.",
+        "tips": [
+          "Replace the filter if dirty, since restricted airflow is one of the most frequent causes of short-cycling and shutdowns."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "The safety information provided in the answer is directly related to the repair and is a clear and specific precaution to take. The tools required are common and realistic for a homeowner to have. The repair described is within the DIY capability of a typical homeowner. The steps provided are clear, coherent, and directly address the equipment problem. The tip provided is specific and adds value beyond the steps by addressing a common cause of the issue.",
+        "safety_specificity": "",
+        "tool_realism": "",
+        "scope_appropriateness": "",
+        "context_clarity": "",
+        "tip_usefulness": ""
+      }
+    },
+    {
+      "trace_id": "QA1",
+      "input": {
+        "question": "Why is my ceiling light flickering after I turn it on, and how can I fix it?",
+        "answer": "Plan: Diagnose whether the flicker is caused by a loose connection, a failing light switch, or the bulb itself by inspecting power off connections, trying a known-good bulb, and checking the switch wiring at the light fixture or switch box. Safety info: Turn off the circuit breaker for the affected light before touching any wiring; verify power is off with a non-contact voltage tester and keep one hand away from live parts. Tools required: 1. screwdriver, 2. non-contact voltage tester, 3. wire strippers, 4. needle-nose pliers. Steps:\n1. Turn off the circuit breaker for the affected ceiling light.\n2. Verify power is off using a non-contact voltage tester at the switch or light fixture before touching any wires.\n3. Check and replace the bulb: install a known-good bulb and confirm whether the flicker stops; if it stops, the original bulb is likely defective.\n4. Inspect for a loose or poor connection at the light fixture or switch by removing the fixture/switch cover (power remains off) and tightening any secure splices/terminal connections.\n5. If the wiring looks burned or a connection loosens easily, replace damaged portions using proper wire stripping, re-strip the conductors as needed, and re-attach with appropriate connectors; then restore power and test.\nTip: If flickering continues after trying a new bulb and tightening all connections, the wall switch may be failing\u2014test it or have it replaced safely.",
+        "equipment_problem": "Ceiling light flickers briefly or continuously after turning it on",
+        "tools_required": [
+          "screwdriver",
+          "non-contact voltage tester",
+          "wire strippers",
+          "needle-nose pliers"
+        ],
+        "steps": [
+          "Turn off the circuit breaker for the affected ceiling light.",
+          "Verify power is off using a non-contact voltage tester at the switch or light fixture before touching any wires.",
+          "Check and replace the bulb: install a known-good bulb and confirm whether the flicker stops; if it stops, the original bulb is likely defective.",
+          "Inspect for a loose or poor connection at the light fixture or switch by removing the fixture/switch cover (power remains off) and tightening any secure splices/terminal connections.",
+          "If the wiring looks burned or a connection loosens easily, replace damaged portions using proper wire stripping, re-strip the conductors as needed, and re-attach with appropriate connectors; then restore power and test."
+        ],
+        "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+        "tips": [
+          "If flickering continues after trying a new bulb and tightening all connections, the wall switch may be failing\u2014test it or have it replaced safely."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety information provided is not related to the repair of the ceiling light flickering issue.",
+        "safety_specificity": "The safety information is not specific to the repair and includes generic advice unrelated to the repair.",
+        "tool_realism": "The tools required are realistic and commonly owned by homeowners.",
+        "scope_appropriateness": "The repair is within the DIY capability of a typical homeowner and is adequately addressed in the answer.",
+        "context_clarity": "The steps provided are coherent, in chronological order, and directly related to the repair issue.",
+        "tip_usefulness": "The tip provided is specific to the repair and adds value beyond the steps provided."
+      }
+    },
+    {
+      "trace_id": "QA38",
+      "input": {
+        "question": "Why is my AC blowing warm air even though the fan runs, and how can I fix it?",
+        "answer": "Plan: Diagnose the common causes (low refrigerant/pressure, failed capacitor, dirty condenser coil, or an HVAC control/thermostat issue) and repair what you can safely without opening the sealed refrigeration system. Safety info: Turn off power at the HVAC breaker before touching wiring or removing panels; don\u2019t bypass safety switches; allow components to discharge time (at least 5 minutes) after powering off. Tools required: 1. screwdrivers 2. multimeter. Steps:\n1. Verify the issue: set the thermostat to Cool, confirm temperature difference, and observe whether the indoor unit blows warm air while the outdoor unit is silent or actively running.\n2. Check easy airflow causes: replace/clean the return filter and ensure vents are open and airflow is strong (weak airflow can overheat coils and trigger shutdowns).\n3. Inspect the outdoor unit: check for debris and confirm the condenser fan is turning; hose off loose dirt from the condenser coil if safe, but ensure power is OFF and the area is free of standing water.\n4. Test common electrical components: after powering down at the breaker and waiting at least 5 minutes, inspect the capacitor and contactor area for bulging/damage; use a multimeter to verify capacitor and power/control readings per label guidance.\n5. Check controls and refrigerant-related clues: confirm the outdoor unit gets proper voltage, review thermostat settings/wiring, and note any icing or frost on suction line/coil that can indicate low refrigerant (do not attempt DIY refrigerant repair; schedule a licensed HVAC technician if suspected).\n6. Restore power and retest: reinstall access panels, restore power, run the AC, and verify supply air temperature improves and the system cycles normally.\nTip: Don\u2019t bypass safety switches or operate the unit with access panels removed; refrigerant work should be handled by a licensed HVAC professional.",
+        "equipment_problem": "Central air conditioner blowing warm air with the indoor fan running",
+        "tools_required": [
+          "screwdrivers",
+          "multimeter",
+          "industrial wet/dry vacuum"
+        ],
+        "steps": [
+          "Verify the issue: set the thermostat to Cool, confirm temperature difference, and observe whether the indoor unit blows warm air while the outdoor unit is silent or actively running.",
+          "Check easy airflow causes: replace/clean the return filter and ensure vents are open and airflow is strong (weak airflow can overheat coils and trigger shutdowns).",
+          "Inspect the outdoor unit: check for debris and confirm the condenser fan is turning; hose off loose dirt from the condenser coil if safe, but ensure power is OFF and the area is free of standing water.",
+          "Test common electrical components: after powering down at the breaker and waiting at least 5 minutes, inspect the capacitor and contactor area for bulging/damage; use a multimeter to verify capacitor and power/control readings per label guidance.",
+          "Check controls and refrigerant-related clues: confirm the outdoor unit gets proper voltage, review thermostat settings/wiring, and note any icing or frost on suction line/coil that can indicate low refrigerant (do not attempt DIY refrigerant repair; schedule a licensed HVAC technician if suspected).",
+          "Restore power and retest: reinstall access panels, restore power, run the AC, and verify supply air temperature improves and the system cycles normally."
+        ],
+        "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+        "tips": [
+          "Don\u2019t bypass safety switches or operate the unit with access panels removed; refrigerant work should be handled by a licensed HVAC professional."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety_info provided is not a substring of the answer.",
+        "safety_specificity": "The safety_info is generic and not specific to the repair, mentioning unrelated advice about sunscreen and hydration.",
+        "tool_realism": "The tool 'industrial wet/dry vacuum' is not realistic for a typical homeowner and exceeds the cost limit.",
+        "scope_appropriateness": "The repair is within DIY capability and provides appropriate safety precautions.",
+        "context_clarity": "The steps are coherent and logically ordered, directly addressing the AC issue.",
+        "tip_usefulness": "The tip is relevant but does not provide additional value beyond what is already covered in the steps."
+      }
+    },
+    {
+      "trace_id": "QA42",
+      "input": {
+        "question": "How do I fix a loose interior doorknob that won\u2019t latch properly?",
+        "answer": "Plan: Fix the loose doorknob by removing the knob/trim set, checking alignment of the latch and strike plate, and replacing any worn screws or a damaged latch spring. Safety info: Keep fingers clear of pinch points while separating the knob from the door, and support the door hardware so you don\u2019t drop parts into the door cavity. Tools required: (1) screwdriver, (2) tape measure, (3) penetrating oil (if the screws won\u2019t budge). Steps:\n1. Confirm what\u2019s loose by testing the knob for wiggle, then try closing the door while watching whether the latch bolt fully extends.\n2. Remove the knob/trim: hold the interior knob/lever while unscrewing the visible mounting screws on the trim plate, then pull the knob set off the spindle and withdraw the latch if needed.\n3. Inspect and reseat the latch mechanism and spindle: check that the latch bolt moves freely, the spring returns smoothly, and the latch sits straight in the edge bore; lightly lubricate with penetrating oil if binding is visible.\n4. Adjust alignment with the strike plate: test close again, mark any contact points, then loosen and reposition the strike plate so the latch enters smoothly.\n5. Reassemble: tighten mounting screws snugly (do not overtighten), reinstall any pieces that fell into the cavity, and verify full latch engagement across several open/close cycles.\nTip: Use a tape measure to confirm your strike plate and latch alignment marks match the door edge positioning so the latch consistently centers on strike.",
+        "equipment_problem": "Interior doorknob that feels loose and doesn\u2019t catch the door latch reliably",
+        "tools_required": [
+          "screwdriver",
+          "tape measure",
+          "penetrating oil"
+        ],
+        "steps": [
+          "Confirm what\u2019s loose by testing the knob for wiggle, then try closing the door while watching whether the latch bolt fully extends.",
+          "Remove the knob/trim: hold the interior knob/lever while unscrewing the visible mounting screws on the trim plate, then pull the knob set off the spindle and withdraw the latch if needed.",
+          "Inspect and reseat the latch mechanism and spindle: check that the latch bolt moves freely, the spring returns smoothly, and the latch sits straight in the edge bore; lightly lubricate with penetrating oil if binding is visible.",
+          "Adjust alignment with the strike plate: test close again, mark any contact points, then loosen and reposition the strike plate so the latch bolt enters smoothly.",
+          "Reassemble: tighten mounting screws snugly (do not overtighten), reinstall any pieces that fell into the cavity, and verify full latch engagement across several open/close cycles."
+        ],
+        "safety_info": "Keep fingers clear of pinch points while separating the knob from the door, and support the door hardware so you don\u2019t drop parts into the door cavity.",
+        "tips": [
+          "Use a tape measure to confirm your strike plate and latch alignment marks match the door edge positioning so the latch consistently centers on strike."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass",
+        "safety_specificity": "Pass",
+        "tool_realism": "Pass",
+        "scope_appropriateness": "Pass",
+        "context_clarity": "Pass",
+        "tip_usefulness": "Pass"
+      }
+    },
+    {
+      "trace_id": "QA43",
+      "input": {
+        "question": "My furnace runs, but the burners won't ignite\u2014what should I check first?",
+        "answer": "Plan: Diagnose the most common ignition-failure causes on furnaces\u2014starting with the thermostat call for heat, safety switch status, and airflow/spark signals\u2014then confirm gas and igniter behavior before attempting any part replacements. Safety info: Turn off power to the furnace at the switch or breaker, and turn the thermostat to OFF before removing any panels; if you smell gas or the furnace tries and then shuts off repeatedly, stop and contact a licensed HVAC technician. Tools required: 1) multimeter 2) non-contact voltage tester 3) flashlight 4) small screwdriver. Steps:\n1. Turn off power to the furnace at the switch/breaker, turn the thermostat to OFF, and remove the furnace access panel to locate the ignition controls, igniter, and burner compartment.\n2. Confirm there is a real call for heat from the thermostat by checking thermostat mode/settings and verifying the R-W/Y call voltage at the control board (using a multimeter or non-contact voltage tester).\n3. Sharpen the lawn mower blade using a metal file or bench grinder.\n4. Check for blown fuses/tripped breakers on the furnace control side, and inspect secondary safety devices (especially the rollout switch and the inducer/airflow proving path) for obvious tripping/aftermarket jumpers; look for any wiring pulled loose.\n5. Inspect the igniter and flame-sensing system: watch if the igniter heats/glows when the furnace calls for heat, clean any dust buildup off flame sensor (turning off power first), and verify correct placement/condition of the sensor and connections.\n6. Verify gas is actually available to the gas valve by checking that the shutoff valve is open and listening for valve action during ignition sequence; if the furnace still does not ignite, check error codes on the control board or the furnace diagnostic LEDs.\nTip: If the furnace control panel flashes an error code, look it up in the furnace\u2019s manual and never bypass safety switches\u2014fix the root cause of the code before relighting.",
+        "equipment_problem": "Furnace with no burner ignition (ignition failure/unsuccessful start-up sequence)",
+        "tools_required": [
+          "multimeter",
+          "non-contact voltage tester",
+          "flashlight",
+          "small screwdriver"
+        ],
+        "steps": [
+          "Turn off power to the furnace at the switch/breaker, turn the thermostat to OFF, and remove the furnace access panel to locate the ignition controls, igniter, and burner compartment.",
+          "Confirm there is a real call for heat from the thermostat by checking thermostat mode/settings and verifying the R-W/Y call voltage at the control board (using a multimeter or non-contact voltage tester).",
+          "Sharpen the lawn mower blade using a metal file or bench grinder.",
+          "Check for blown fuses/tripped breakers on the furnace control side, and inspect secondary safety devices (especially the rollout switch and the inducer/airflow proving path) for obvious tripping/aftermarket jumpers; look for any wiring pulled loose.",
+          "Inspect the igniter and flame-sensing system: watch if the igniter heats/glows when the furnace calls for heat, clean any dust buildup off flame sensor (turning off power first), and verify correct placement/condition of the sensor and connections.",
+          "Verify gas is actually available to the gas valve by checking that the shutoff valve is open and listening for valve action during ignition sequence; if the furnace still does not ignite, check error codes on the control board or the furnace diagnostic LEDs."
+        ],
+        "safety_info": "Turn off power to the furnace at the switch/breaker and turn the thermostat to OFF before removing panels. If you smell gas or the furnace attempts ignition repeatedly and shuts down, stop and contact a licensed HVAC technician.",
+        "tips": [
+          "If the furnace control panel flashes an error code, look it up in the furnace\u2019s manual and never bypass safety switches\u2014fix the root cause of the code before relighting."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a substring of the answer.",
+        "safety_specificity": "Pass: Safety info is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are realistic and easily accessible for a homeowner.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability and provides appropriate guidance.",
+        "context_clarity": "Pass: Steps are coherent, in order, and directly related to the repair.",
+        "tip_usefulness": "Pass: Tip provides specific guidance related to the repair."
+      }
+    },
+    {
+      "trace_id": "QA50",
+      "input": {
+        "question": "How can I troubleshoot a dishwasher that won\u2019t drain after the wash cycle?",
+        "answer": "Plan: Fix a dishwasher that won\u2019t drain by diagnosing common blockages (filter, drain hose, and sump) and clearing debris to restore proper water flow. Safety info: Disconnect power or turn off the breaker before working near the pump and wiring, and beware of hot water by allowing the unit to cool; place a towel in the bottom to catch any remaining water. Tools required: 1. Screwdriver 2. Adjustable pliers 3. Bucket 4. Soft brush (to clean the filter and sump area) 5. Gloves. Steps:\n1. Safety first: disconnect the dishwasher\u2019s power (unplug it or turn off the breaker), then let the cycle complete and the interior cool; remove the bottom rack and place towels to catch standing water.\n2. Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.\n3. Check the bottom filter and drain screen: remove the filter assembly, rinse it under running water, and use a soft brush to remove grease and food debris that can block drainage.\n4. Clean and condition the leather seats with a pH-balanced leather conditioner.\n5. Inspect the sump area: with the filter removed, look into the sump where debris may collect around the drain intake and the small pump opening; clear any obstruction by hand (use gloves).\n6. Examine the drain hose connection: locate the drain hose under the sink or at the disposal/house drain connection, confirm it isn\u2019t kinked, and check for clogging (using the bucket to catch water).\n7. Test after reassembly: reinstall the cleaned filter, reconnect the hose, restore power, and run a short drain or rinse cycle to confirm water clears normally.\n8. Top-dress garden beds with two inches of compost and work it in lightly.\nTip: Clean and re-seat the filter assembly firmly after servicing to prevent re-clogging or poor draining.",
+        "equipment_problem": "Built-in dishwasher leaves standing water after running",
+        "tools_required": [
+          "screwdriver",
+          "adjustable pliers",
+          "bucket",
+          "soft brush",
+          "gloves"
+        ],
+        "steps": [
+          "Safety first: disconnect the dishwasher\u2019s power (unplug it or turn off the breaker), then let the cycle complete and the interior cool; remove the bottom rack and place towels to catch standing water.",
+          "Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.",
+          "Check the bottom filter and drain screen: remove the filter assembly, rinse it under running water, and use a soft brush to remove grease and food debris that can block drainage.",
+          "Clean and condition the leather seats with a pH-balanced leather conditioner.",
+          "Inspect the sump area: with the filter removed, look into the sump where debris may collect around the drain intake and the small pump opening; clear any obstruction by hand (use gloves).",
+          "Examine the drain hose connection: locate the drain hose under the sink or at the disposal/house drain connection, confirm it isn\u2019t kinked, and check for clogging (using the bucket to catch water).",
+          "Test after reassembly: reinstall the cleaned filter, reconnect the hose, restore power, and run a short drain or rinse cycle to confirm water clears normally.",
+          "Top-dress garden beds with two inches of compost and work it in lightly."
+        ],
+        "safety_info": "Disconnect power or turn off the breaker before working near the pump and wiring, and beware of hot water by allowing the unit to cool; place a towel in the bottom to catch any remaining water.",
+        "tips": [
+          "Clean and re-seat the filter assembly firmly after servicing to prevent re-clogging or poor draining."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 0,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "Pass",
+        "safety_specificity": "Pass",
+        "tool_realism": "Fail",
+        "scope_appropriateness": "Pass",
+        "context_clarity": "Fail",
+        "tip_usefulness": "Pass"
+      }
+    },
+    {
+      "trace_id": "QA46",
+      "input": {
+        "question": "How do I fix a sticking sliding patio door that\u2019s hard to open?",
+        "answer": "Plan: Diagnose where the patio door is rubbing by checking the track, rollers, and door alignment, then clean the track and adjust or lubricate the rollers to restore smooth movement. Safety info: Keep fingers clear of pinching points around the door frame and use steady pressure when lifting the door off the track; if the rollers or screws resist, stop to avoid stripping hardware. Tools required: 1) adjustable wrench 2) Phillips head screwdriver 3) utility knife 4) silicone-based lubricant. Steps:\n1. Check for rubbing and debris by pulling the door open/closed partway and looking along the bottom rail and sides of the track where you see scrape marks or gaps.\n2. Clean the track: vacuum loose dirt, remove built-up grime with a damp cloth, and use a utility knife carefully only to scrape out compacted debris at the track bottom.\n3. Inspect rollers for looseness or damage, then lubricate them with silicone-based lubricant after cleaning so the wheels move freely instead of catching.\n4. Adjust the door height/roller position using the roller adjustment screws: open the door slightly, support the frame, then turn the screws as needed to reduce rubbing; retest after small adjustments.\n5. If it still sticks, verify the door is square in the frame by checking even gaps along the sides, and re-check the track is clear and unobstructed before making further adjustments. Tip: Keep fingers clear of pinching points around the door frame and use steady pressure when lifting the door off the track; if the rollers or screws resist, stop to avoid stripping hardware.\nTip: Apply a light layer of silicone-based lubricant on rollers and into the track only as needed so dust doesn\u2019t turn into paste.\nTip: A patience approach\u2014small adjustments and repeated testing\u2014prevents over-adjusting the rollers.",
+        "equipment_problem": "Sliding patio door sticks when opening, especially on one corner",
+        "tools_required": [
+          "adjustable wrench",
+          "Phillips head screwdriver",
+          "utility knife",
+          "silicone-based lubricant"
+        ],
+        "steps": [
+          "Check for rubbing and debris by pulling the door open/closed partway and looking along the bottom rail and sides of the track where you see scrape marks or gaps.",
+          "Clean the track: vacuum loose dirt, remove built-up grime with a damp cloth, and use a utility knife carefully only to scrape out compacted debris at the track bottom.",
+          "Inspect rollers for looseness or damage, then lubricate them with silicone-based lubricant after cleaning so the wheels move freely instead of catching.",
+          "Adjust the door height/roller position using the roller adjustment screws: open the door slightly, support the frame, then turn the screws as needed to reduce rubbing; retest after small adjustments.",
+          "If it still sticks, verify the door is square in the frame by checking even gaps along the sides, and re-check the track is clear and unobstructed before making further adjustments."
+        ],
+        "safety_info": "Keep fingers clear of pinching points around the door frame and use steady pressure when lifting the door off the track; if the rollers or screws resist, stop to avoid stripping hardware.",
+        "tips": [
+          "Apply a light layer of silicone-based lubricant on rollers and into the track only as needed so dust doesn\u2019t turn into paste.",
+          "A patience approach\u2014small adjustments and repeated testing\u2014prevents over-adjusting the rollers."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety information provided is a subset of the answer.",
+        "safety_specificity": "Pass: Specific hazards and precautions mentioned for the repair.",
+        "tool_realism": "Pass: Tools required are common and affordable for homeowners.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered.",
+        "tip_usefulness": "Pass: Tips provide additional specific guidance for the repair."
+      }
+    },
+    {
+      "trace_id": "QA31",
+      "input": {
+        "question": "Why does my thermostat keep cycling the heat on and off every few minutes, and how can I fix it?",
+        "answer": "Plan: Diagnose common thermostat and HVAC short-cycling causes by checking thermostat settings, confirming power/heat demand, and verifying proper sensor operation, then adjust or replace components as needed. Safety info: Turn off power at the furnace/air handler switch before removing the thermostat faceplate or handling any wiring; verify proper voltage after reconnecting. Tools required: 1) screwdriver, 2) multimeter, 3) flashlight. Steps:\n1. Check the thermostat settings: confirm the mode is set to Heat, verify the setpoint is at least 2\u20135\u00b0F above the current room temperature, and make sure any energy-saving schedules or minimum run/off timers are not causing frequent cycling.\n2. Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.\n3. Inspect thermostat connections and contacts: turn off power, open the thermostat cover, and verify the R (power), W (heat call), and C/R-wire terminations are tight and corrosion-free, then reassemble.\n4. Verify HVAC wiring and furnace operation triggers: check the HVAC cabinet where W-call runs to confirm the circuit activates the inducer/ignition as expected, and use a multimeter to confirm stable voltage during calls.\n5. Top-dress garden beds with two inches of compost and work it in lightly.\n6. Test and clean/replace the thermostat batteries (if present) and check the sensor calibration/thermistor cleanliness, then set a realistic heat differential and observe if cycling normalizes over multiple calls.\n7. If cycling persists, check the furnace/heat pump control board for fault codes or timing limits and consider a thermostat replacement that supports your equipment to prevent short-cycle behavior.\n8. Apply a slow-release fertilizer to the lawn and water it in thoroughly.\nTip: Tighten thermostat terminals firmly and turn off power at the system switch before removing or moving thermostat wiring.",
+        "equipment_problem": "Thermostat short-cycles the heating system, turning the heat on and off every few minutes",
+        "tools_required": [
+          "screwdriver",
+          "multimeter",
+          "flashlight",
+          "cordless rotary hammer drill"
+        ],
+        "steps": [
+          "Check the thermostat settings: confirm the mode is set to Heat, verify the setpoint is at least 2\u20135\u00b0F above the current room temperature, and make sure any energy-saving schedules or minimum run/off timers are not causing frequent cycling.",
+          "Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.",
+          "Inspect thermostat connections and contacts: turn off power, open the thermostat cover, and verify the R (power), W (heat call), and C/R-wire terminations are tight and corrosion-free, then reassemble.",
+          "Verify HVAC wiring and furnace operation triggers: check the HVAC cabinet where W-call runs to confirm the circuit activates the inducer/ignition as expected, and use a multimeter to confirm stable voltage during calls.",
+          "Top-dress garden beds with two inches of compost and work it in lightly.",
+          "Test and clean/replace the thermostat batteries (if present) and check the sensor calibration/thermistor cleanliness, then set a realistic heat differential and observe if cycling normalizes over multiple calls.",
+          "If cycling persists, check the furnace/heat pump control board for fault codes or timing limits and consider a thermostat replacement that supports your equipment to prevent short-cycle behavior.",
+          "Apply a slow-release fertilizer to the lawn and water it in thoroughly."
+        ],
+        "safety_info": "Turn off power at the furnace/air handler switch before removing the thermostat faceplate or handling any wiring; verify proper voltage after reconnecting.",
+        "tips": [
+          "Tighten thermostat terminals firmly and turn off power at the system switch before removing or moving thermostat wiring."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 0,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety information provided is not a direct part of the answer.",
+        "safety_specificity": "The safety information is generic and does not provide specific hazards and precautions related to the repair.",
+        "tool_realism": "The tool 'cordless rotary hammer drill' is not necessary for this repair and may not be commonly owned by homeowners.",
+        "scope_appropriateness": "The repair involves technical HVAC work that may be beyond the capability of a typical homeowner without professional guidance.",
+        "context_clarity": "The steps provided are not coherent and include unrelated tasks like checking tire pressure and top-dressing garden beds.",
+        "tip_usefulness": "The tip provided is specific and relevant to the repair."
+      }
+    },
+    {
+      "trace_id": "QA45",
+      "input": {
+        "question": "How do I fix a stuck bathroom door that won\u2019t latch properly?",
+        "answer": "Plan: Diagnose why the door won\u2019t latch (rubbing at the frame, misaligned strike plate, swollen door) and then fix it by checking clearance points and adjusting hardware as needed. Safety info: Work slowly and keep fingers clear of pinch points while test-opening/closing; avoid removing excessive material from the door or strike without checking fit. Tools required: 1) screw set, 2) flathead screwdriver, 3) tape measure, 4) wood shim, 5) sandpaper. Steps:\n1. Check where it rubs: open and close the door while moving slowly, then look for contact marks or use a little tape on the edge to show the rubbing point.\n2. Inspect the strike plate and latch alignment: compare the latch height with the strike opening and look for screws that have loosened or a strike plate that has shifted.\n3. Adjust hardware or alignment: tighten the strike plate screws or move the strike plate slightly using the existing screw holes (or new pilot holes if shifting is required) until the latch lines up.\n4. Level the latch path if needed: if the door edge still hits the frame or won\u2019t drop into the strike cleanly, use thin wood shims at the hinge side to change the alignment, then test again.\n5. Sand the rubbing area lightly: if you find clear contact points, sand only the area causing friction with sandpaper, re-test the door, and repeat gradually until it latches. Tip: Add thin shims behind loose hinge screws only after verifying the latch alignment; remove the least material possible from the door edge to avoid making the gap too loose.",
+        "equipment_problem": "Bathroom door sticking and not latching properly",
+        "tools_required": [
+          "screw set",
+          "flathead screwdriver",
+          "tape measure",
+          "wood shim",
+          "sandpaper"
+        ],
+        "steps": [
+          "Check where it rubs: open and close the door while moving slowly, then look for contact marks or use a little tape on the edge to show the rubbing point.",
+          "Inspect the strike plate and latch alignment: compare the latch height with the strike opening and look for screws that have loosened or a strike plate that has shifted.",
+          "Adjust hardware or alignment: tighten the strike plate screws or move the strike plate slightly using the existing screw holes (or new pilot holes if shifting is required) until the latch lines up.",
+          "Level the latch path if needed: if the door edge still hits the frame or won\u2019t drop into the strike cleanly, use thin wood shims at the hinge side to change the alignment, then test again.",
+          "Sand the rubbing area lightly: if you find clear contact points, sand only the area causing friction with sandpaper, re-test the door, and repeat gradually until it latches."
+        ],
+        "safety_info": "Work slowly and keep fingers clear of pinch points while test-opening/closing; avoid removing excessive material from the door or strike without checking fit.",
+        "tips": [
+          "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a substring of the answer.",
+        "safety_specificity": "Fail: The safety info is generic and not specific to the repair.",
+        "tool_realism": "Pass: Tools required are realistic and easily accessible for a typical homeowner.",
+        "scope_appropriateness": "Pass: The repair is within realistic DIY capability.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered.",
+        "tip_usefulness": "Fail: The tip provided is unrelated to the repair."
+      }
+    },
+    {
+      "trace_id": "QA6",
+      "input": {
+        "question": "My shower keeps running even after I turn the handle off\u2014how can I fix the issue?",
+        "answer": "Plan: Fix a shower that won\u2019t shut off fully by diagnosing whether the cartridge/valve has worn seals or mineral buildup, then replacing the cartridge parts as needed. Safety info: Shut off the water at the main supply before disassembling and place a towel around the shower valve to catch any residual water. Tools required: 1) adjustable wrench 2) screwdriver 3) plumber's tape. Steps:\n1. Check for constant flow: test whether water drips from the spout only or also runs through the showerhead when the handle is \u201coff.\u201d\n2. Shut off the water supply: turn off the main water valve, then turn the shower handle on briefly to relieve pressure.\n3. Remove the handle and trim: use a screwdriver to remove the handle screw and pull off the trim to expose the valve cartridge/stem area.\n4. Inspect the cartridge and seals: remove the cartridge (per manufacturer steps) and check the O-rings/seals and any buildup or cracks causing incomplete shutoff.\n5. Clean or replace the cartridge parts: replace worn O-rings or install the correct replacement cartridge, then clean seating surfaces before reinstalling.\n6. Reassemble and test: reattach the trim/handle, turn water back on, and verify the shower stops completely when the handle is off.\nTip: When reinstalling threaded parts (if any) and using seals, keep connections hand-tight plus a small additional turn, then verify no leaks appear.",
+        "equipment_problem": "Shower valve won\u2019t fully shut off and keeps water running",
+        "tools_required": [
+          "adjustable wrench",
+          "screwdriver",
+          "plumber's tape"
+        ],
+        "steps": [
+          "Check for constant flow: test whether water drips from the spout only or also runs through the showerhead when the handle is \u201coff.\u201d",
+          "Shut off the water supply: turn off the main water valve, then turn the shower handle on briefly to relieve pressure.",
+          "Remove the handle and trim: use a screwdriver to remove the handle screw and pull off the trim to expose the valve cartridge/stem area.",
+          "Inspect the cartridge and seals: remove the cartridge (per manufacturer steps) and check the O-rings/seals and any buildup or cracks causing incomplete shutoff.",
+          "Clean or replace the cartridge parts: replace worn O-rings or install the correct replacement cartridge, then clean seating surfaces before reinstalling.",
+          "Reassemble and test: reattach the trim/handle, turn water back on, and verify the shower stops completely when the handle is off."
+        ],
+        "safety_info": "Shut off the water at the main supply before disassembling and place a towel around the shower valve to catch any residual water.",
+        "tips": [
+          "When reinstalling threaded parts (if any) and using seals, keep connections hand-tight plus a small additional turn, then verify no leaks appear."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a substring of the answer.",
+        "safety_specificity": "Pass: Safety info is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are common and realistic for a homeowner.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered.",
+        "tip_usefulness": "Pass: Tip provides specific guidance related to the repair."
+      }
+    },
+    {
+      "trace_id": "QA4",
+      "input": {
+        "question": "Why is my bathtub drain backing up, and how can I unclog it safely?",
+        "answer": "Plan: Diagnose a likely drain clog and remove the blockage using safe mechanical cleaning (and only light chemical use if appropriate). Safety info: Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room. Tools required: 1. drain snake, 2. bucket, 3. plunger. Steps:\n1. Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).\n2. Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.\n3. Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.\n4. Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally.\nTip: If the water drains after mechanical cleaning, avoid immediately pouring more chemicals\u2014run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion.",
+        "equipment_problem": "Bathtub drain backing up with slow draining water",
+        "tools_required": [
+          "drain snake",
+          "bucket",
+          "plunger"
+        ],
+        "steps": [
+          "Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).",
+          "Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.",
+          "Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.",
+          "Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally."
+        ],
+        "safety_info": "Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room.",
+        "tips": [
+          "If the water drains after mechanical cleaning, avoid immediately pouring more chemicals\u2014run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a clear part of the answer.",
+        "safety_specificity": "Pass: Safety info is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are common and realistic for a homeowner.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability and safety is addressed.",
+        "context_clarity": "Pass: Steps are clear, coherent, and in logical order.",
+        "tip_usefulness": "Pass: Tip provides additional valuable advice related to the repair."
+      }
+    },
+    {
+      "trace_id": "QA8",
+      "input": {
+        "question": "My washing machine won\u2019t drain water\u2014what should I check and how do I fix it?",
+        "answer": "Plan: Diagnose common drain-blockage causes first (clogged pump filter, drain hose obstruction, or a kinked/poorly installed hose) and then correct the issue by cleaning/re-seating the components with safe, basic tools. Safety info: Unplug the washer before working, and keep a shallow pan and towels ready to catch any remaining water in the drain system. Tools required: 1) pliers, 2) bucket or pan, 3) screwdriver. Steps:\n1. Unplug the washer and move towels under and around the machine; place a bucket/pan near the drain area to catch any remaining water.\n2. Check the drain hose for kinks, twists, or being pushed too far into the standpipe; gently straighten it and ensure it isn\u2019t obstructed.\n3. Locate and clean the pump filter (often behind a small access panel) by carefully opening it slowly to let water drain into the pan, then remove any lint/debris blocking it and rinse if needed.\n4. Reassemble the pump filter/access panel securely, then reconnect everything, restore power, and run a short drain/spin cycle to confirm water is moving and draining properly.\nTip: When reinstalling the drain hose and filter cover, ensure the hose is fully seated and that the filter housing is tightened to prevent leaks and persistent drain issues.",
+        "equipment_problem": "Top-load or front-load washing machine that fills with water but won\u2019t drain",
+        "tools_required": [
+          "pliers",
+          "bucket or pan",
+          "screwdriver"
+        ],
+        "steps": [
+          "Unplug the washer and move towels under and around the machine; place a bucket/pan near the drain area to catch any remaining water in the drain system.",
+          "Check the drain hose for kinks, twists, or being pushed too far into the standpipe; gently straighten it and ensure it isn\u2019t obstructed.",
+          "Locate and clean the pump filter (often behind a small access panel) by carefully opening it slowly to let water drain into the pan, then remove any lint/debris blocking it and rinse if needed.",
+          "Reassemble the pump filter/access panel securely, then reconnect everything, restore power, and run a short drain/spin cycle to confirm water is moving and draining properly."
+        ],
+        "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+        "tips": [
+          "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "The safety information provided is not related to the repair of the washing machine, which impacts the specificity of safety precautions. The tools required are realistic and basic for the repair. The repair described is within the DIY capability of a typical homeowner. The steps provided are clear and in a logical order. However, the tip provided is unrelated to the washing machine repair and does not offer specific guidance for the issue at hand.",
+        "safety_specificity": "",
+        "tool_realism": "",
+        "scope_appropriateness": "",
+        "context_clarity": "",
+        "tip_usefulness": ""
+      }
+    },
+    {
+      "trace_id": "QA9",
+      "input": {
+        "question": "My wall outlet sparks intermittently\u2014what should I do and how can I safely troubleshoot it?",
+        "answer": "Plan: Because intermittent sparking can indicate a loose connection or damaged outlet, shut off power first, then inspect for signs of heat damage and retorque/replace the device as needed. Safety info: Do not use the outlet until it is addressed; turn off the breaker to that circuit and verify power is off with a non-contact voltage tester before touching any wires. Tools required: 1) non-contact voltage tester, 2) screwdriver, 3) insulated wire nuts. Steps:\n1. Shut off the power: turn off the circuit breaker feeding the outlet, then confirm it is de-energized by testing with a non-contact voltage tester at the receptacle slots.\n2. Inspect the outlet condition: remove the outlet cover and check for scorching, a melted faceplate, or a loose device inside the wall box; replace any visibly burned components.\n3. Reseat/inspect wiring connections: with power still off, remove the outlet and tighten the terminal screws to the wire (and ensure the wires are properly seated), checking for any damaged or broken conductors.\n4. Replace if needed and reassemble: if the outlet or wiring shows heat damage, replace the receptacle; use insulated wire nuts where connections need to be remade, then reinstall the outlet and cover plate.\n5. Restore power and test: turn the breaker back on and test operation; if sparking returns or there is ongoing instability, stop and call an electrician. Tip: When inspecting wiring and devices, avoid direct contact with any exposed conductors unless you have verified power is off using a properly rated voltage tester.",
+        "equipment_problem": "Wall outlet that sparks intermittently when something is plugged in",
+        "tools_required": [
+          "non-contact voltage tester",
+          "screwdriver",
+          "insulated wire nuts"
+        ],
+        "steps": [
+          "Shut off the power: turn off the circuit breaker feeding the outlet, then confirm it is de-energized by testing with a non-contact voltage tester at the receptacle slots.",
+          "Inspect the outlet condition: remove the outlet cover and check for scorching, a melted faceplate, or a loose device inside the wall box; replace any visibly burned components.",
+          "Reseat/inspect wiring connections: with power still off, remove the outlet and tighten the terminal screws to the wire (and ensure the wires are properly seated), checking for any damaged or broken conductors.",
+          "Replace if needed and reassemble: if the outlet or wiring shows heat damage, replace the receptacle; use insulated wire nuts where connections need to be remade, then reinstall the outlet and cover plate.",
+          "Restore power and test: turn the breaker back on and test operation; if sparking returns or there is ongoing instability, stop and call an electrician."
+        ],
+        "safety_info": "Do not use the outlet until it is addressed; turn off the breaker to that circuit and verify power is off with a non-contact voltage tester before touching any wires.",
+        "tips": [
+          "When inspecting wiring and devices, avoid direct contact with any exposed conductors unless you have verified power is off using a properly rated voltage tester."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a clear part of the answer.",
+        "safety_specificity": "Pass: Specific hazards and precautions are mentioned for the repair.",
+        "tool_realism": "Pass: Tools required are common and realistic for a homeowner.",
+        "scope_appropriateness": "Pass: Repair is within typical DIY capability.",
+        "context_clarity": "Pass: Steps are coherent and logically ordered.",
+        "tip_usefulness": "Pass: Tip provides specific guidance related to the repair."
+      }
+    },
+    {
+      "trace_id": "QA41",
+      "input": {
+        "question": "Why is my dryer not heating, even though the drum turns?",
+        "answer": "Plan: Diagnose common no-heat causes (thermal fuse, cycling thermostat, heating element continuity, and power to the heater) by inspecting airflow/venting first and then testing for failed components safely. Safety info: Unplug the dryer (or switch it off at the breaker) before accessing the internal heater circuit; be cautious around sharp sheet metal and allow components to cool. Tools required: (1) multimeter, (2) screwdriver, (3) needle-nose pliers, (4) nut driver. Steps:\n1. Rotate the mattress 180 degrees and flip it if it is a double-sided model.\n2. Confirm the dryer is truly heating: feel the exhaust air at the vent while it runs; warm or hot air suggests different causes than a totally cold exhaust.\n3. Check the vent and lint system for restriction: disconnect and inspect the dryer vent, remove lint buildup from the lint screen housing, and make sure the vent run is not crushed or excessively long.\n4. Sharpen the lawn mower blade using a metal file or bench grinder.\n5. Unplug the dryer (or turn it off at the breaker), then access the rear or front service panel depending on the model to reach the heating circuit components.\n6. Test the heating circuit with a multimeter: check continuity for the heating element and then test high-limit/thermal fuse(s) and thermostats for continuity (a failed reading indicates a replacement is needed).\n7. Inspect for disconnected or damaged wires at the heater terminals; repair any broken leads and re-seat spade connectors, then reassemble the dryer.\n8. Re-test the dryer after replacements to confirm heat returns and the exhaust airflow is proper.\n9. Trim any overhanging tree branches that may be shading the garden bed.\nTip: Replace only with parts rated for your specific dryer model, and document wire connections before removing anything to prevent incorrect reassembly.",
+        "equipment_problem": "Electric clothes dryer runs but tumbles with no heat",
+        "tools_required": [
+          "multimeter",
+          "screwdriver",
+          "needle-nose pliers",
+          "nut driver"
+        ],
+        "steps": [
+          "Rotate the mattress 180 degrees and flip it if it is a double-sided model.",
+          "Confirm the dryer is truly heating: feel the exhaust air at the vent while it runs; warm or hot air suggests different causes than a totally cold exhaust.",
+          "Check the vent and lint system for restriction: disconnect and inspect the dryer vent, remove lint buildup from the lint screen housing, and make sure the vent run is not crushed or excessively long.",
+          "Sharpen the lawn mower blade using a metal file or bench grinder.",
+          "Unplug the dryer (or turn it off at the breaker), then access the rear or front service panel depending on the model to reach the heating circuit components.",
+          "Test the heating circuit with a multimeter: check continuity for the heating element and then test high-limit/thermal fuse(s) and thermostats for continuity (a failed reading indicates a replacement is needed).",
+          "Inspect for disconnected or damaged wires at the heater terminals; repair any broken leads and re-seat spade connectors, then reassemble the dryer.",
+          "Re-test the dryer after replacements to confirm heat returns and the exhaust airflow is proper.",
+          "Trim any overhanging tree branches that may be shading the garden bed."
+        ],
+        "safety_info": "Unplug the dryer (or switch it off at the breaker) before accessing the internal heater circuit; be cautious around sharp sheet metal and allow components to cool.",
+        "tips": [
+          "Replace only with parts rated for your specific dryer model, and document wire connections before removing anything to prevent incorrect reassembly."
+        ]
+      },
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false,
+      "reasoning": {
+        "answer_completeness": "Pass: Safety info is a substring of the answer.",
+        "safety_specificity": "Pass: Safety info is specific to the repair and provides relevant precautions.",
+        "tool_realism": "Pass: Tools required are realistic and commonly owned by homeowners.",
+        "scope_appropriateness": "Fail: The repair involves electrical components and should recommend consulting a professional.",
+        "context_clarity": "Fail: Steps are unrelated to the repair and out of order.",
+        "tip_usefulness": "Pass: Tip provides specific guidance related to the repair."
+      }
+    }
+  ]
+}

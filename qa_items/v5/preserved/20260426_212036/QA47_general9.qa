@@ -1,0 +1,23 @@
+{
+  "question": "How can I fix a door that sticks when I open it in the winter?",
+  "answer": "Plan: Diagnose the sticking point by checking the latch, frame edges, and strike plate alignment, then sand the interfering area or adjust the hinges so the door clears smoothly. Safety info: Unload the door by supporting it during hinge checks to avoid pinched fingers, and place cardboard or a towel under the door while you test for movement. Tools required: 1. tape measure 2. pencil 3. sanding block (or orbital sander with fine grit) 4. screwdriver 5. wood shims  Steps:\n1. Check where it rubs: open the door slowly and look for scuffs, or run a pencil along the edges, then close it and inspect transfer marks.\n2. Verify alignment: inspect the hinges for looseness and check that the strike plate and latch alignment look straight; measure gaps along the top and sides with a tape measure.\n3. Fix minor rubbing: loosen hinge screws just enough to shift the door slightly, using small movements to align it, then tighten and test; insert wood shims behind a hinge if the frame is slightly out of square.\n4. Remove material conservatively: sand only the marked high spots on the door edge with a sanding block (or fine grit on an orbital sander), test the fit, and repeat until the door opens freely.\n5. Re-test after hardware movement: open and close the door a few times and ensure the latch fully engages without needing extra force.\nTip: Always avoid sanding or adjusting past the point of free movement, since removing too much material can create new drafts or improper latch engagement.",
+  "equipment_problem": "Front door sticking at the latch and rubbing against the frame",
+  "tools_required": [
+    "tape measure",
+    "pencil",
+    "sanding block (or orbital sander with fine grit)",
+    "screwdriver",
+    "wood shims"
+  ],
+  "steps": [
+    "Check where it rubs: open the door slowly and look for scuffs, or run a pencil along the edges, then close it and inspect transfer marks.",
+    "Verify alignment: inspect the hinges for looseness and check that the strike plate and latch alignment look straight; measure gaps along the top and sides with a tape measure.",
+    "Fix minor rubbing: loosen hinge screws just enough to shift the door slightly, using small movements to align it, then tighten and test; insert wood shims behind a hinge if the frame is slightly out of square.",
+    "Remove material conservatively: sand only the marked high spots on the door edge with a sanding block (or fine grit on an orbital sander), test the fit, and repeat until the door opens freely.",
+    "Re-test after hardware movement: open and close the door a few times and ensure the latch fully engages without needing extra force."
+  ],
+  "safety_info": "Unloads the door by supporting it during hinge checks to avoid pinched fingers, and place cardboard or a towel under the door while you test for movement.",
+  "tips": [
+    "Always avoid sanding or adjusting past the point of free movement, since removing too much material can create new drafts or improper latch engagement."
+  ]
+}

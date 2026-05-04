@@ -1,0 +1,17 @@
+{
+  "question": "How do I fix a loose interior doorknob that won’t latch properly?",
+  "answer": "Plan: Fix the loose doorknob by removing the knob/trim set, checking alignment of the latch and strike plate, and replacing any worn screws or a damaged latch spring. Safety info: Keep fingers clear of pinch points while separating the knob from the door, and support the door hardware so you don’t drop parts into the door cavity. Tools required: (1) screwdriver, (2) tape measure, (3) penetrating oil (if the screws won’t budge). Steps:\n1. Confirm what’s loose by testing the knob for wiggle, then try closing the door while watching whether the latch bolt fully extends.\n2. Remove the knob/trim: hold the interior knob/lever while unscrewing the visible mounting screws on the trim plate, then pull the knob set off the spindle and withdraw the latch if needed.\n3. Inspect and reseat the latch mechanism and spindle: check that the latch bolt moves freely, the spring returns smoothly, and the latch sits straight in the edge bore; lightly lubricate with penetrating oil if binding is visible.\n4. Adjust alignment with the strike plate: test close again, mark any contact points, then loosen and reposition the strike plate so the latch enters smoothly.\n5. Reassemble: tighten mounting screws snugly (do not overtighten), reinstall any pieces that fell into the cavity, and verify full latch engagement across several open/close cycles.\nTip: Use a tape measure to confirm your strike plate and latch alignment marks match the door edge positioning so the latch consistently centers on strike.",
+  "equipment_problem": "Interior doorknob that feels loose and doesn’t catch the door latch reliably",
+  "tools_required": ["screwdriver", "tape measure", "penetrating oil"],
+  "steps": [
+    "Confirm what’s loose by testing the knob for wiggle, then try closing the door while watching whether the latch bolt fully extends.",
+    "Remove the knob/trim: hold the interior knob/lever while unscrewing the visible mounting screws on the trim plate, then pull the knob set off the spindle and withdraw the latch if needed.",
+    "Inspect and reseat the latch mechanism and spindle: check that the latch bolt moves freely, the spring returns smoothly, and the latch sits straight in the edge bore; lightly lubricate with penetrating oil if binding is visible.",
+    "Adjust alignment with the strike plate: test close again, mark any contact points, then loosen and reposition the strike plate so the latch bolt enters smoothly.",
+    "Reassemble: tighten mounting screws snugly (do not overtighten), reinstall any pieces that fell into the cavity, and verify full latch engagement across several open/close cycles."
+  ],
+  "safety_info": "Keep fingers clear of pinch points while separating the knob from the door, and support the door hardware so you don’t drop parts into the door cavity.",
+  "tips": [
+    "Use a tape measure to confirm your strike plate and latch alignment marks match the door edge positioning so the latch consistently centers on strike."
+  ]
+}

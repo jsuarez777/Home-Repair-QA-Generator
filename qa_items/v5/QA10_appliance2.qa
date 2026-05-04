@@ -1,0 +1,21 @@
+{
+  "question": "My top-loading washing machine shakes loudly during the spin cycle\u2014what can I do to diagnose and fix it?",
+  "answer": "Plan: Diagnose whether the shaking comes from an unbalanced load, a leveling issue, or failing suspension/hinges, then correct the cause by redistributing the load and checking/adjusting the machine\u2019s leveling and internal shock absorbers/suspension.\nSafety info: Unplug the washer before checking components underneath or moving parts; keep hands away from the moving tub during testing; use a level and move the washer carefully to avoid strain.\nTools required:\n1. wrench\n2. screwdriver\n3. level\nSteps:\n1. Stop the cycle and pause safely: confirm no loose clothing or objects are caught around the drum, then run a small load and observe whether the vibration still happens.\n2. Check load balance and reinstall items: ensure heavy items are not clumped to one side and redistribute the laundry manually, then restart the spin cycle to see if shaking improves.\n3. Level the washer: use a level on top of the machine in both directions and adjust the leveling feet with the wrench until the washer is stable and doesn\u2019t rock.\n4. Inspect suspension components if shaking persists: unplug the washer, pull it out enough to access the underside, check suspension rods/springs or shock absorbers for wear/breaks, and replace any failing parts per the service instructions.\nTip: Replace the washer\u2019s suspension/shock parts only if you see visible damage, leaking, or severe wear\u2014don\u2019t just keep tightening to \u201chide\u201d the problem.",
+  "equipment_problem": "Top-loading washing machine shaking loudly during the spin cycle",
+  "tools_required": [
+    "wrench",
+    "screwdriver",
+    "level",
+    "thermal imaging camera"
+  ],
+  "steps": [
+    "Stop the cycle and pause safely: confirm no loose clothing or objects are caught around the drum, then run a small load and observe whether the vibration still happens.",
+    "Check load balance and reinstall items: ensure heavy items are not clumped to one side and redistribute the laundry manually, then restart the spin cycle to see if shaking improves.",
+    "Level the washer: use a level on top of the machine in both directions and adjust the leveling feet with the wrench until the washer is stable and doesn\u2019t rock.",
+    "Inspect suspension components if shaking persists: unplug the washer, pull it out enough to access the underside, check suspension rods/springs or shock absorbers for wear/breaks, and replace any failing parts per the service instructions."
+  ],
+  "safety_info": "Unplug the washer before checking components underneath or moving parts; keep hands away from the moving tub during testing; use a level and move the washer carefully to avoid strain.",
+  "tips": [
+    "Replace the washer\u2019s suspension/shock parts only if you see visible damage, leaking, or severe wear\u2014don\u2019t just keep tightening to \u201chide\u201d the problem."
+  ]
+}

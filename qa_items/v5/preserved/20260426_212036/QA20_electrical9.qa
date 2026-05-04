@@ -1,0 +1,18 @@
+{
+  "question": "Why does my circuit breaker keep tripping, and how can I fix it?",
+  "answer": "Plan: Diagnose what is causing the overload/short by checking for obvious damage, testing/resetting safely, and isolating loads one by one, then repair/replace any faulty appliance or wiring before restoring normal service. Safety info: Shut off the power at the main panel if you see signs of burning or melting, wear rubber-soled shoes and eye protection, and do not work inside the panel unless you are comfortable doing so—use a qualified electrician if anything looks scorched, loose, or wet. Tools required: 1) voltage tester, 2) insulated screwdriver, 3) flashlight. Steps:\n1. Unplug or turn off everything connected to the affected circuit (lights, outlets, and major appliances) before touching the breaker.\n2. Identify which breaker trips and note any patterns (only one room, certain appliance running, time of day), then reset the breaker fully to the OFF/ON position.\n3. Test systematically: plug devices/appliances back in one at a time (or switch them on) to find the specific device or area that immediately causes the breaker to trip.\n4. Inspect for wiring damage in that area: look for warm outlets, scorch marks, buzzing, loose cover plates, or frayed cords, then test with a voltage tester before making any changes.\n5. If the trip follows a single outlet or appliance, repair the outlet/cabling if you have verified it is safe and is minor work; otherwise replace the damaged cord/appliance and retest the breaker with the repaired load.\n6. If the breaker trips immediately with all loads removed, or if you observe burning, a damaged panel/breaker, or moisture inside the panel, stop and call a qualified electrician before resetting again.\nTip: When in doubt, turn off power at the main and use a qualified electrician—frequent tripping can indicate wiring or breaker failure that requires professional inspection.",
+  "equipment_problem": "A home circuit breaker that repeatedly trips in one area or when certain appliances run",
+  "tools_required": ["voltage tester", "insulated screwdriver", "flashlight"],
+  "steps": [
+    "Unplug or turn off everything connected to the affected circuit (lights, outlets, and major appliances) before touching the breaker.",
+    "Identify which breaker trips and note any patterns (only one room, certain appliance running, time of day), then reset the breaker fully to the OFF/ON position.",
+    "Test systematically: plug devices/appliances back in one at a time (or switch them on) to find the specific device or area that immediately causes the breaker to trip.",
+    "Inspect for wiring damage in that area: look for warm outlets, scorch marks, buzzing, loose cover plates, or frayed cords, then test with a voltage tester before making any changes.",
+    "If the trip follows a single outlet or appliance, repair the outlet/cabling if you have verified it is safe and is minor work; otherwise replace the damaged cord/appliance and retest the breaker with the repaired load.",
+    "If the breaker trips immediately with all loads removed, or if you observe burning, a damaged panel/breaker, or moisture inside the panel, stop and call a qualified electrician before resetting again."
+  ],
+  "safety_info": "Shut off the power at the main panel if you see signs of burning or melting, wear rubber-soled shoes and eye protection, and do not work inside the panel unless you are comfortable doing so—use a qualified electrician if anything looks scorched, loose, or wet.",
+  "tips": [
+    "When in doubt, turn off power at the main and use a qualified electrician—frequent tripping can indicate wiring or breaker failure that requires professional inspection."
+  ]
+}

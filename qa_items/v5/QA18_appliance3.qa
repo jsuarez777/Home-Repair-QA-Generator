@@ -1,0 +1,22 @@
+{
+  "question": "Why is my dryer taking too long to dry clothes, and how can I fix it?",
+  "answer": "Plan: Diagnose the most common causes\u2014blocked lint screen/duct airflow restrictions, a clogged vent, or a failing dryer heating cycle\u2014then restore proper airflow and verify heating operation. Safety info: Unplug the dryer before reaching behind it and avoid vacuuming or poking near the vent transition unless the power is disconnected. Tools required: [\"dryer vent brush\", \"vacuum with hose attachment\", \"screwdriver\"]. Steps:\n1. Clean the lint screen thoroughly and vacuum any lint debris from the screen housing.\n2. Rotate the mattress 180 degrees and flip it if it is a double-sided model.\n3. Pull the dryer away from the wall and disconnect the vent duct (metal vent clamps often require a screwdriver to loosen).\n4. Inspect the vent for visible lint buildup and use the dryer vent brush with the vacuum hose attachment to clear the duct run and the dryer outlet.\n5. Reattach the duct securely, check that the vent is not crushed or severely bent, then restore power and run a test cycle with the door closed.\n6. If it still takes too long, verify that the dryer is actually heating (listen/feel for warm air near the exhaust) and clean out lint around the lint trap area again; if heating is absent, the issue may be a thermostat or heating element and should be serviced.\nTip: Always wear a mask if you disturb heavy lint, and do not leave the dryer duct connected with gaps\u2014poor seals can vent hot air and lint indoors.",
+  "equipment_problem": "Clothes stay damp for many cycles in an electric dryer",
+  "tools_required": [
+    "dryer vent brush",
+    "vacuum with hose attachment",
+    "screwdriver"
+  ],
+  "steps": [
+    "Clean the lint screen thoroughly and vacuum any lint debris from the screen housing.",
+    "Rotate the mattress 180 degrees and flip it if it is a double-sided model.",
+    "Pull the dryer away from the wall and disconnect the vent duct (metal vent clamps often require a screwdriver to loosen).",
+    "Inspect the vent for visible lint buildup and use the dryer vent brush with the vacuum hose attachment to clear the duct run and the dryer outlet.",
+    "Reattach the duct securely, check that the vent is not crushed or severely bent, then restore power and run a test cycle with the door closed.",
+    "If it still takes too long, verify that the dryer is actually heating (listen/feel for warm air near the exhaust) and clean out lint around the lint trap area again; if heating is absent, the issue may be a thermostat or heating element and should be serviced."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "Always wear a mask if you disturb heavy lint, and do not leave the dryer duct connected with gaps\u2014poor seals can vent hot air and lint indoors."
+  ]
+}

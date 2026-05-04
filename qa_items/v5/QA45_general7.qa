@@ -1,0 +1,23 @@
+{
+  "question": "How do I fix a stuck bathroom door that won\u2019t latch properly?",
+  "answer": "Plan: Diagnose why the door won\u2019t latch (rubbing at the frame, misaligned strike plate, swollen door) and then fix it by checking clearance points and adjusting hardware as needed. Safety info: Work slowly and keep fingers clear of pinch points while test-opening/closing; avoid removing excessive material from the door or strike without checking fit. Tools required: 1) screw set, 2) flathead screwdriver, 3) tape measure, 4) wood shim, 5) sandpaper. Steps:\n1. Check where it rubs: open and close the door while moving slowly, then look for contact marks or use a little tape on the edge to show the rubbing point.\n2. Inspect the strike plate and latch alignment: compare the latch height with the strike opening and look for screws that have loosened or a strike plate that has shifted.\n3. Adjust hardware or alignment: tighten the strike plate screws or move the strike plate slightly using the existing screw holes (or new pilot holes if shifting is required) until the latch lines up.\n4. Level the latch path if needed: if the door edge still hits the frame or won\u2019t drop into the strike cleanly, use thin wood shims at the hinge side to change the alignment, then test again.\n5. Sand the rubbing area lightly: if you find clear contact points, sand only the area causing friction with sandpaper, re-test the door, and repeat gradually until it latches. Tip: Add thin shims behind loose hinge screws only after verifying the latch alignment; remove the least material possible from the door edge to avoid making the gap too loose.",
+  "equipment_problem": "Bathroom door sticking and not latching properly",
+  "tools_required": [
+    "screw set",
+    "flathead screwdriver",
+    "tape measure",
+    "wood shim",
+    "sandpaper"
+  ],
+  "steps": [
+    "Check where it rubs: open and close the door while moving slowly, then look for contact marks or use a little tape on the edge to show the rubbing point.",
+    "Inspect the strike plate and latch alignment: compare the latch height with the strike opening and look for screws that have loosened or a strike plate that has shifted.",
+    "Adjust hardware or alignment: tighten the strike plate screws or move the strike plate slightly using the existing screw holes (or new pilot holes if shifting is required) until the latch lines up.",
+    "Level the latch path if needed: if the door edge still hits the frame or won\u2019t drop into the strike cleanly, use thin wood shims at the hinge side to change the alignment, then test again.",
+    "Sand the rubbing area lightly: if you find clear contact points, sand only the area causing friction with sandpaper, re-test the door, and repeat gradually until it latches."
+  ],
+  "safety_info": "Work slowly and keep fingers clear of pinch points while test-opening/closing; avoid removing excessive material from the door or strike without checking fit.",
+  "tips": [
+    "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "question": "Why is my shower drain backing up and how can I unclog it safely?",
+  "answer": "Plan: Diagnose where the clog is in the shower drain line by checking for visible hair/debris near the drain and then clear it with a drain strainer puller or drain snake as needed. Safety info: Run water carefully and avoid using harsh chemicals if you may need to snake the line; turn off the water if removing any drain cover and keep hair gloves/eye protection in place. Tools required: 1) plunger 2) drain snake 3) bucket 4) wire hanger with hooked end. Steps:\n1. Check for the clog location: remove the drain cover if you can access it, then look for hair, soap buildup, or a blockage you can remove by hand.\n2. Do a bucket test and minimize mess: place a bucket under the trap/clean-out area (or beneath the drain) and run a small amount of water to see whether it drains slowly or backs up.\n3. Clear with a plunger if standing water is present: use the plunger on the shower drain with the plunger fully submerged, push firmly and pull back repeatedly, then test by running a little water.\n4. If the plunger doesn’t fix it, use a drain snake: insert the snake into the shower drain and turn/advance until you feel resistance, then rotate to grab hair/debris or break up the clog, and pull it back out.\n5. Flush and re-test: run water to confirm the shower drains normally and repeat the snaking step if water still backs up.\nTip: Avoid mixing or pouring chemical drain cleaners after mechanical snaking attempts; use one method at a time to prevent dangerous reactions.",
+  "equipment_problem": "Shower drain backing up with slow drainage and occasional standing water",
+  "tools_required": ["plunger", "drain snake", "bucket", "wire hanger with hooked end"],
+  "steps": [
+    "Check for the clog location: remove the drain cover if you can access it, then look for hair, soap buildup, or a blockage you can remove by hand.",
+    "Do a bucket test and minimize mess: place a bucket under the trap/clean-out area (or beneath the drain) and run a small amount of water to see whether it drains slowly or backs up.",
+    "Clear with a plunger if standing water is present: use the plunger on the shower drain with the plunger fully submerged, push firmly and pull back repeatedly, then test by running a little water.",
+    "If the plunger doesn’t fix it, use a drain snake: insert the snake into the shower drain and turn/advance until you feel resistance, then rotate to grab hair/debris or break up the clog, and pull it back out.",
+    "Flush and re-test: run water to confirm the shower drains normally and repeat the snaking step if water still backs up."
+  ],
+  "safety_info": "Run water carefully and avoid using harsh chemicals if you may need to snake the line; turn off the water if removing any drain cover and keep hair gloves/eye protection in place.",
+  "tips": ["Avoid mixing or pouring chemical drain cleaners after mechanical snaking attempts; use one method at a time to prevent dangerous reactions."]
+}

@@ -1,0 +1,429 @@
+{
+  "eval_version": "260503_185214",
+  "generated_at": "2026-05-03T22:52:14.056563+00:00",
+  "model": "gpt-4.1-nano",
+  "judge_prompt_version": "v3",
+  "judge_prompt": "You are a strict quality judge evaluating DIY home repair QA items, tasked with evaluating QA Items provided in JSON format against 6 quality dimensions.\nThose dimensions are: answer_completeness, safety_specificity, tool_realism, scope_appropriateness, context_clarity, tip_usefulness.\nFor each QA Item evaluated, the output will be a JSON object with an integer indicator for each quality dimension, with '0' for fail and '1' for pass.\nAdditionally, an item's evaluation output will contain a 'trace_id' field that is copied form the trace_id of the item evaluated if it is present, but is \"[NA]\" if not present.\n\n<example input>\n[\n{\n  \"trace_id\": \"QA1\",\n  \"question\": \"Why is my bathtub drain backing up, and how can I unclog it safely?\",\n  \"answer\": \"Plan: Diagnose a likely drain clog and remove the blockage using safe mechanical cleaning (and only light chemical use if appropriate). Safety info: Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room. Tools required: 1. drain snake, 2. bucket, 3. plunger. Steps:\\n1. Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).\\n2. Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.\\n3. Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.\\n4. Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally.\\nTip: If the water drains after mechanical cleaning, avoid immediately pouring more chemicals\u2014run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion.\",\n  \"equipment_problem\": \"Bathtub drain backing up with slow draining water\",\n  \"tools_required\": [\"drain snake\", \"bucket\", \"plunger\"],\n  \"steps\": [\n    \"Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).\",\n    \"Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.\",\n    \"Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.\",\n    \"Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally.\"\n  ],\n  \"safety_info\": \"Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room.\",\n  \"tips\": [\n    \"If the water drains after mechanical cleaning, avoid immediately pouring more chemicals\u2014run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion.\"\n  ]\n},\n{\n    \"trace_id\": \"QA2\",\n  \"question\": \"How do I repair a small crack in a drywall wall?\",\n  \"answer\": \"Plan: Fix the drywall crack by cleaning out debris, applying joint compound, embedding tape, and finishing with sanding and paint-ready smoothing for a flat repair. Safety info: Wear eye protection and a dust mask when sanding dried compound, and cover nearby surfaces with a drop cloth to control dust. Tools required: 1) drywall knife 2) joint compound 3) sanding block. Steps:\\n1. Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.\\n2. Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.\\n3. Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.\\n4. Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.\\n5. Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge.\\nTip: Use thin coats and feather the edges so the patch becomes harder to notice after painting.\",\n  \"equipment_problem\": \"Hairline crack running along an interior drywall wall\",\n  \"tools_required\": [\n    \"drywall knife\",\n    \"joint compound\",\n    \"sanding block\"\n  ],\n  \"steps\": [\n    \"Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.\",\n    \"Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.\",\n    \"Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.\",\n    \"Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.\",\n    \"Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge.\"\n  ],\n  \"safety_info\": \"Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.\",\n  \"tips\": [\n    \"Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn.\"\n  ]\n}\n]\n</example input>\n\n<example_output>\n[{\n  \"trace_id\": \"QA1\",\n  \"answer_completeness\": 1,\n  \"safety_specificity\": 1,\n  \"tool_realism\": 1,\n  \"scope_appropriateness\": 1,\n  \"context_clarity\": 1,\n  \"tip_usefulness\": 1\n},\n{\n  \"trace_id\": \"QA2\",\n  \"answer_completeness\": 0,  #In the example above, the \"tip\" contains a tip mentions watering plants, but that tip is not present in the \"answer\" and another tip is present that is not listed in the tip section.\n  \"safety_specificity\": 0, #In the example above, the \"safety_info\" mentions wearing sunscreen and staying hydrated, but that is not associated with a door repair.\n  \"tool_realism\": 1,\n  \"scope_appropriateness\": 1,\n  \"context_clarity\": 0, # Due to issues with tips, safety_info, and a mismatching answer section, this is not a clear example.\n  \"tip_usefulness\": 0  # A tip about watering house plants has nothing to do with door repair.\n}]\n</example_output>\n\n\nQuality criteria is below:\n<answer_completeness>\n    1. Evaluate whether the \"answer\" field reads as a complete, natural, unified response that a homeowner could follow from top to bottom.  It must also contain the content from sections: safety_info, tools_required, steps, tips.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if information from a section is missing, is only partially present, or is different between answer and the other section.  This does not apply to formatting.\n      -For example, if the answer contains a \"tip\", but the text is substantially differente between the content in the answer and the content in the \"tip\" section, then fail this dimension.\n</answer_completeness>\n\n<safety_specificity>\n    1. Evaluate whether the \"safety_info\" field names specific hazards and specific precautions relevant to this exact repair.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if safety information is generic without specific details for the repair type (\"use caution\", \"be careful\", \"stay safe\", \"wear protective equipment\" without specifying what or why)\n    4. Fail if there is no named hazard associated with this repair (e.g., electrocution risk, laceration from sharp edges, chemical burns, fall risk)\n    5. Fail if it does not state the specific precaution to take for each named hazard.\n</safety_specificity>\n\n<tool_realism>\n    1. Evaluate whether the \"tools_required\" field lists only tools a typical homeowner would realistically own or have easy access to.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if any tool listed requires a trade license or professional certification to purchase or operate.\n    4. Fail if any tool is specialized equipment not found in a typical home toolbox and not available at a general hardware store\n    5. Fail if any tool would cost more than $50 for a basic version (excludes common power tools like drills)\n</tool_realism>\n\n<scope_appropriateness>\n    1. Evaluate whether the repair described is within realistic DIY capability for a typical homeowner, and whether the answer handles the scope correctly.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if the repair involves work that is genuinely dangerous for an amateur to perform (e.g., natural gas lines, main electrical panel, load-bearing structural modifications) but the answer provides DIY instructions without strongly recommending a licensed professional\n    4. Fail if the answer provides instructions for work that requires a permit or licensed contractor in most jurisdictions without noting this.\n    5. Fail if the repair is clearly beyond the skill level of a typical homeowner and the answer does not acknowledge this\n</scope_appropriateness>\n\n<context_clarity>\n    1. The question and answer contain enough context to understand the problem, and the answer directly addresses the specific equipment_problem.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if steps are not coherent or follow logically in chronological order.\n    4. Fail if steps mention instruct the user to do something totally unrelated to the repair type or category.\n       -Example: \"Make sure the door is level\" when dealing with a clogged drain issue.\n    5. Fail if steps are out of order.\n    6. Pass if each step flows logically from one to the next.\n    7. Pass if each step is related to the prior step or to the problem being solved.\n</context_clarity>\n\n<tip_usefulness>\n    1. Evaluate whether every tip in the \"tips\" field provides non-obvious, task-specific advice that adds value beyond what is already covered in the \"steps\" field.\n    2. Respond with '1' if PASS or '0' if FAIL.\n    3. Fail if any tip offers generic encouragement or advice that applies to all repairs (\"measure twice, cut once\", \"take your time\", \"ask for help if needed\")\n    4. Fail if any tip is unrelated to the problem being solved. (eg, make sure to cut the power when repairing a standard door)\n    5. Pass if every tip provides specific, non-obvious guidance that is distinct from the steps.\n</tip_usefulness>",
+  "results": [
+    {
+      "trace_id": "QA30",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA33",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA6",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA26",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA11",
+      "answer_completeness": 1,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA3",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA12",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA35",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA19",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA47",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA31",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA27",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA4",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA42",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA46",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA22",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA45",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA8",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA1",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA24",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA16",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA23",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA9",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA10",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA15",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA28",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA32",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA2",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA34",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA37",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA25",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA50",
+      "answer_completeness": 0,
+      "safety_specificity": 0,
+      "tool_realism": 0,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA7",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA20",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA43",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA41",
+      "answer_completeness": 0,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 0,
+      "context_clarity": 0,
+      "tip_usefulness": 1,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA38",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA17",
+      "answer_completeness": 0,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA21",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    },
+    {
+      "trace_id": "QA5",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA18",
+      "answer_completeness": 0,
+      "safety_specificity": 0,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 0,
+      "tip_usefulness": 0,
+      "overall_pass": false
+    },
+    {
+      "trace_id": "QA29",
+      "answer_completeness": 1,
+      "safety_specificity": 1,
+      "tool_realism": 1,
+      "scope_appropriateness": 1,
+      "context_clarity": 1,
+      "tip_usefulness": 1,
+      "overall_pass": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "question": "Why is my thermostat blank and how can I troubleshoot/fix it?",
+  "answer": "Plan: Diagnose the power source and connection between your thermostat and HVAC system, then correct the most common issues like dead batteries, tripped power, or a loose/failed low-voltage wire before replacing anything. Safety info: Turn off HVAC power at the furnace/air handler switch or circuit breaker before opening wiring or checking terminals. Tools required: 1) non-contact voltage tester, 2) screwdriver, 3) needle-nose pliers. Steps:\n1. Check HVAC power first: go to the furnace/air handler and confirm the power switch is on, or verify the breaker that controls the system isn\u2019t tripped.\n2. Remove the thermostat faceplate and inspect the batteries/transformer connection: replace fresh batteries if it runs on batteries; confirm the thermostat wires are fully seated and there\u2019s no loose terminal screw.\n3. Verify low-voltage is reaching the thermostat: use a non-contact voltage tester (or safely test the system\u2019s 24V at the thermostat\u2019s power connection) to determine whether power is present; if no power is detected, look back to the HVAC transformer and wiring.\n4. Test the system after correcting the issue: reassemble the thermostat, restore power, set heat/cool to call, and verify the air handler/furnace responds.\nTip: Label wires before removing them and take a clear photo so you can reconnect them exactly to the same terminals.",
+  "equipment_problem": "Thermostat screen is blank and HVAC won\u2019t respond",
+  "tools_required": [
+    "non-contact voltage tester",
+    "screwdriver",
+    "needle-nose pliers",
+    "cordless rotary hammer drill"
+  ],
+  "steps": [
+    "Check HVAC power first: go to the furnace/air handler and confirm the power switch is on, or verify the breaker that controls the system isn\u2019t tripped.",
+    "Remove the thermostat faceplate and inspect the batteries/transformer connection: replace fresh batteries if it runs on batteries; confirm the thermostat wires are fully seated and there\u2019s no loose terminal screw.",
+    "Verify low-voltage is reaching the thermostat: use a non-contact voltage tester (or safely test the system\u2019s 24V at the thermostat\u2019s power connection) to determine whether power is present; if no power is detected, look back to the HVAC transformer and wiring.",
+    "Test the system after correcting the issue: reassemble the thermostat, restore power, set heat/cool to call, and verify the air handler/furnace responds."
+  ],
+  "safety_info": "Turn off HVAC power at the furnace/air handler switch or circuit breaker before opening wiring or checking terminals.",
+  "tips": [
+    "Label wires before removing them and take a clear photo so you can reconnect them exactly to the same terminals."
+  ]
+}

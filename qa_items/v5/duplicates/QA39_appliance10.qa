@@ -1,0 +1,14 @@
+{
+  "question": "My washing machine is draining slowly—what should I check and how can I fix it?",
+  "answer": "Plan: Fix a slow-draining washing machine by diagnosing whether the issue is in the drain hose, the drain pump filter/clog area, or the home drain connection, then clearing any blockages and confirming correct water evacuation during a rinse/spin test. Safety info: Unplug the washer before reaching into the pump/filter area, turn off the water supply, and keep a shallow pan and towels ready in case residual water leaks out. Tools required: 1) adjustable pliers 2) screwdriver 3) flashlight. Steps:\n1. Unplug the washing machine and shut off the water supply; put towels under the drain area and place a shallow pan under the front/bottom access point.\n2. Inspect and clear the drain hose: check for kinks, flattened sections, or clogged ends, and make sure the drain hose is not pushed too far into the standpipe.\n3. Check the drain pump filter or access cap (where applicable): open the lower access panel carefully, loosen the filter cap slowly, and remove any lint/debris blocking the pump.\n4. Reassemble and run a quick test cycle: replace the filter cap/cover and confirm the washer drains normally during a short wash/rinse/spin.\nTip: Use the flashlight to check the hose openings and pump filter area for hidden debris like coins, sock pieces, and lint buildup.",
+  "equipment_problem": "Front-load washing machine draining slowly and leaving water in the tub",
+  "tools_required": ["adjustable pliers", "screwdriver", "flashlight"],
+  "steps": [
+    "Unplug the washing machine and shut off the water supply; put towels under the drain area and place a shallow pan under the front/bottom access point.",
+    "Inspect and clear the drain hose: check for kinks, flattened sections, or clogged ends, and make sure the drain hose is not pushed too far into the standpipe.",
+    "Check the drain pump filter or access cap (where applicable): open the lower access panel carefully, loosen the filter cap slowly, and remove any lint/debris blocking the pump.",
+    "Reassemble and run a quick test cycle: replace the filter cap/cover and confirm the washer drains normally during a short wash/rinse/spin."
+  ],
+  "safety_info": "Unplug the washer before reaching into the pump/filter area, turn off the water supply, and keep a shallow pan and towels ready in case residual water leaks out.",
+  "tips": ["Use the flashlight to check the hose openings and pump filter area for hidden debris like coins, sock pieces, and lint buildup."]
+}

@@ -1,0 +1,25 @@
+{
+  "question": "Why does my thermostat keep cycling the heat on and off every few minutes, and how can I fix it?",
+  "answer": "Plan: Diagnose common thermostat and HVAC short-cycling causes by checking thermostat settings, confirming power/heat demand, and verifying proper sensor operation, then adjust or replace components as needed. Safety info: Turn off power at the furnace/air handler switch before removing the thermostat faceplate or handling any wiring; verify proper voltage after reconnecting. Tools required: 1) screwdriver, 2) multimeter, 3) flashlight. Steps:\n1. Check the thermostat settings: confirm the mode is set to Heat, verify the setpoint is at least 2\u20135\u00b0F above the current room temperature, and make sure any energy-saving schedules or minimum run/off timers are not causing frequent cycling.\n2. Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.\n3. Inspect thermostat connections and contacts: turn off power, open the thermostat cover, and verify the R (power), W (heat call), and C/R-wire terminations are tight and corrosion-free, then reassemble.\n4. Verify HVAC wiring and furnace operation triggers: check the HVAC cabinet where W-call runs to confirm the circuit activates the inducer/ignition as expected, and use a multimeter to confirm stable voltage during calls.\n5. Top-dress garden beds with two inches of compost and work it in lightly.\n6. Test and clean/replace the thermostat batteries (if present) and check the sensor calibration/thermistor cleanliness, then set a realistic heat differential and observe if cycling normalizes over multiple calls.\n7. If cycling persists, check the furnace/heat pump control board for fault codes or timing limits and consider a thermostat replacement that supports your equipment to prevent short-cycle behavior.\n8. Apply a slow-release fertilizer to the lawn and water it in thoroughly.\nTip: Tighten thermostat terminals firmly and turn off power at the system switch before removing or moving thermostat wiring.",
+  "equipment_problem": "Thermostat short-cycles the heating system, turning the heat on and off every few minutes",
+  "tools_required": [
+    "screwdriver",
+    "multimeter",
+    "flashlight",
+    "cordless rotary hammer drill"
+  ],
+  "steps": [
+    "Check the thermostat settings: confirm the mode is set to Heat, verify the setpoint is at least 2\u20135\u00b0F above the current room temperature, and make sure any energy-saving schedules or minimum run/off timers are not causing frequent cycling.",
+    "Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.",
+    "Inspect thermostat connections and contacts: turn off power, open the thermostat cover, and verify the R (power), W (heat call), and C/R-wire terminations are tight and corrosion-free, then reassemble.",
+    "Verify HVAC wiring and furnace operation triggers: check the HVAC cabinet where W-call runs to confirm the circuit activates the inducer/ignition as expected, and use a multimeter to confirm stable voltage during calls.",
+    "Top-dress garden beds with two inches of compost and work it in lightly.",
+    "Test and clean/replace the thermostat batteries (if present) and check the sensor calibration/thermistor cleanliness, then set a realistic heat differential and observe if cycling normalizes over multiple calls.",
+    "If cycling persists, check the furnace/heat pump control board for fault codes or timing limits and consider a thermostat replacement that supports your equipment to prevent short-cycle behavior.",
+    "Apply a slow-release fertilizer to the lawn and water it in thoroughly."
+  ],
+  "safety_info": "Turn off power at the furnace/air handler switch before removing the thermostat faceplate or handling any wiring; verify proper voltage after reconnecting.",
+  "tips": [
+    "Tighten thermostat terminals firmly and turn off power at the system switch before removing or moving thermostat wiring."
+  ]
+}

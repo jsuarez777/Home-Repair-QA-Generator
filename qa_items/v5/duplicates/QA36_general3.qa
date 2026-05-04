@@ -1,0 +1,16 @@
+{
+  "question": "How can I fix a running toilet that keeps refilling?",
+  "answer": "Plan: Fix the running toilet by diagnosing whether the problem is caused by the flapper not sealing or the fill valve set too high, then replacing or adjusting the toilet components with the proper water shutoff. Safety info: Turn off the toilet shutoff valve before opening the tank, and keep hands and tools clear of sharp edges inside the tank. Tools required:\n1. adjustable wrench\n2. rubber gloves\n3. sponge\nSteps:\n1. Lift the tank lid and observe the toilet during a flush to identify whether water continues to run from the overflow tube or the water level is staying too high\n2. Check the flapper seal and chain alignment by pressing the flapper down; if it stops or looks warped, replace the flapper and set the chain so there is slight slack but the flapper fully closes\n3. Inspect the fill valve and adjust water level so it is a small amount below the top of the overflow tube; if the fill valve is worn or keeps cycling, replace the fill valve parts\n4. Flush and verify the tank refills only once per flush and that water stops without continuously running; add an optional final tank water-level check and make small adjustments if needed\nTip: Mark the original fill level (with a pencil on the tank interior) before adjusting so you can return to the baseline if your first setting doesn’t stop the running.",
+  "equipment_problem": "Toilet running after a flush (refilling continuously)",
+  "tools_required": ["adjustable wrench", "rubber gloves", "sponge"],
+  "steps": [
+    "Lift the tank lid and observe the toilet during a flush to identify whether water continues to run from the overflow tube or the water level is staying too high",
+    "Check the flapper seal and chain alignment by pressing the flapper down; if it stops or looks warped, replace the flapper and set the chain so there is slight slack but the flapper fully closes",
+    "Inspect the fill valve and adjust water level so it is a small amount below the top of the overflow tube; if the fill valve is worn or keeps cycling, replace the fill valve parts",
+    "Flush and verify the tank refills only once per flush and that water stops without continuously running; add an optional final tank water-level check and make small adjustments if needed"
+  ],
+  "safety_info": "Turn off the toilet shutoff valve before opening the tank, and keep hands and tools clear of sharp edges inside the tank.",
+  "tips": [
+    "Mark the original fill level (with a pencil on the tank interior) before adjusting so you can return to the baseline if your first setting doesn\u2019t stop the running."
+  ]
+}

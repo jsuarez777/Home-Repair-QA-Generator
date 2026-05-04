@@ -1,0 +1,17 @@
+{
+  "question": "How can I patch a small hole in my drywall?",
+  "answer": "Plan: Patch the small drywall hole by removing loose edges, applying backing (if needed), covering the area with drywall patch or mesh tape, then layering joint compound and sanding for a smooth finish. Safety info: Wear a dust mask and eye protection when sanding, and cut only shallowly with a utility knife to avoid damaging wires or plumbing. Tools required: 1. utility knife, 2. putty knife, 3. joint compound (drywall mud), 4. sanding block, 5. drywall patch or self-adhesive mesh. Steps:\n1. Cut back loose drywall edges: use a utility knife to trim frayed edges until the opening is clean and solid.\n2. Add backing (if required): insert a drywall patch or use a self-adhesive mesh backing over the hole so the surface is supported.\n3. Apply the first coat of joint compound: spread joint compound over and beyond the patch with a putty knife, feathering the edges to blend into the wall.\n4. Let it dry, then sand smooth: once fully dry, sand with a sanding block until the surface is level.\n5. Add a second (or thin third) coat if needed: apply a thin layer to refine the blend, let it dry, then sand again. Tip: Always wait for compound to fully dry before sanding, and feather each new layer wider than the previous one for the smoothest transition.",
+  "equipment_problem": "Small hole in drywall from a doorknob or picture hook",
+  "tools_required": ["utility knife", "putty knife", "joint compound (drywall mud)", "sanding block", "drywall patch or self-adhesive mesh"],
+  "steps": [
+    "Cut back loose drywall edges: use a utility knife to trim frayed edges until the opening is clean and solid.",
+    "Add backing (if required): insert a drywall patch or use a self-adhesive mesh backing over the hole so the surface is supported.",
+    "Apply the first coat of joint compound: spread joint compound over and beyond the patch with a putty knife, feathering the edges to blend into the wall.",
+    "Let it dry, then sand smooth: once fully dry, sand with a sanding block until the surface is level.",
+    "Add a second (or thin third) coat if needed: apply a thin layer to refine the blend, let it dry, then sand again."
+  ],
+  "safety_info": "Wear a dust mask and eye protection when sanding, and cut only shallowly with a utility knife to avoid damaging wires or plumbing.",
+  "tips": [
+    "Always wait for compound to fully dry before sanding, and feather each new layer wider than the previous one for the smoothest transition."
+  ]
+}

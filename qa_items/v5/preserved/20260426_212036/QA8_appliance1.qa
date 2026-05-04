@@ -1,0 +1,16 @@
+{
+  "question": "My washing machine won’t drain water—what should I check and how do I fix it?",
+  "answer": "Plan: Diagnose common drain-blockage causes first (clogged pump filter, drain hose obstruction, or a kinked/poorly installed hose) and then correct the issue by cleaning/re-seating the components with safe, basic tools. Safety info: Unplug the washer before working, and keep a shallow pan and towels ready to catch any remaining water in the drain system. Tools required: 1) pliers, 2) bucket or pan, 3) screwdriver. Steps:\n1. Unplug the washer and move towels under and around the machine; place a bucket/pan near the drain area to catch any remaining water.\n2. Check the drain hose for kinks, twists, or being pushed too far into the standpipe; gently straighten it and ensure it isn’t obstructed.\n3. Locate and clean the pump filter (often behind a small access panel) by carefully opening it slowly to let water drain into the pan, then remove any lint/debris blocking it and rinse if needed.\n4. Reassemble the pump filter/access panel securely, then reconnect everything, restore power, and run a short drain/spin cycle to confirm water is moving and draining properly.\nTip: When reinstalling the drain hose and filter cover, ensure the hose is fully seated and that the filter housing is tightened to prevent leaks and persistent drain issues.",
+  "equipment_problem": "Top-load or front-load washing machine that fills with water but won’t drain",
+  "tools_required": ["pliers", "bucket or pan", "screwdriver"],
+  "steps": [
+    "Unplug the washer and move towels under and around the machine; place a bucket/pan near the drain area to catch any remaining water in the drain system.",
+    "Check the drain hose for kinks, twists, or being pushed too far into the standpipe; gently straighten it and ensure it isn’t obstructed.",
+    "Locate and clean the pump filter (often behind a small access panel) by carefully opening it slowly to let water drain into the pan, then remove any lint/debris blocking it and rinse if needed.",
+    "Reassemble the pump filter/access panel securely, then reconnect everything, restore power, and run a short drain/spin cycle to confirm water is moving and draining properly."
+  ],
+  "safety_info": "Unplug the washer before working, and keep a shallow pan and towels ready to catch any remaining water in the drain system.",
+  "tips": [
+    "When reinstalling the drain hose and filter cover, ensure the hose is fully seated and that the filter housing is tightened to prevent leaks and persistent drain issues."
+  ]
+}

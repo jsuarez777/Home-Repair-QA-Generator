@@ -1,0 +1,17 @@
+{
+  "question": "My HVAC thermostat keeps switching modes on its own (heat/cool), and the display flashes. What should I check?",
+  "answer": "Plan: Diagnose thermostat power (battery/transformer), wiring (loose or miswired leads), and HVAC equipment communication, then secure connections and replace failing power components if needed. Safety info: Turn off power to the HVAC system at the breaker before removing the thermostat cover or working on wiring. Tools required: flathead screwdriver, multimeter, screwdriver. Steps:\n1. Confirm it is electrical, not just scheduling: check the thermostat for a clock/schedule or programming mode that could be enabled, and verify whether flashing coincides with mode changes.\n2. Turn off HVAC power at the breaker, then remove the thermostat cover to inspect the terminals for any loose wires, burned contacts, or wires pulled back from their screw posts.\n3. Check power supply and replace batteries or verify C-wire presence using the multimeter as needed; if batteries/transformer voltage are unstable, it can cause the display to flash and settings to revert.\n4. Tighten/seat wires to their correct terminals, reassemble the thermostat, turn breaker back on, and observe whether the mode cycling stops after power becomes stable.\n5. If behavior continues, verify correct low-voltage configuration (single-stage heat/cool vs. heat pump auxiliary) and test the HVAC equipment operation by calling for heat/cool to ensure the unit and thermostat signals match.\nTip: Use a multimeter to confirm stable low-voltage power before concluding the thermostat is faulty.",
+  "equipment_problem": "Thermostat with a flashing display that switches heat/cool modes by itself",
+  "tools_required": ["flathead screwdriver", "multimeter", "screwdriver"],
+  "steps": [
+    "Confirm it is electrical, not just scheduling: check the thermostat for a clock/schedule or programming mode that could be enabled, and verify whether flashing coincides with mode changes.",
+    "Turn off HVAC power at the breaker, then remove the thermostat cover to inspect the terminals for any loose wires, burned contacts, or wires pulled back from their screw posts.",
+    "Check power supply and replace batteries or verify C-wire presence using the multimeter as needed; if batteries/transformer voltage are unstable, it can cause the display to flash and settings to revert.",
+    "Tighten/seat wires to their correct terminals, reassemble the thermostat, turn breaker back on, and observe whether the mode cycling stops after power becomes stable.",
+    "If behavior continues, verify correct low-voltage configuration (single-stage heat/cool vs. heat pump auxiliary) and test the HVAC equipment operation by calling for heat/cool to ensure the unit and thermostat signals match."
+  ],
+  "safety_info": "Turn off power to the HVAC system at the breaker before removing the thermostat cover or working on wiring.",
+  "tips": [
+    "Use a multimeter to confirm stable low-voltage power before concluding the thermostat is faulty."
+  ]
+}

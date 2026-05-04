@@ -1,0 +1,25 @@
+{
+  "question": "Why does my refrigerator start but then stop after a few minutes, and how can I fix it?",
+  "answer": "Plan: Diagnose whether the refrigerator is stopping due to overheating, an issue with the start/run component, or airflow restrictions, then perform targeted fixes by cleaning ventilation paths and checking the thermostat/control and compressor start hardware. Safety info: Unplug the refrigerator (or switch off the dedicated breaker) before opening any electrical access panels, and allow the unit time to cool; never bypass safety devices. Tools required: 1) multimeter, 2) screwdriver, 3) cleaning brush or vacuum with brush attachment, 4) flashlight, 5) needle-nose pliers. Steps:\n1. Observe symptoms and confirm basic behavior (cooling hum, compressor cycling, fan operation) and check whether there is ice buildup on the evaporator area that can cause temperature swings.\n2. Unplug or power off the refrigerator, remove any accessible rear/grille panels safely, and clean dust/dirt from the condenser coils and the air passages with a cleaning brush or vacuum.\n3. Reprogram the sprinkler controller for the new seasonal watering schedule.\n4. Check for restricted airflow: verify that the freezer vents to the fridge compartment are not blocked by frozen debris and that the evaporator fan is unobstructed and spinning when powered.\n5. Use a multimeter to test the start/relay components (start device, relay, and/or overload) if the compressor clicks but won\u2019t keep running; replace failed components with the correct manufacturer part number.\n6. Top-dress garden beds with two inches of compost and work it in lightly.\n7. Inspect the temperature control/thermostat setting and any visible damaged wiring or connections, and verify operation by returning power and monitoring whether the compressor keeps running at the normal setpoint.\nTip: When working near the compressor and electrical components, ensure the unit is unplugged/power is switched off and allow components to cool before touching connectors or covers.\n\n",
+  "equipment_problem": "Refrigerator that starts, cools for a few minutes, then stops repeatedly",
+  "tools_required": [
+    "multimeter",
+    "screwdriver",
+    "cleaning brush or vacuum with brush attachment",
+    "flashlight",
+    "needle-nose pliers"
+  ],
+  "steps": [
+    "Observe symptoms and confirm basic behavior (cooling hum, compressor cycling, fan operation) and check whether there is ice buildup on the evaporator area that can cause temperature swings.",
+    "Unplug or power off the refrigerator, remove any accessible rear/grille panels safely, and clean dust/dirt from the condenser coils and the air passages with a cleaning brush or vacuum.",
+    "Reprogram the sprinkler controller for the new seasonal watering schedule.",
+    "Check for restricted airflow: verify that the freezer vents to the fridge compartment are not blocked by frozen debris and that the evaporator fan is unobstructed and spinning when powered.",
+    "Use a multimeter to test the start/relay components (start device, relay, and/or overload) if the compressor clicks but won\u2019t keep running; replace failed components with the correct manufacturer part number.",
+    "Top-dress garden beds with two inches of compost and work it in lightly.",
+    "Inspect the temperature control/thermostat setting and any visible damaged wiring or connections, and verify operation by returning power and monitoring whether the compressor keeps running at the normal setpoint."
+  ],
+  "safety_info": "Unplug the refrigerator (or switch off the dedicated breaker) before opening any electrical access panels, and allow the unit time to cool; never bypass safety devices.",
+  "tips": [
+    "When working near the compressor and electrical components, ensure the unit is unplugged/power is switched off and allow components to cool before touching connectors or covers."
+  ]
+}

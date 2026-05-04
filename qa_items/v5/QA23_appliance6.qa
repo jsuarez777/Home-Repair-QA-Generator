@@ -1,0 +1,23 @@
+{
+  "question": "My washing machine drains slowly and won\u2019t fully empty\u2014what should I check and how can I fix it?",
+  "answer": "Plan: Diagnose the cause of slow draining by inspecting common restriction points (drain hose, pump filter, and standpipe connection) and clearing debris before testing the drain cycle again. Safety info: Unplug the washer before working around the pump or drain area, and shut off the water to avoid accidental leaks when you move hoses. Tools required: 1) flat-head screwdriver 2) pliers 3) a bucket 4) towels. Steps:\n1. Unplug the washing machine, then turn off the water supply hoses and place towels around the washer.\n2. Check the drain hose for clogs or restrictions by inspecting the entire hose run; straighten any kinks and look for debris near the ends.\n3. Verify the drain hose height and connection: ensure the standpipe/top-drain point isn\u2019t over-extended or too deep, and that the hose isn\u2019t pushed into the drain too far.\n4. Locate and service the pump filter/cap (usually near the bottom front) and carefully drain any residual water into a bucket.\n5. Remove any visible lint, small socks, or debris from the pump filter area, re-seat the cover, and wipe everything clean before reconnecting.\n6. Reconnect the hose, turn water back on, plug the washer in, and run a short drain/spin cycle to confirm it empties normally.\nTip: Always support and monitor any hoses while removing caps or filters so residual water drains safely into a bucket.",
+  "equipment_problem": "Washing machine with slow draining and incomplete emptying",
+  "tools_required": [
+    "flat-head screwdriver",
+    "pliers",
+    "bucket",
+    "towels"
+  ],
+  "steps": [
+    "Unplug the washing machine, then turn off the water supply hoses and place towels around the washer.",
+    "Check the drain hose for clogs or restrictions by inspecting the entire hose run; straighten any kinks and look for debris near the ends.",
+    "Verify the drain hose height and connection: ensure the standpipe/top-drain point isn\u2019t over-extended or too deep, and that the hose isn\u2019t pushed into the drain too far.",
+    "Locate and service the pump filter/cap (usually near the bottom front) and carefully drain any residual water into a bucket.",
+    "Remove any visible lint, small socks, or debris from the pump filter area, re-seat the cover, and wipe everything clean before reconnecting.",
+    "Reconnect the hose, turn water back on, plug the washer in, and run a short drain/spin cycle to confirm it empties normally."
+  ],
+  "safety_info": "Always unplug the washer before working around the pump or drain area, and shut off the water to avoid accidental leaks when you move hoses.",
+  "tips": [
+    "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+  ]
+}

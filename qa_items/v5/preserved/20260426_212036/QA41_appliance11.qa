@@ -1,0 +1,18 @@
+{
+  "question": "Why is my dryer not heating, even though the drum turns?",
+  "answer": "Plan: Diagnose common no-heat causes (thermal fuse, cycling thermostat, heating element continuity, and power to the heater) by inspecting airflow/venting first and then testing for failed components safely. Safety info: Unplug the dryer (or switch it off at the breaker) before accessing the internal heater circuit; be cautious around sharp sheet metal and allow components to cool. Tools required: (1) multimeter, (2) screwdriver, (3) needle-nose pliers, (4) nut driver. Steps:\n1. Confirm the dryer is truly heating: feel the exhaust air at the vent while it runs; warm or hot air suggests different causes than a totally cold exhaust.\n2. Check the vent and lint system for restriction: disconnect and inspect the dryer vent, remove lint buildup from the lint screen housing, and make sure the vent run is not crushed or excessively long.\n3. Unplug the dryer (or turn it off at the breaker), then access the rear or front service panel depending on the model to reach the heating circuit components.\n4. Test the heating circuit with a multimeter: check continuity for the heating element and then test high-limit/thermal fuse(s) and thermostats for continuity (a failed reading indicates a replacement is needed).\n5. Inspect for disconnected or damaged wires at the heater terminals; repair any broken leads and re-seat spade connectors, then reassemble the dryer.\n6. Re-test the dryer after replacements to confirm heat returns and the exhaust airflow is proper.\nTip: Replace only with parts rated for your specific dryer model, and document wire connections before removing anything to prevent incorrect reassembly.",
+  "equipment_problem": "Electric clothes dryer runs but tumbles with no heat",
+  "tools_required": ["multimeter", "screwdriver", "needle-nose pliers", "nut driver"],
+  "steps": [
+    "Confirm the dryer is truly heating: feel the exhaust air at the vent while it runs; warm or hot air suggests different causes than a totally cold exhaust.",
+    "Check the vent and lint system for restriction: disconnect and inspect the dryer vent, remove lint buildup from the lint screen housing, and make sure the vent run is not crushed or excessively long.",
+    "Unplug the dryer (or turn it off at the breaker), then access the rear or front service panel depending on the model to reach the heating circuit components.",
+    "Test the heating circuit with a multimeter: check continuity for the heating element and then test high-limit/thermal fuse(s) and thermostats for continuity (a failed reading indicates a replacement is needed).",
+    "Inspect for disconnected or damaged wires at the heater terminals; repair any broken leads and re-seat spade connectors, then reassemble the dryer.",
+    "Re-test the dryer after replacements to confirm heat returns and the exhaust airflow is proper."
+  ],
+  "safety_info": "Unplug the dryer (or switch it off at the breaker) before accessing the internal heater circuit; be cautious around sharp sheet metal and allow components to cool.",
+  "tips": [
+    "Replace only with parts rated for your specific dryer model, and document wire connections before removing anything to prevent incorrect reassembly."
+  ]
+}

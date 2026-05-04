@@ -1,0 +1,22 @@
+{
+  "question": "How do I repair a small drywall hole in a wall?",
+  "answer": "Plan: Fix the small drywall hole by cutting away any loose edges, backing the opening if needed, then filling with spackle/joint compound, sanding smooth, and matching texture/paint so the patch blends in. Safety info: Wear a dust mask and safety glasses when sanding or scraping to avoid inhaling drywall dust; turn off power to nearby outlets if you need to remove or work around wiring. Tools required: 1) putty knife 2) sanding block 3) utility knife 4) drywall patch/mesh patch. Steps:\n1. Remove loose drywall edges: cut back any torn or crumbling paper/drywall around the hole until you have a solid, flat perimeter.\n2. Fit a backing/patch: if the hole is small, press a self-adhesive mesh patch over the opening; if the edges need support, add a lightweight backing (such as a piece of drywall or furring) and screw/adhere it as appropriate.\n3. Apply joint compound/spackle in layers: spread compound over the hole and patch with the putty knife, feathering out the edges; allow it to dry fully, then apply additional thin layers as needed to level the surface.\n4. Sand smooth: once dry, sand the patch area until it’s flush with the surrounding wall and the edges disappear.\n5. Finish and match: wipe away dust, prime if needed (especially for exposed paper), then paint to match the wall color.\nTip: Blend the final coat thinly and feather the edges wider each layer for the smoothest, least noticeable repair.",
+  "equipment_problem": "Small drywall hole with a torn edge in an indoor wall",
+  "tools_required": [
+    "putty knife",
+    "sanding block",
+    "utility knife",
+    "drywall patch/mesh patch"
+  ],
+  "steps": [
+    "Remove loose drywall edges: cut back any torn or crumbling paper/drywall around the hole until you have a solid, flat perimeter.",
+    "Fit a backing/patch: if the hole is small, press a self-adhesive mesh patch over the opening; if the edges need support, add a lightweight backing (such as a piece of drywall or furring) and screw/adhere it as appropriate.",
+    "Apply joint compound/spackle in layers: spread compound over the hole and patch with the putty knife, feathering out the edges; allow it to dry fully, then apply additional thin layers as needed to level the surface.",
+    "Sand smooth: once dry, sand the patch area until it’s flush with the surrounding wall and the edges disappear.",
+    "Finish and match: wipe away dust, prime if needed (especially for exposed paper), then paint to match the wall color."
+  ],
+  "safety_info": "Wear a dust mask and safety glasses when sanding or scraping to avoid inhaling drywall dust; turn off power to nearby outlets if you need to remove or work around wiring.",
+  "tips": [
+    "Blend the final coat thinly and feather the edges wider each layer for the smoothest, least noticeable repair."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "question": "Why does my outlet stop working when I press the plug into it, and how can I fix it?",
+  "answer": "Plan: Diagnose loose or damaged outlet connections (hot/neutral wires) and either re-secure the device in the box or replace the outlet if the receptacle contacts are worn, ensuring power is off and terminals are properly tightened. Safety info: Turn off the breaker that feeds the outlet before touching any wiring; verify power is truly off with a non-contact voltage tester. Tools required: 1) screwdrivers 2) non-contact voltage tester 3) wire stripper/cutter 4) needle-nose pliers 5) electrical tape. Steps:\n1. Turn off power to the outlet at the breaker, then test the outlet with a non-contact voltage tester to confirm it is not live.\n2. Remove the outlet cover and screws, gently pull the receptacle out without pulling on the wires.\n3. Check for looseness at the terminal screws and reseat the hot and neutral wires by tightening the screws (make sure strands are fully under the terminal, not out).\n4. If the receptacle is visibly damaged or if contacts feel worn, disconnect the wires (label positions) and replace the outlet with an identical type and rating, then reconnect wires securely.\n5. Tuck wires back carefully, re-seat the receptacle in the box, and reinstall the cover plate; restore power at the breaker and test with the same plug and a lamp/test device.\nTip: If you see any burning marks, melting, or frequent arcing on the receptacle or inside the box, stop and consider replacing the device and having the circuit inspected, since those are signs of heat damage.",
+  "equipment_problem": "A wall outlet that works only when the plug is pressed in",
+  "tools_required": [
+    "screwdrivers",
+    "non-contact voltage tester",
+    "wire stripper/cutter",
+    "needle-nose pliers",
+    "electrical tape",
+    "industrial wet/dry vacuum"
+  ],
+  "steps": [
+    "Turn off power to the outlet at the breaker, then test the outlet with a non-contact voltage tester to confirm it is not live.",
+    "Remove the outlet cover and screws, gently pull the receptacle out without pulling on the wires.",
+    "Check for looseness at the terminal screws and reseat the hot and neutral wires by tightening the screws (make sure strands are fully under the terminal, not out).",
+    "If the receptacle is visibly damaged or if contacts feel worn, disconnect the wires (label positions) and replace the outlet with an identical type and rating, then reconnect wires securely.",
+    "Tuck wires back carefully, re-seat the receptacle in the box, and reinstall the cover plate; restore power at the breaker and test with the same plug and a lamp/test device."
+  ],
+  "safety_info": "Turn off the breaker that feeds the outlet before touching any wiring; verify power is truly off with a non-contact voltage tester.",
+  "tips": [
+    "If you see any burning marks, melting, or frequent arcing on the receptacle or inside the box, stop and consider replacing the device and having the circuit inspected, since those are signs of heat damage."
+  ]
+}

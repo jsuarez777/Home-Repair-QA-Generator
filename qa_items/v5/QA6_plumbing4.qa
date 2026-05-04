@@ -1,0 +1,18 @@
+{
+  "question": "My shower keeps running even after I turn the handle off—how can I fix the issue?",
+  "answer": "Plan: Fix a shower that won’t shut off fully by diagnosing whether the cartridge/valve has worn seals or mineral buildup, then replacing the cartridge parts as needed. Safety info: Shut off the water at the main supply before disassembling and place a towel around the shower valve to catch any residual water. Tools required: 1) adjustable wrench 2) screwdriver 3) plumber's tape. Steps:\n1. Check for constant flow: test whether water drips from the spout only or also runs through the showerhead when the handle is “off.”\n2. Shut off the water supply: turn off the main water valve, then turn the shower handle on briefly to relieve pressure.\n3. Remove the handle and trim: use a screwdriver to remove the handle screw and pull off the trim to expose the valve cartridge/stem area.\n4. Inspect the cartridge and seals: remove the cartridge (per manufacturer steps) and check the O-rings/seals and any buildup or cracks causing incomplete shutoff.\n5. Clean or replace the cartridge parts: replace worn O-rings or install the correct replacement cartridge, then clean seating surfaces before reinstalling.\n6. Reassemble and test: reattach the trim/handle, turn water back on, and verify the shower stops completely when the handle is off.\nTip: When reinstalling threaded parts (if any) and using seals, keep connections hand-tight plus a small additional turn, then verify no leaks appear.",
+  "equipment_problem": "Shower valve won’t fully shut off and keeps water running",
+  "tools_required": ["adjustable wrench", "screwdriver", "plumber's tape"],
+  "steps": [
+    "Check for constant flow: test whether water drips from the spout only or also runs through the showerhead when the handle is “off.”",
+    "Shut off the water supply: turn off the main water valve, then turn the shower handle on briefly to relieve pressure.",
+    "Remove the handle and trim: use a screwdriver to remove the handle screw and pull off the trim to expose the valve cartridge/stem area.",
+    "Inspect the cartridge and seals: remove the cartridge (per manufacturer steps) and check the O-rings/seals and any buildup or cracks causing incomplete shutoff.",
+    "Clean or replace the cartridge parts: replace worn O-rings or install the correct replacement cartridge, then clean seating surfaces before reinstalling.",
+    "Reassemble and test: reattach the trim/handle, turn water back on, and verify the shower stops completely when the handle is off."
+  ],
+  "safety_info": "Shut off the water at the main supply before disassembling and place a towel around the shower valve to catch any residual water.",
+  "tips": [
+    "When reinstalling threaded parts (if any) and using seals, keep connections hand-tight plus a small additional turn, then verify no leaks appear."
+  ]
+}

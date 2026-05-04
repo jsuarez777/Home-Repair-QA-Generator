@@ -1,0 +1,18 @@
+{
+  "question": "Why is my bathroom sink drain backing up when I run the faucet, and how can I fix it?",
+  "answer": "Plan: Diagnose whether the clog is in the P-trap, the trap arm, or deeper in the drain line, then clear the blockage using safe mechanical methods first. Safety info: Stop water use immediately and use a drain bucket to contain debris; avoid using chemical drain cleaners on the trap while you’re working. Tools required: 1. plunger 2. drain auger (toilet/hand) 3. bucket  Steps:\n1. Check the symptom and confirm where it’s failing: run a little water and watch if it drains slowly, backs up in the sink, or gurgles.\n2. Use a bucket to catch water and debris: loosen the slip nuts under the sink (P-trap side connections) and gently pull the P-trap down over the bucket.\n3. Clear the clog locally: inspect the P-trap and remove any hair/soap buildup, then rinse and reassemble loosely.\n4. Test flow before reinstalling everything: run water briefly to see if it drains normally; if it still backs up, the clog is further down.\n5. Use a drain auger to clear deeper: feed the auger into the drain from the sink outlet and rotate/advance until resistance clears, then pull back and flush with water.\n6. Reassemble and confirm the fix: fully tighten connections and run water again to ensure the sink drains without backup or gurgling.\nTip: Use a drain auger instead of aggressive chemicals for clogs you can reach, since chemicals can react unpredictably with existing residue and may damage plumbing surfaces.\nTip: Use a drain auger instead of aggressive chemicals for clogs you can reach, since chemicals can react unpredictably with existing residue and may damage plumbing surfaces.",
+  "equipment_problem": "Bathroom sink draining slowly and backing up in the basin when the faucet runs",
+  "tools_required": ["plunger", "drain auger (toilet/hand)", "bucket"],
+  "steps": [
+    "Check the symptom and confirm where it’s failing: run a little water and watch if it drains slowly, backs up in the sink, or gurgles.",
+    "Use a bucket to catch water and debris: loosen the slip nuts under the sink (P-trap side connections) and gently pull the P-trap down over the bucket.",
+    "Clear the clog locally: inspect the P-trap and remove any hair/soap buildup, then rinse and reassemble loosely.",
+    "Test flow before reinstalling everything: run water briefly to see if it drains normally; if it still backs up, the clog is further down.",
+    "Use a drain auger to clear deeper: feed the auger into the drain from the sink outlet and rotate/advance until resistance clears, then pull back and flush with water.",
+    "Reassemble and confirm the fix: fully tighten connections and run water again to ensure the sink drains without backup or gurgling."
+  ],
+  "safety_info": "Stop water use immediately and use a drain bucket to contain debris; avoid using chemical drain cleaners on the trap while you’re working.",
+  "tips": [
+    "Use a drain auger instead of aggressive chemicals for clogs you can reach, since chemicals can react unpredictably with existing residue and may damage plumbing surfaces."
+  ]
+}

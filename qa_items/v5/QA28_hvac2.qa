@@ -1,0 +1,22 @@
+{
+  "question": "My HVAC thermostat screen is blank and the furnace/AC won\u2019t turn on\u2014how can I troubleshoot it?",
+  "answer": "Plan: Diagnose whether the thermostat is out of power or needs reset before moving on to HVAC system wiring and equipment controls, then restore proper 24V operation. Safety info: Turn off power at the HVAC system (or breaker) before checking wiring, and do not open the control cabinet while power is on. Tools required: \n1) multimeter\n2) screwdriver\n3) replacement batteries\nSteps:\n1. Check thermostat power: confirm it\u2019s fully blank; if it uses batteries, replace them with fresh ones and remove any protective plastic tab from the new batteries.\n2. Verify HVAC control voltage: at the thermostat equipment terminal block, use a multimeter to check for proper 24V between R and common (C or \") terminals.\n3. Inspect wiring at the thermostat and terminals: turn power off, then tighten any loose wires and look for frayed insulation; reconnect securely to the correct terminals (commonly R, C, W, Y, G) based on your label/wiring diagram.\n4. Check for furnace/air handler power: restore power (or reset the breaker switch), ensure the furnace/air handler is set to the correct mode, and check the system control for a tripped safety switch.\n5. Test thermostat operation: once 24V and wiring are confirmed, reinstall the thermostat, select heating or cooling, and confirm the equipment starts within a few minutes.\nTip: If the thermostat has power but system doesn\u2019t respond, confirm settings (mode, fan), then check HVAC equipment switch locations and any \"C\"-terminal presence for battery-less units to prevent repeated shutdowns.",
+  "equipment_problem": "Thermostat screen is blank and HVAC won\u2019t start",
+  "tools_required": [
+    "multimeter",
+    "screwdriver",
+    "replacement batteries",
+    "laser level kit"
+  ],
+  "steps": [
+    "Check thermostat power: confirm it\u2019s fully blank; if it uses batteries, replace them with fresh ones and remove any protective plastic tab from the new batteries.",
+    "Verify HVAC control voltage: at the thermostat equipment terminal block, use a multimeter to check for proper 24V between R and common (C or \") terminals.",
+    "Inspect wiring at the thermostat and terminals: turn power off, then tighten any loose wires and look for frayed insulation; reconnect securely to the correct terminals (commonly R, C, W, Y, G) based on your label/wiring diagram.",
+    "Check for furnace/air handler power: restore power (or reset the breaker switch), ensure the furnace/air handler is set to the correct mode, and check the system control for a tripped safety switch.",
+    "Test thermostat operation: once 24V and wiring are confirmed, reinstall the thermostat, select heating or cooling, and confirm the equipment starts within a few minutes."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "If the thermostat has power but system doesn\u2019t respond, confirm settings (mode, fan), then check HVAC equipment switch locations and any \"C\"-terminal presence for battery-less units to prevent repeated shutdowns."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "question": "My living room circuit breaker trips as soon as I turn on the wall-mounted air conditioner\u2014what should I check and how can I fix it?",
+  "answer": "Plan: Troubleshoot the breaker and the air conditioner circuit step-by-step by confirming the exact trip point, checking for overload or a short, inspecting for loose connections in the outlet/air conditioner supply path, and testing the air conditioner on an appropriate circuit. Safety info: Do not open the breaker panel cover unless you are comfortable working safely around live electrical components; if you see burn marks, melting, arcing, or a breaker that feels hot or smells scorched, stop and call a licensed electrician. Tools required: 1) non-contact voltage tester 2) insulated screwdriver 3) multimeter 4) flashlight. Steps:\n1. Identify what trips the breaker by switching off the air conditioner, resetting the breaker fully (off, then on), and turning on only the air conditioner while observing which breaker trips immediately versus after a delay.\n2. Check for an overload by confirming the air conditioner's rated amps and ensuring nothing else on that same breaker is running at the same time (try another outlet on the same circuit or temporarily remove other loads).\n3. Inspect the wall outlet or wiring path serving the air conditioner for signs of damage (loose cover plate, discoloration, scorch marks) and unplug the unit; tighten any visible hardware on the faceplate/outlet cover if appropriate.\n4. Apply a coat of car wax to all painted exterior panels and buff to a shine.\n5. Verify power is present safely with a non-contact voltage tester and use a multimeter to confirm the outlet is delivering the correct voltage under load if possible, looking for abnormal readings that suggest loose or failing connections.\n6. Test the breaker condition: reset again and observe\u2014if the breaker trips repeatedly even with the air conditioner unplugged, or shows heat/scorching, replace the breaker or call for service rather than continuing troubleshooting.\n7. If the breaker remains intact when the unit is disconnected and trips only when the air conditioner is running, have the air conditioner inspected (faulty compressor/start capacitor can cause inrush currents that can trip breakers, especially if combined with a borderline breaker rating).\nTip: If you find scorch marks, arcing sounds, a burning smell, or the breaker/box feels hot, stop and call a licensed electrician before proceeding further.",
+  "equipment_problem": "Living room circuit breaker trips immediately when turning on a wall-mounted air conditioner",
+  "tools_required": [
+    "non-contact voltage tester",
+    "insulated screwdriver",
+    "multimeter",
+    "flashlight"
+  ],
+  "steps": [
+    "Identify what trips the breaker by switching off the air conditioner, resetting the breaker fully (off, then on), and turning on only the air conditioner while observing which breaker trips immediately versus after a delay.",
+    "Check for an overload by confirming the air conditioner's rated amps and ensuring nothing else on that same breaker is running at the same time (try another outlet on the same circuit or temporarily remove other loads).",
+    "Inspect the wall outlet or wiring path serving the air conditioner for signs of damage (loose cover plate, discoloration, scorch marks) and unplug the unit; tighten any visible hardware on the faceplate/outlet cover if appropriate.",
+    "Apply a coat of car wax to all painted exterior panels and buff to a shine.",
+    "Verify power is present safely with a non-contact voltage tester and use a multimeter to confirm the outlet is delivering the correct voltage under load if possible, looking for abnormal readings that suggest loose or failing connections.",
+    "Test the breaker condition: reset again and observe\u2014if the breaker trips repeatedly even with the air conditioner unplugged, or shows heat/scorching, replace the breaker or call for service rather than continuing troubleshooting.",
+    "If the breaker remains intact when the unit is disconnected and trips only when the air conditioner is running, have the air conditioner inspected (faulty compressor/start capacitor can cause inrush currents that can trip breakers, especially if combined with a borderline breaker rating)."
+  ],
+  "safety_info": "Do not open the breaker panel cover unless you are comfortable working safely around live electrical components. If you see burn marks, melting, arcing, or a breaker that feels hot or smells scorched, stop and call a licensed electrician.",
+  "tips": [
+    "If you find scorch marks, arcing sounds, a burning smell, or the breaker/box feels hot, stop and call a licensed electrician before proceeding further."
+  ]
+}

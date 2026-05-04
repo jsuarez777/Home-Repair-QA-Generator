@@ -1,0 +1,17 @@
+{
+  "question": "My furnace won’t blow warm air—what should I check first?",
+  "answer": "Plan: Troubleshoot common furnace airflow and ignition issues step-by-step, then restore safe operation by correcting any failed filters, improper thermostat settings, or burner/limit problems. Safety info: Shut off power to the furnace at the switch (or breaker) before opening the blower compartment, and never bypass the rollout/limit switches. Tools required: 1) multimeter 2) flathead screwdriver 3) needle-nose pliers 4) flashlight. Steps:\n1. Check thermostat and mode settings: confirm it is set to Heat, the fan is set to Auto (not On), and raise the setpoint above the current room temperature.\n2. Inspect the air filter and returns: turn off the furnace, replace a dirty/fully blocked filter, and verify supply/return vents aren’t obstructed.\n3. Verify power and blower start: reset the furnace (using the control board reset button if present) and confirm the furnace has electrical power; then test whether the blower motor runs when there’s a call for heat.\n4. If there is still no heat, check ignition sequence basics: look for an ignition attempt (hot surface igniter glowing or burner ignition), and confirm gas shutoff valve is fully open.\n5. Check limit/lockout condition and correct the fault: look for LED/status codes on the furnace control board; clear a nuisance lockout only if airflow issues are resolved, then restart and observe the ignition/operation.\nTip: When reconnecting electrical/low-voltage leads, take a clear photo before removing wires so you can return them to the same terminals correctly.",
+  "equipment_problem": "Furnace blowing cool or no air when calling for heat",
+  "tools_required": ["multimeter", "flathead screwdriver", "needle-nose pliers", "flashlight"],
+  "steps": [
+    "Check thermostat and mode settings: confirm it is set to Heat, the fan is set to Auto (not On), and raise the setpoint above the current room temperature.",
+    "Inspect the air filter and returns: turn off the furnace, replace a dirty/fully blocked filter, and verify supply/return vents aren’t obstructed.",
+    "Verify power and blower start: reset the furnace (using the control board reset button if present) and confirm the furnace has electrical power; then test whether the blower motor runs when there’s a call for heat.",
+    "If there is still no heat, check ignition sequence basics: look for an ignition attempt (hot surface igniter glowing or burner ignition), and confirm gas shutoff valve is fully open.",
+    "Check limit/lockout condition and correct the fault: look for LED/status codes on the furnace control board; clear a nuisance lockout only if airflow issues are resolved, then restart and observe the ignition/operation."
+  ],
+  "safety_info": "Shut off power to the furnace at the switch (or breaker) before opening the blower compartment, and never bypass the rollout/limit switches.",
+  "tips": [
+    "When reconnecting electrical/low-voltage leads, take a clear photo before removing wires so you can return them to the same terminals correctly."
+  ]
+}

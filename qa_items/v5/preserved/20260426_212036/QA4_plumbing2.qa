@@ -1,0 +1,16 @@
+{
+  "question": "Why is my bathtub drain backing up, and how can I unclog it safely?",
+  "answer": "Plan: Diagnose a likely drain clog and remove the blockage using safe mechanical cleaning (and only light chemical use if appropriate). Safety info: Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room. Tools required: 1. drain snake, 2. bucket, 3. plunger. Steps:\n1. Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).\n2. Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.\n3. Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.\n4. Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally.\nTip: If the water drains after mechanical cleaning, avoid immediately pouring more chemicals—run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion.",
+  "equipment_problem": "Bathtub drain backing up with slow draining water",
+  "tools_required": ["drain snake", "bucket", "plunger"],
+  "steps": [
+    "Check where the water is coming to the surface: run a small amount of water and observe whether it backs up slowly (partial clog) or instantly with no drainage (deeper blockage).",
+    "Remove the drain stopper and debris: unscrew or lift out the drain stopper/strainer, then pull out visible hair and gunk; collect any debris with a bucket.",
+    "Plunge to dislodge: fill the tub so the plunger cup seals (about 1 to 2 inches of water), place the plunger over the drain, and do 15 to 20 firm pushes; check for improved flow.",
+    "Use a drain snake if the clog persists: feed the drain snake into the drain until you feel resistance, rotate to catch the obstruction, then pull it out; repeat until water drains normally."
+  ],
+  "safety_info": "Avoid mixing chemical drain cleaners with other chemicals; keep the area ventilated and never apply harsh chemicals directly if you have a clog near an overflow or you see standing wastewater backing into the room.",
+  "tips": [
+    "If the water drains after mechanical cleaning, avoid immediately pouring more chemicals—run water for a while to confirm the clog is fully cleared and to prevent hidden residue from causing leaks or corrosion."
+  ]
+}

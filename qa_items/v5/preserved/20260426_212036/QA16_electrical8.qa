@@ -1,0 +1,17 @@
+{
+  "question": "Why does my bathroom GFCI outlet keep tripping and how can I fix it safely?",
+  "answer": "Plan: Diagnose the cause of the GFCI outlet tripping (check for moisture, miswiring, or an overloaded circuit), then either reset it after cleanup or rewire/replace the device if tests indicate an internal failure or wiring issue. Safety info: Turn off power at the breaker before removing the outlet; if the outlet or surrounding wall is wet or smells burnt, stop and call an electrician. Tools required: (1) non-contact voltage tester, (2) insulated screwdriver set, (3) needle-nose pliers, (4) wire stripper/utility knife. Steps:\n1. Verify what’s tripping it: unplug all devices downstream of the outlet, then press the outlet’s \"Reset\" button and observe whether it holds.\n2. Check for moisture or physical damage: inspect the outlet face, nearby backsplash/caulk area, and any stains, cracks, or water seepage, and dry/clean if necessary.\n3. Test for live wiring safely: with a non-contact voltage tester, confirm the outlet is receiving power only after troubleshooting starts, and before touching wires confirm power is off by testing at the device once the breaker is off.\n4. Inspect and fix wiring: remove the cover, tighten loose screw terminals, confirm the line wires (incoming) are on the \"LINE\" side and any protected downstream wires are on the \"LOAD\" side, then check for damaged insulation and trim/strip and reterminate as needed.\n5. Restore power and retest: turn the breaker back on, press \"Reset,\" and then plug devices back in one at a time (or use only the device you suspect) to identify any short, ground fault, or overloaded load.\nTip: Always shut off power at the breaker before touching any wiring, and test for de-energized conductors before proceeding.",
+  "equipment_problem": "Bathroom GFCI outlet that trips repeatedly",
+  "tools_required": ["non-contact voltage tester", "insulated screwdriver set", "needle-nose pliers", "wire stripper/utility knife"],
+  "steps": [
+    "Verify what’s tripping it: unplug all devices downstream of the outlet, then press the outlet’s \"Reset\" button and observe whether it holds.",
+    "Check for moisture or physical damage: inspect the outlet face, nearby backsplash/caulk area, and any stains, cracks, or water seepage, and dry/clean if necessary.",
+    "Test for live wiring safely: with a non-contact voltage tester, confirm the outlet is receiving power only after troubleshooting starts, and before touching wires confirm power is off by testing at the device once the breaker is off.",
+    "Inspect and fix wiring: remove the cover, tighten loose screw terminals, confirm the line wires (incoming) are on the \"LINE\" side and any protected downstream wires are on the \"LOAD\" side, then check for damaged insulation and trim/strip and reterminate as needed.",
+    "Restore power and retest: turn the breaker back on, press \"Reset,\" and then plug devices back in one at a time (or use only the device you suspect) to identify any short, ground fault, or overloaded load."
+  ],
+  "safety_info": "Turn off power at the breaker before removing the outlet; if the outlet or surrounding wall is wet or smells burnt, stop and call an electrician.",
+  "tips": [
+    "Always shut off power at the breaker before touching any wiring, and test for de-energized conductors before proceeding."
+  ]
+}

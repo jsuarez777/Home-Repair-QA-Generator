@@ -1,0 +1,18 @@
+{
+  "question": "Why is my refrigerator not cooling enough, and what can I check before calling for service?",
+  "answer": "Plan: Troubleshoot an under-cooling refrigerator by checking common causes like airflow issues, the condenser fan, the evaporator fan, temperature settings, and basic defrost/ice buildup—then reset and verify temperatures. Safety info: Unplug the refrigerator before accessing internal components, avoid touching hot compressor/condenser parts, and give the unit time to stabilize after each check. Tools required:  screwdriver, multimeter, flashlight. Steps:\n1. Verify the temperature settings: check that the freezer is set cold (typically mid-to-high) and that the refrigerator setting isn’t accidentally warm.\n2. Confirm airflow: after opening the freezer, use a flashlight to inspect that the evaporator fan is running and that air is moving into the refrigerator compartment.\n3. Look for frost/ice buildup: inspect around the evaporator coils (usually behind the back panel inside the freezer) for heavy frost that could indicate a defrost problem; clear only safely if you must, and allow the fridge to thaw before powering fully.\n4. Check fans: if the evaporator or condenser fan is silent or not spinning, unplug and remove the relevant covers to visually inspect blades and for obstructions, then test for power to the fan using a multimeter.\n5. Test components safely: use a multimeter to check continuity or resistance on suspect defrost-related parts only after disconnecting power; replace only parts you can confirm are faulty.\n6. Reset and retest: reconnect power, close doors firmly, and allow 4–24 hours to reach target temperatures while monitoring with an external thermometer.\nTip: If troubleshooting shows intermittent operation or heavy ice that returns quickly, it’s safer to contact a qualified technician to avoid repeated overheating and potential sealed-system issues.",
+  "equipment_problem": "Refrigerator running but not cooling enough",
+  "tools_required": ["screwdriver", "multimeter", "flashlight"],
+  "steps": [
+    "Verify the temperature settings: check that the freezer is set cold (typically mid-to-high) and that the refrigerator setting isn’t accidentally warm.",
+    "Confirm airflow: after opening the freezer, use a flashlight to inspect that the evaporator fan is running and that air is moving into the refrigerator compartment.",
+    "Look for frost/ice buildup: inspect around the evaporator coils (usually behind the back panel inside the freezer) for heavy frost that could indicate a defrost problem; clear only safely if you must, and allow the fridge to thaw before powering fully.",
+    "Check fans: if the evaporator or condenser fan is silent or not spinning, unplug and remove the relevant covers to visually inspect blades and for obstructions, then test for power to the fan using a multimeter.",
+    "Test components safely: use a multimeter to check continuity or resistance on suspect defrost-related parts only after disconnecting power; replace only parts you can confirm are faulty.",
+    "Reset and retest: reconnect power, close doors firmly, and allow 4–24 hours to reach target temperatures while monitoring with an external thermometer."
+  ],
+  "safety_info": "Always unplug the refrigerator before accessing internal components, avoid touching hot compressor/condenser parts, and give the unit time to stabilize after each check.",
+  "tips": [
+    "If troubleshooting shows intermittent operation or heavy ice that returns quickly, it’s safer to contact a qualified technician to avoid repeated overheating and potential sealed-system issues."
+  ]
+}

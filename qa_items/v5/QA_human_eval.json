@@ -1,0 +1,222 @@
+[
+  {
+    "trace_id": "QA1",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 0,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA2",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA3",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 0,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA4",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA31",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 0,
+    "tool_realism": 0,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA30",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA12",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 0,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 0,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA8",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 0,
+    "tip_usefulness": 0,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA9",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA17",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 0,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 0,
+    "tip_usefulness": 0,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA33",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA37",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 0,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA41",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 0,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA42",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA43",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 0,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA45",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 0,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA38",
+    "labeler": "human",
+    "answer_completeness": 0,
+    "context_clarity": 1,
+    "tool_realism": 0,
+    "scope_appropriateness": 1,
+    "safety_specificity": 0,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  },
+  {
+    "trace_id": "QA46",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA6",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 1,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": true
+  },
+  {
+    "trace_id": "QA50",
+    "labeler": "human",
+    "answer_completeness": 1,
+    "context_clarity": 0,
+    "tool_realism": 1,
+    "scope_appropriateness": 1,
+    "safety_specificity": 1,
+    "tip_usefulness": 1,
+    "overall_pass": false
+  }
+]

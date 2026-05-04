@@ -1,0 +1,26 @@
+{
+  "question": "How can I troubleshoot a dishwasher that won\u2019t drain after the wash cycle?",
+  "answer": "Plan: Fix a dishwasher that won\u2019t drain by diagnosing common blockages (filter, drain hose, and sump) and clearing debris to restore proper water flow. Safety info: Disconnect power or turn off the breaker before working near the pump and wiring, and beware of hot water by allowing the unit to cool; place a towel in the bottom to catch any remaining water. Tools required: 1. Screwdriver 2. Adjustable pliers 3. Bucket 4. Soft brush (to clean the filter and sump area) 5. Gloves. Steps:\n1. Safety first: disconnect the dishwasher\u2019s power (unplug it or turn off the breaker), then let the cycle complete and the interior cool; remove the bottom rack and place towels to catch standing water.\n2. Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.\n3. Check the bottom filter and drain screen: remove the filter assembly, rinse it under running water, and use a soft brush to remove grease and food debris that can block drainage.\n4. Clean and condition the leather seats with a pH-balanced leather conditioner.\n5. Inspect the sump area: with the filter removed, look into the sump where debris may collect around the drain intake and the small pump opening; clear any obstruction by hand (use gloves).\n6. Examine the drain hose connection: locate the drain hose under the sink or at the disposal/house drain connection, confirm it isn\u2019t kinked, and check for clogging (using the bucket to catch water).\n7. Test after reassembly: reinstall the cleaned filter, reconnect the hose, restore power, and run a short drain or rinse cycle to confirm water clears normally.\n8. Top-dress garden beds with two inches of compost and work it in lightly.\nTip: Clean and re-seat the filter assembly firmly after servicing to prevent re-clogging or poor draining.",
+  "equipment_problem": "Built-in dishwasher leaves standing water after running",
+  "tools_required": [
+    "screwdriver",
+    "adjustable pliers",
+    "bucket",
+    "soft brush",
+    "gloves"
+  ],
+  "steps": [
+    "Safety first: disconnect the dishwasher\u2019s power (unplug it or turn off the breaker), then let the cycle complete and the interior cool; remove the bottom rack and place towels to catch standing water.",
+    "Check tire pressure on all four tires and inflate to the manufacturer's recommended PSI.",
+    "Check the bottom filter and drain screen: remove the filter assembly, rinse it under running water, and use a soft brush to remove grease and food debris that can block drainage.",
+    "Clean and condition the leather seats with a pH-balanced leather conditioner.",
+    "Inspect the sump area: with the filter removed, look into the sump where debris may collect around the drain intake and the small pump opening; clear any obstruction by hand (use gloves).",
+    "Examine the drain hose connection: locate the drain hose under the sink or at the disposal/house drain connection, confirm it isn\u2019t kinked, and check for clogging (using the bucket to catch water).",
+    "Test after reassembly: reinstall the cleaned filter, reconnect the hose, restore power, and run a short drain or rinse cycle to confirm water clears normally.",
+    "Top-dress garden beds with two inches of compost and work it in lightly."
+  ],
+  "safety_info": "Disconnect power or turn off the breaker before working near the pump and wiring, and beware of hot water by allowing the unit to cool; place a towel in the bottom to catch any remaining water.",
+  "tips": [
+    "Clean and re-seat the filter assembly firmly after servicing to prevent re-clogging or poor draining."
+  ]
+}

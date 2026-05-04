@@ -1,0 +1,17 @@
+{
+  "question": "Why won\u2019t my dishwasher drain, and how can I fix it?",
+  "answer": "Plan: Fix a dishwasher that won\u2019t drain by diagnosing blockages in the filter and drain line, then checking the drain pump for jams or failure. Safety info: Unplug the dishwasher (or switch it off at the breaker) before reaching into the bottom tub, and place towels down because water can spill out during cleaning. Tools required: adjustable wrench, screwdriver, pliers, bucket. Steps:\n1. Clear standing water: stop the cycle and allow the unit to cool; then remove the bottom rack and use a cup or sponge to scoop out standing water into a bucket.\n2. Check and clean the filter assembly: locate the dishwasher filter at the bottom (turn/remove per the local design), rinse it under running water, and remove any debris around the filter well.\n3. Inspect the drain area for clogs: look into the sump opening and remove visible food particles or broken glass with gloved hands or a small tool; then run a short cycle to verify improved drainage.\n4. Examine the drain hose connection and unclog: turn off power and gently pull out the unit enough to access the underside, then use a bucket and pliers/adjustable wrench to inspect for a kinked hose or blockage where the drain hose connects.\n5. Test the drain pump for obstruction: access the pump area, check that the impeller (if reachable) spins freely, remove the jam, and confirm wiring connections are seated before reassembly.\nTip: Apply plumber's tape clockwise around threaded connections to ensure a watertight seal.",
+  "equipment_problem": "Dishwasher with standing water that doesn\u2019t drain after a wash cycle",
+  "tools_required": ["adjustable wrench", "screwdriver", "pliers", "bucket"],
+  "steps": [
+    "Clear standing water: stop the cycle and allow the unit to cool; then remove the bottom rack and use a cup or sponge to scoop out standing water into a bucket.",
+    "Check and clean the filter assembly: locate the dishwasher filter at the bottom (turn/remove per the local design), rinse it under running water, and remove any debris around the filter well.",
+    "Inspect the drain area for clogs: look into the sump opening and remove visible food particles or broken glass with gloved hands or a small tool; then run a short cycle to verify improved drainage.",
+    "Examine the drain hose connection and unclog: turn off power and gently pull out the unit enough to access the underside, then use a bucket and pliers/adjustable wrench to inspect for a kinked hose or blockage where the drain hose connects.",
+    "Test the drain pump for obstruction: access the pump area, check that the impeller (if reachable) spins freely, remove the jam, and confirm wiring connections are seated before reassembly."
+  ],
+  "safety_info": "Always unplug the dishwasher (or switch it off at the breaker) before reaching into the bottom tub, and place towels down because water can spill out during cleaning.",
+  "tips": [
+    "Apply plumber's tape clockwise around threaded connections to ensure a watertight seal."
+  ]
+}

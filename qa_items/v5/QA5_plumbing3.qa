@@ -1,0 +1,22 @@
+{
+  "question": "My basement drain is backing up\u2014what\u2019s the best way to troubleshoot and fix a slow bathroom drain (hair and gunk clog)?",
+  "answer": "Plan: Diagnose whether the clog is in the drain trap or further down by checking water drainage, then clear the obstruction safely by removing/cleaning the P-trap or using a drain snake as needed. Safety info: Protect the work area with a towel or bucket, avoid chemical drain cleaners if you plan to snake or remove the P-trap, and wash hands after handling dirty drain water. Tools required:\n1. adjustable wrench\n2. plunger\n3. drain snake. Steps:\n1. Confirm the symptom by running water into the sink or shower and observe whether it drains slowly, gurgles, or backs up.\n2. Try the plunger using an aggressive plunging motion while keeping a tight seal around the drain opening for several cycles to dislodge hair clogs.\n3. If plunging doesn\u2019t help, place a bucket/towel under the P-trap (or underside connection), then loosen slip nuts with the adjustable wrench and remove the trap to access built-up hair and sludge.\n4. Clean the P-trap and drain connections, reinstall the trap with the joints aligned correctly, then run water to verify flow.\n5. If the backup persists beyond the P-trap, insert the drain snake into the drain line, break up the clog by rotating while pushing, retract the snake, and re-test drainage.\nTip: Avoid chemical drain cleaners if you need to remove the P-trap or use a snake\u2014follow label directions only if you must use them.",
+  "equipment_problem": "Slow bathroom sink drain in a basement with water backing up and gurgling",
+  "tools_required": [
+    "adjustable wrench",
+    "plunger",
+    "drain snake",
+    "thermal imaging camera"
+  ],
+  "steps": [
+    "Confirm the symptom by running water into the sink or shower and observe whether it drains slowly, gurgles, or backs up.",
+    "Try the plunger using an aggressive plunging motion while keeping a tight seal around the drain opening for several cycles to dislodge hair clogs.",
+    "If plunging doesn\u2019t help, place a bucket/towel under the P-trap (or underside connection), then loosen slip nuts with the adjustable wrench and remove the trap to access built-up hair and sludge.",
+    "Clean the P-trap and drain connections, reinstall the trap with the joints aligned correctly, then run water to verify flow.",
+    "If the backup persists beyond the P-trap, insert the drain snake into the drain line, break up the clog by rotating while pushing, retract the snake, and re-test drainage."
+  ],
+  "safety_info": "Protect the work area with a towel or bucket, avoid chemical drain cleaners if you plan to snake or remove the P-trap, and wash hands after handling dirty drain water.",
+  "tips": [
+    "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+  ]
+}

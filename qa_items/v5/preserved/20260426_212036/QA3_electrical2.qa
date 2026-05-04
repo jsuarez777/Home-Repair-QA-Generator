@@ -1,0 +1,17 @@
+{
+  "question": "Why does the circuit breaker trip when I turn on my microwave, and how can I fix it safely?",
+  "answer": "Plan: Diagnose the breaker trip cause by checking for overload, identifying a damaged outlet or power cord, then resetting and testing while ruling out short circuits and wiring issues. Safety info: Turn off/unplug the microwave and any other devices on that circuit, keep hands away from the panel while covers are in place, and if you see signs of heat, burning, or repeated tripping immediately upon reset, stop and contact a qualified electrician. Tools required: 1) non-contact voltage tester, 2) multimeter, 3) insulated screwdriver. Steps:\n1. Unplug the microwave and remove any other loads from the breaker’s circuit so you can tell whether the problem is specific to the microwave or the circuit wiring.\n2. Locate the tripping breaker and note how often it trips; then switch it fully to OFF, and disconnect power by keeping the breaker OFF before further checks.\n3. Inspect the microwave plug, power cord, and the receptacle for damage, looseness, discoloration, or signs of scorching; replace any clearly damaged component before retesting.\n4. Test the receptacle wiring safely using a non-contact voltage tester and, if readings seem abnormal, verify voltage/continuity with a multimeter (follow your meter instructions).\n5. Reset the breaker to ON, then plug in only the microwave and run it briefly to see if it trips; if it trips immediately even with no other devices plugged in, the circuit (or breaker) likely has a fault and needs professional evaluation.\nTip: Label breaker circuits before testing so you can track what was changed, and replace damaged outlets or cords before using the microwave again.",
+  "equipment_problem": "Microwave trips the circuit breaker immediately after turning it on",
+  "tools_required": ["non-contact voltage tester", "multimeter", "insulated screwdriver"],
+  "steps": [
+    "Unplug the microwave and remove any other loads from the breaker’s circuit so you can tell whether the problem is specific to the microwave or the circuit wiring.",
+    "Locate the tripping breaker and note how often it trips; then switch it fully to OFF, and disconnect power by keeping the breaker OFF before further checks.",
+    "Inspect the microwave plug, power cord, and the receptacle for damage, looseness, discoloration, or signs of scorching; replace any clearly damaged component before retesting.",
+    "Test the receptacle wiring safely using a non-contact voltage tester and, if readings seem abnormal, verify voltage/continuity with a multimeter (follow your meter instructions).",
+    "Reset the breaker to ON, then plug in only the microwave and run it briefly to see if it trips; if it trips immediately even with no other devices plugged in, the circuit (or breaker) likely has a fault and needs professional evaluation."
+  ],
+  "safety_info": "Turn off/unplug the microwave and any other devices on that circuit, keep hands away from the panel while covers are in place, and if you see signs of heat, burning, or repeated tripping immediately upon reset, stop and contact a qualified electrician.",
+  "tips": [
+    "Label breaker circuits before testing so you can track what was changed, and replace damaged outlets or cords before using the microwave again."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "question": "My wall outlet sparks intermittently—what should I do and how can I safely troubleshoot it?",
+  "answer": "Plan: Because intermittent sparking can indicate a loose connection or damaged outlet, shut off power first, then inspect for signs of heat damage and retorque/replace the device as needed. Safety info: Do not use the outlet until it is addressed; turn off the breaker to that circuit and verify power is off with a non-contact voltage tester before touching any wires. Tools required: 1) non-contact voltage tester, 2) screwdriver, 3) insulated wire nuts. Steps:\n1. Shut off the power: turn off the circuit breaker feeding the outlet, then confirm it is de-energized by testing with a non-contact voltage tester at the receptacle slots.\n2. Inspect the outlet condition: remove the outlet cover and check for scorching, a melted faceplate, or a loose device inside the wall box; replace any visibly burned components.\n3. Reseat/inspect wiring connections: with power still off, remove the outlet and tighten the terminal screws to the wire (and ensure the wires are properly seated), checking for any damaged or broken conductors.\n4. Replace if needed and reassemble: if the outlet or wiring shows heat damage, replace the receptacle; use insulated wire nuts where connections need to be remade, then reinstall the outlet and cover plate.\n5. Restore power and test: turn the breaker back on and test operation; if sparking returns or there is ongoing instability, stop and call an electrician. Tip: When inspecting wiring and devices, avoid direct contact with any exposed conductors unless you have verified power is off using a properly rated voltage tester.",
+  "equipment_problem": "Wall outlet that sparks intermittently when something is plugged in",
+  "tools_required": ["non-contact voltage tester", "screwdriver", "insulated wire nuts"],
+  "steps": [
+    "Shut off the power: turn off the circuit breaker feeding the outlet, then confirm it is de-energized by testing with a non-contact voltage tester at the receptacle slots.",
+    "Inspect the outlet condition: remove the outlet cover and check for scorching, a melted faceplate, or a loose device inside the wall box; replace any visibly burned components.",
+    "Reseat/inspect wiring connections: with power still off, remove the outlet and tighten the terminal screws to the wire (and ensure the wires are properly seated), checking for any damaged or broken conductors.",
+    "Replace if needed and reassemble: if the outlet or wiring shows heat damage, replace the receptacle; use insulated wire nuts where connections need to be remade, then reinstall the outlet and cover plate.",
+    "Restore power and test: turn the breaker back on and test operation; if sparking returns or there is ongoing instability, stop and call an electrician."
+  ],
+  "safety_info": "Do not use the outlet until it is addressed; turn off the breaker to that circuit and verify power is off with a non-contact voltage tester before touching any wires.",
+  "tips": [
+    "When inspecting wiring and devices, avoid direct contact with any exposed conductors unless you have verified power is off using a properly rated voltage tester."
+  ]
+}

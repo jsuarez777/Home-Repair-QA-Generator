@@ -1,0 +1,22 @@
+{
+  "question": "Why is my ceiling light flickering after I turn it on, and how can I fix it?",
+  "answer": "Plan: Diagnose whether the flicker is caused by a loose connection, a failing light switch, or the bulb itself by inspecting power off connections, trying a known-good bulb, and checking the switch wiring at the light fixture or switch box. Safety info: Turn off the circuit breaker for the affected light before touching any wiring; verify power is off with a non-contact voltage tester and keep one hand away from live parts. Tools required: 1. screwdriver, 2. non-contact voltage tester, 3. wire strippers, 4. needle-nose pliers. Steps:\n1. Turn off the circuit breaker for the affected ceiling light.\n2. Verify power is off using a non-contact voltage tester at the switch or light fixture before touching any wires.\n3. Check and replace the bulb: install a known-good bulb and confirm whether the flicker stops; if it stops, the original bulb is likely defective.\n4. Inspect for a loose or poor connection at the light fixture or switch by removing the fixture/switch cover (power remains off) and tightening any secure splices/terminal connections.\n5. If the wiring looks burned or a connection loosens easily, replace damaged portions using proper wire stripping, re-strip the conductors as needed, and re-attach with appropriate connectors; then restore power and test.\nTip: If flickering continues after trying a new bulb and tightening all connections, the wall switch may be failing\u2014test it or have it replaced safely.",
+  "equipment_problem": "Ceiling light flickers briefly or continuously after turning it on",
+  "tools_required": [
+    "screwdriver",
+    "non-contact voltage tester",
+    "wire strippers",
+    "needle-nose pliers"
+  ],
+  "steps": [
+    "Turn off the circuit breaker for the affected ceiling light.",
+    "Verify power is off using a non-contact voltage tester at the switch or light fixture before touching any wires.",
+    "Check and replace the bulb: install a known-good bulb and confirm whether the flicker stops; if it stops, the original bulb is likely defective.",
+    "Inspect for a loose or poor connection at the light fixture or switch by removing the fixture/switch cover (power remains off) and tightening any secure splices/terminal connections.",
+    "If the wiring looks burned or a connection loosens easily, replace damaged portions using proper wire stripping, re-strip the conductors as needed, and re-attach with appropriate connectors; then restore power and test."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "If flickering continues after trying a new bulb and tightening all connections, the wall switch may be failing\u2014test it or have it replaced safely."
+  ]
+}

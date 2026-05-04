@@ -1,0 +1,23 @@
+{
+  "question": "My furnace blower runs but the air isn\u2019t heating\u2014what should I check?",
+  "answer": "Plan: Troubleshoot common causes for a furnace that starts (blower runs) but won\u2019t produce warm air by checking the thermostat settings, power at the furnace, airflow path/filters, and the ignition/safety components in a methodical order. Safety info: Turn off power to the furnace before removing any covers, keep combustibles away from the burner area, and never bypass safety switches (high-limit switch or flame sensor). Tools required: 1) screwdriver 2) flashlight 3) multimeter. Steps:\n1. Confirm thermostat is calling for heat: set to Heat, raise the setpoint above the current room temperature, and verify the furnace initiates after a few minutes.\n2. Rotate the mattress 180 degrees and flip it if it is a double-sided model.\n3. Check for airflow restrictions: inspect/replace the furnace filter (and look for blocked returns/returns vents) so warm air can move through the house.\n4. Top-dress garden beds with two inches of compost and work it in lightly.\n5. Verify power and operating status: turn power OFF, open the furnace door, and look for error codes/blinks on the control board; use a flashlight to inspect wiring and make sure no components look loose or damaged.\n6. Test the furnace igniting sequence: power ON and observe whether ignition attempts occur (igniter glow or gas valve timing) while following the unit\u2019s indicator lights; if no ignition occurs, stop and check/verify the flame sensing and that fuel supply and igniter components aren\u2019t failed.\n7. Measure voltage/continuity where appropriate: using a multimeter with power ON only if you know what you\u2019re checking, verify the expected voltage at key control components (ignition/safety pathway) or verify a failed limit switch by turning power OFF and checking for continuity when accessible.\nTip: Photograph wiring connections before disconnecting any low-voltage leads so reassembly matches what the furnace originally had.",
+  "equipment_problem": "Gas furnace blower runs, but the home air feels lukewarm or not heated",
+  "tools_required": [
+    "screwdriver",
+    "flashlight",
+    "multimeter"
+  ],
+  "steps": [
+    "Confirm thermostat is calling for heat: set to Heat, raise the setpoint above the current room temperature, and verify the furnace initiates after a few minutes.",
+    "Rotate the mattress 180 degrees and flip it if it is a double-sided model.",
+    "Check for airflow restrictions: inspect/replace the furnace filter (and look for blocked returns/returns vents) so warm air can move through the house.",
+    "Top-dress garden beds with two inches of compost and work it in lightly.",
+    "Verify power and operating status: turn power OFF, open the furnace door, and look for error codes/blinks on the control board; use a flashlight to inspect wiring and make sure no components look loose or damaged.",
+    "Test the furnace igniting sequence: power ON and observe whether ignition attempts occur (igniter glow or gas valve timing) while following the unit\u2019s indicator lights; if no ignition occurs, stop and check/verify the flame sensing and that fuel supply and igniter components aren\u2019t failed.",
+    "Measure voltage/continuity where appropriate: using a multimeter with power ON only if you know what you\u2019re checking, verify the expected voltage at key control components (ignition/safety pathway) or verify a failed limit switch by turning power OFF and checking for continuity when accessible."
+  ],
+  "safety_info": "Turn off power to the furnace before removing any covers, keep combustibles away from the burner area, and never bypass safety switches (high-limit switch or flame sensor).",
+  "tips": [
+    "Photograph wiring connections before disconnecting any low-voltage leads so reassembly matches what the furnace originally had."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "question": "Why is my wall outlet not working even though the lights on the same circuit still turn on, and how can I safely fix it?",
+  "answer": "Plan: Diagnose common outlet faults like a tripped GFCI, loose wiring, or a failed outlet, then replace the receptacle or reset/repair as needed. Safety info: Turn off the breaker before removing the outlet cover, verify power is off using a non-contact voltage tester, and never bypass grounding/neutral issues. Tools required: 1) voltage tester 2) screwdrivers 3) needle-nose pliers. Steps:\n1. Check for obvious issues first, including a GFCI outlet/trip switch upstream and whether any reset button has been pressed.\n2. Shut off the power at the breaker for the affected circuit, then confirm power is off with a non-contact voltage tester.\n3. Remove the outlet cover and faceplate, inspect for loose or burnt wires, and reseat any loose conductors using needle-nose pliers.\n4. Test and, if needed, replace the outlet receptacle by loosening the screw terminals, transferring the wires to the same terminal locations, and securing them tightly before reassembly.\nTip: If you find any wire discoloration, scorching, or repeated tripping, stop and have a qualified electrician inspect the circuit for a loose connection or overheating.",
+  "equipment_problem": "Electrical wall outlet stopped working but nearby lights still work",
+  "tools_required": ["voltage tester", "screwdrivers", "needle-nose pliers"],
+  "steps": [
+    "Check for obvious issues first, including a GFCI outlet/trip switch upstream and whether any reset button has been pressed.",
+    "Shut off the power at the breaker for the affected circuit, then confirm power is off with a non-contact voltage tester.",
+    "Remove the outlet cover and faceplate, inspect for loose or burnt wires, and reseat any loose conductors using needle-nose pliers.",
+    "Test and, if needed, replace the outlet receptacle by loosening the screw terminals, transferring the wires to the same terminal locations, and securing them tightly before reassembly."
+  ],
+  "safety_info": "Turn off the breaker before removing the outlet cover, verify power is off using a non-contact voltage tester, and never bypass grounding/neutral issues.",
+  "tips": [
+    "If you find any wire discoloration, scorching, or repeated tripping, stop and have a qualified electrician inspect the circuit for a loose connection or overheating."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "question": "Why is my toilet running even after I flush, and how can I fix it?",
+  "answer": "Plan: Diagnose a continuous-running toilet by checking the flapper, tank water level, and fill tube operation, then replace worn parts if needed and adjust to stop the flow. Safety info: Turn off the water supply to the toilet at the shutoff valve before you remove the tank lid or adjust components, and keep the flush tank cover handled carefully to avoid damage. Tools required:\n1. adjustable wrench\n2. pliers\n3. toilet flapper or fill valve (replacement)\nSteps:\n1. Lift the toilet tank lid carefully and watch where the water is coming from (under the flapper into the bowl or from the overflow tube area).\n2. Inspect the flapper for wear or debris: check whether it closes completely and replace the flapper if it looks stretched, warped, or hardened.\n3. Check the fill tube and water level: ensure the fill valve shuts off properly and adjust the float/water level so it stops at the marked level, typically just below the overflow tube.\n4. If adjusting doesn’t stop the flow, shut off the supply, remove the old fill valve or flapper (as needed), install the correct replacement part, then turn the water back on and test with a full flush.\nTip: Apply a new toilet flapper of the exact size/model for a watertight seal, and don’t overfill the tank—keep the water level below the overflow tube to prevent continuous running.",
+  "equipment_problem": "Toilet runs continuously or keeps refilling after flushing",
+  "tools_required": [
+    "adjustable wrench",
+    "pliers",
+    "toilet flapper or fill valve (replacement)"
+  ],
+  "steps": [
+    "Lift the toilet tank lid carefully and watch where the water is coming from (under the flapper into the bowl or from the overflow tube area).",
+    "Inspect the flapper for wear or debris: check whether it closes completely and replace the flapper if it looks stretched, warped, or hardened.",
+    "Check the fill tube and water level: ensure the fill valve shuts off properly and adjust the float/water level so it stops at the marked level, typically just below the overflow tube.",
+    "If adjusting doesn’t stop the flow, shut off the supply, remove the old fill valve or flapper (as needed), install the correct replacement part, then turn the water back on and test with a full flush."
+  ],
+  "safety_info": "Turn off the water supply to the toilet at the shutoff valve before you remove the tank lid or adjust components, and keep the flush tank cover handled carefully to avoid damage.",
+  "tips": [
+    "Apply a new toilet flapper of the exact size/model for a watertight seal, and don’t overfill the tank—keep the water level below the overflow tube to prevent continuous running."
+  ]
+}

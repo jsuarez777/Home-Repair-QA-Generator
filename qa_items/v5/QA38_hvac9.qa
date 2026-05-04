@@ -1,0 +1,22 @@
+{
+  "question": "Why is my AC blowing warm air even though the fan runs, and how can I fix it?",
+  "answer": "Plan: Diagnose the common causes (low refrigerant/pressure, failed capacitor, dirty condenser coil, or an HVAC control/thermostat issue) and repair what you can safely without opening the sealed refrigeration system. Safety info: Turn off power at the HVAC breaker before touching wiring or removing panels; don\u2019t bypass safety switches; allow components to discharge time (at least 5 minutes) after powering off. Tools required: 1. screwdrivers 2. multimeter. Steps:\n1. Verify the issue: set the thermostat to Cool, confirm temperature difference, and observe whether the indoor unit blows warm air while the outdoor unit is silent or actively running.\n2. Check easy airflow causes: replace/clean the return filter and ensure vents are open and airflow is strong (weak airflow can overheat coils and trigger shutdowns).\n3. Inspect the outdoor unit: check for debris and confirm the condenser fan is turning; hose off loose dirt from the condenser coil if safe, but ensure power is OFF and the area is free of standing water.\n4. Test common electrical components: after powering down at the breaker and waiting at least 5 minutes, inspect the capacitor and contactor area for bulging/damage; use a multimeter to verify capacitor and power/control readings per label guidance.\n5. Check controls and refrigerant-related clues: confirm the outdoor unit gets proper voltage, review thermostat settings/wiring, and note any icing or frost on suction line/coil that can indicate low refrigerant (do not attempt DIY refrigerant repair; schedule a licensed HVAC technician if suspected).\n6. Restore power and retest: reinstall access panels, restore power, run the AC, and verify supply air temperature improves and the system cycles normally.\nTip: Don\u2019t bypass safety switches or operate the unit with access panels removed; refrigerant work should be handled by a licensed HVAC professional.",
+  "equipment_problem": "Central air conditioner blowing warm air with the indoor fan running",
+  "tools_required": [
+    "screwdrivers",
+    "multimeter",
+    "industrial wet/dry vacuum"
+  ],
+  "steps": [
+    "Verify the issue: set the thermostat to Cool, confirm temperature difference, and observe whether the indoor unit blows warm air while the outdoor unit is silent or actively running.",
+    "Check easy airflow causes: replace/clean the return filter and ensure vents are open and airflow is strong (weak airflow can overheat coils and trigger shutdowns).",
+    "Inspect the outdoor unit: check for debris and confirm the condenser fan is turning; hose off loose dirt from the condenser coil if safe, but ensure power is OFF and the area is free of standing water.",
+    "Test common electrical components: after powering down at the breaker and waiting at least 5 minutes, inspect the capacitor and contactor area for bulging/damage; use a multimeter to verify capacitor and power/control readings per label guidance.",
+    "Check controls and refrigerant-related clues: confirm the outdoor unit gets proper voltage, review thermostat settings/wiring, and note any icing or frost on suction line/coil that can indicate low refrigerant (do not attempt DIY refrigerant repair; schedule a licensed HVAC technician if suspected).",
+    "Restore power and retest: reinstall access panels, restore power, run the AC, and verify supply air temperature improves and the system cycles normally."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "Don\u2019t bypass safety switches or operate the unit with access panels removed; refrigerant work should be handled by a licensed HVAC professional."
+  ]
+}

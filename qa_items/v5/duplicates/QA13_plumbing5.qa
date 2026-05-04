@@ -1,0 +1,17 @@
+{
+  "question": "My toilet won\u2019t stop running after I flush. What should I check and how can I fix it?",
+  "answer": "Plan: Diagnose whether the flapper, fill level, or float/chain is causing the continuous running, then fix the issue by adjusting the chain or replacing worn flapper parts. Safety info: Shut off the toilet\u2019s water supply to stop water from flowing during inspection and replacement, and avoid bending the flapper or float excessively. Tools required: (1) adjustable pliers (2) flathead screwdriver (3) bucket/cloth. Steps:\n1. Remove the tank lid carefully and observe the fill tube, water level, and flapper as the toilet completes a flush cycle.\n2. Check the chain connected to the flapper: ensure it has a small amount of slack (it should not be taut or holding the flapper up).\n3. Verify the water level: the tank water should sit near the fill line; adjust the float/fill valve by turning the adjustment screw or bending the float rod carefully.\n4. Inspect the flapper for wear or warping; if it doesn\u2019t seal tightly or closes slowly, replace the flapper with a matching style.\n5. Restore the water supply, run several test flushes, and confirm the flapper closes fully and the toilet stops running. Tip: When reinstalling or tightening the flapper and fill adjustment, make small changes first and re-test, since over-tightening the chain can keep the flapper from sealing.",
+  "equipment_problem": "Toilet runs continuously after flushing (water won\u2019t stop in the tank).",
+  "tools_required": ["adjustable pliers", "flathead screwdriver", "bucket/cloth"],
+  "steps": [
+    "Remove the tank lid carefully and observe the fill tube, water level, and flapper as the toilet completes a flush cycle.",
+    "Check the chain connected to the flapper: ensure it has a small amount of slack (it should not be taut or holding the flapper up).",
+    "Verify the water level: the tank water should sit near the fill line; adjust the float/fill valve by turning the adjustment screw or bending the float rod carefully.",
+    "Inspect the flapper for wear or warping; if it doesn\u2019t seal tightly or closes slowly, replace the flapper with a matching style.",
+    "Restore the water supply, run several test flushes, and confirm the flapper closes fully and the toilet stops running."
+  ],
+  "safety_info": "Shut off the toilet\u2019s water supply to stop water from flowing during inspection and replacement, and avoid bending the flapper or float excessively.",
+  "tips": [
+    "When reinstalling or tightening the flapper and fill adjustment, make small changes first and re-test, since over-tightening the chain can keep the flapper from sealing."
+  ]
+}

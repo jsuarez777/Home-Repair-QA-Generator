@@ -1,0 +1,17 @@
+{
+  "question": "How do I patch a small hole in drywall from a doorknob or picture hook?",
+  "answer": "Plan: Patch the small hole in your drywall by removing loose material, reinforcing the opening with a backing if needed, and applying joint compound in thin coats until the surface is smooth, then sanding and painting to match. Safety info: Wear eye protection and a dust mask when cutting or sanding drywall dust; turn off HVAC and use painter\u2019s tape to reduce mess while you work. Tools required: 1) utility knife 2) drywall patch (or scrap drywall and backer board) 3) putty knife 4) drywall joint compound 5) sandpaper (medium and fine grit). Steps:\n1. Inspect the hole and remove loose, torn drywall with a utility knife until you have clean, straight edges.\n2. If the opening is deeper or edges don\u2019t have solid backing, install a backer (like a scrap board) or press-fit a self-adhesive patch so it sits flush with the wall.\n3. Apply a thin layer of drywall joint compound over the patch seams with a putty knife, smoothing out toward the surrounding wall.\n4. Let the compound dry, then apply a second (and optionally third) thin coat to build up level with the wall.\n5. Sand once fully dry, starting with medium grit to level it and finishing with fine grit until smooth to the touch, then wipe dust away.\nTip: Feather the compound out beyond the edges of the hole so the final surface blends smoothly into the existing drywall; thin coats reduce cracking.",
+  "equipment_problem": "Small hole in drywall where a picture hook or doorknob made contact",
+  "tools_required": ["utility knife", "drywall patch (or scrap drywall and backer board)", "putty knife", "drywall joint compound", "sandpaper (medium and fine grit)"],
+  "steps": [
+    "Inspect the hole and remove loose, torn drywall with a utility knife until you have clean, straight edges.",
+    "If the opening is deeper or edges don\u2019t have solid backing, install a backer (like a scrap board) or press-fit a self-adhesive patch so it sits flush with the wall.",
+    "Apply a thin layer of drywall joint compound over the patch seams with a putty knife, smoothing out toward the surrounding wall.",
+    "Let the compound dry, then apply a second (and optionally third) thin coat to build up level with the wall.",
+    "Sand once fully dry, starting with medium grit to level it and finishing with fine grit until smooth to the touch, then wipe dust away."
+  ],
+  "safety_info": "Wear eye protection and a dust mask when cutting or sanding drywall dust; turn off HVAC and use painter\u2019s tape to reduce mess while you work.",
+  "tips": [
+    "Feather the compound out beyond the edges of the hole so the final surface blends smoothly into the existing drywall; thin coats reduce cracking."
+  ]
+}

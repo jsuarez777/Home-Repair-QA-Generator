@@ -1,0 +1,22 @@
+{
+  "question": "How can I fix my refrigerator when it\u2019s not cooling properly?",
+  "answer": "Plan: Fix a refrigerator that\u2019s not cooling properly by diagnosing airflow and power/control issues first (thermostat settings, airflow blockages, fan operation, and condensation on coils), then checking for common causes like a clogged condenser coil, faulty evaporator fan, or low refrigerant symptoms that indicate a sealed-system problem. Safety info: Unplug the refrigerator before inspecting fans and wiring near electrical components; if you remove back panels, do so carefully to avoid puncturing insulation lines or damaging clips. Tools required: 1) multimeter 2) soft brush or coil-cleaning brush 3) vacuum hose with brush attachment 4) nut driver set. Steps:\n1. Verify basic operation by setting the temperature to a colder setting, waiting 30\u201360 minutes, and confirming whether the interior light and controls respond.\n2. Check condenser area access and cleanliness by locating the condenser coils (usually behind the lower kick plate or at the back), then unplug the unit and use a soft brush or coil-cleaning brush plus a vacuum with the hose attachment to remove dust buildup.\n3. Inspect and confirm airflow by checking for ice buildup or blocked vents in the freezer, clearing any airflow obstructions so cold air can move to the refrigerator compartment.\n4. Test fan operation by locating the evaporator and condenser fans (where applicable) and using careful visual inspection for movement; if needed, use a multimeter to verify power is being supplied when the unit calls for cooling.\n5. Reassemble, plug back in, and monitor temperature while listening for consistent fan cycling and checking whether frost forms/disappears normally on evaporator surfaces.\nTip: Only after eliminating thermostat, fan, and airflow/coil cleaning issues should you consider advanced diagnostics, because compressor/sealed-system failures are typically not economical or safe for homeowners to repair without proper refrigerant handling equipment.",
+  "equipment_problem": "Side-by-side refrigerator that is running but not cooling evenly (freezer is warmer than normal).",
+  "tools_required": [
+    "multimeter",
+    "soft brush or coil-cleaning brush",
+    "vacuum hose with brush attachment",
+    "nut driver set"
+  ],
+  "steps": [
+    "Verify basic operation by setting the temperature to a colder setting, waiting 30\u201360 minutes, and confirming whether the interior light and controls respond.",
+    "Check condenser area access and cleanliness by locating the condenser coils (usually behind the lower kick plate or at the back), then unplug the unit and use a soft brush or coil-cleaning brush plus a vacuum with the hose attachment to remove dust buildup.",
+    "Inspect and confirm airflow by checking for ice buildup or blocked vents in the freezer, clearing any airflow obstructions so cold air can move to the refrigerator compartment.",
+    "Test fan operation by locating the evaporator and condenser fans (where applicable) and using careful visual inspection for movement; if needed, use a multimeter to verify power is being supplied when the unit calls for cooling.",
+    "Reassemble, plug back in, and monitor temperature while listening for consistent fan cycling and checking whether frost forms/disappears normally on evaporator surfaces."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "Only after eliminating thermostat, fan, and airflow/coil cleaning issues should you consider advanced diagnostics, because compressor/sealed-system failures are typically not economical or safe for homeowners to repair without proper refrigerant handling equipment."
+  ]
+}

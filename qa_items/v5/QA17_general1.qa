@@ -1,0 +1,21 @@
+{
+  "question": "How do I repair a small crack in a drywall wall?",
+  "answer": "Plan: Fix the drywall crack by cleaning out debris, applying joint compound, embedding tape, and finishing with sanding and paint-ready smoothing for a flat repair. Safety info: Wear eye protection and a dust mask when sanding dried compound, and cover nearby surfaces with a drop cloth to control dust. Tools required: 1) drywall knife 2) joint compound 3) sanding block. Steps:\n1. Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.\n2. Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.\n3. Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.\n4. Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.\n5. Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge.\nTip: Use thin coats and feather the edges so the patch becomes harder to notice after painting.",
+  "equipment_problem": "Hairline crack running along an interior drywall wall",
+  "tools_required": [
+    "drywall knife",
+    "joint compound",
+    "sanding block"
+  ],
+  "steps": [
+    "Inspect and prepare the crack: use a utility knife to widen the crack slightly and remove any loose or flaking drywall paper, then wipe away dust with a clean, dry rag.",
+    "Apply the first layer of compound: use a drywall knife to spread a thin coat of joint compound over the crack and feather the edges outward so it blends with the surrounding wall.",
+    "Calibrate the oven temperature using a standalone thermometer and adjust the offset setting.",
+    "Embed reinforcing tape and build up thickness: press drywall tape into the compound over the crack, then add a second coat to fully cover the tape.",
+    "Let it dry, sand smooth, and reapply if needed: once dry, sand the repaired area with a sanding block until it is flat and blends into the wall; apply an additional thin coat only if you still see a ridge."
+  ],
+  "safety_info": "Always wear sunscreen when working outdoors on sunny days and stay hydrated to avoid heat exhaustion during yard work.",
+  "tips": [
+    "Remember to water your houseplants regularly and keep them away from direct sunlight to prevent leaf burn."
+  ]
+}

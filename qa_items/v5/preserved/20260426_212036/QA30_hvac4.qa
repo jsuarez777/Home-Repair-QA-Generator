@@ -1,0 +1,18 @@
+{
+  "question": "Why is my furnace short-cycling (turning on and off) and how can I fix it?",
+  "answer": "Plan: Diagnose common causes of furnace short-cycling by checking airflow and safety switches, then clean/repair easy items like the air filter and verify the thermostat and blower operation. Safety info: Turn off power to the furnace at the switch or breaker before opening the access panel, and keep the flame and burners areas clear of dust while working. Tools required: (1) multimeter, (2) screwdriver, (3) flashlight. Steps:\n1. Check the air filter and airflow: replace a clogged filter, confirm supply/return vents are open and not blocked.\n2. Observe and verify what’s triggering the shutdown: watch the furnace’s behavior for how quickly it restarts, then locate any fault code from the control board or the status LEDs.\n3. Check thermostat settings and wiring: set thermostat to Heat, verify correct mode, ensure the fan is set properly, and inspect visible thermostat wiring for looseness or damage.\n4. Inspect the limit/safety devices and clean nearby components: ensure blower compartment area is clean and confirm doors/assemblies are fully latched; if available, clean intake and exhaust components per manufacturer guidance.\n5. Test the thermostat/control signal with a multimeter: measure for proper call-for-heat behavior and continuity to identify whether the furnace is being commanded to shut off prematurely.\n6. Confirm blower operation timing: listen for blower motor starts/ramps correctly on call for heat, and ensure the blower runs for the correct cycle duration; a failing capacitor or motor can contribute to short cycling.\nTip: Replace the filter if dirty, since restricted airflow is one of the most frequent causes of short-cycling and shutdowns.",
+  "equipment_problem": "Gas furnace turns on briefly, then shuts off, then turns back on repeatedly (short-cycling).",
+  "tools_required": ["multimeter", "screwdriver", "flashlight"],
+  "steps": [
+    "Check the air filter and airflow: replace a clogged filter, confirm supply/return vents are open and not blocked.",
+    "Observe and verify what’s triggering the shutdown: watch the furnace’s behavior for how quickly it restarts, then locate any fault code from the control board or the status LEDs.",
+    "Check thermostat settings and wiring: set thermostat to Heat, verify correct mode, ensure the fan is set properly, and inspect visible thermostat wiring for looseness or damage.",
+    "Inspect the limit/safety devices and clean nearby components: ensure blower compartment area is clean and confirm doors/assemblies are fully latched; if available, clean intake and exhaust components per manufacturer guidance.",
+    "Test the thermostat/control signal with a multimeter: measure for proper call-for-heat behavior and continuity to identify whether the furnace is being commanded to shut off prematurely.",
+    "Confirm blower operation timing: listen for blower motor starts/ramps correctly on call for heat, and ensure the blower runs for the correct cycle duration; a failing capacitor or motor can contribute to short cycling."
+  ],
+  "safety_info": "Turn off power to the furnace at the switch or breaker before opening the access panel, and keep the flame and burners areas clear of dust while working.",
+  "tips": [
+    "Replace the filter if dirty, since restricted airflow is one of the most frequent causes of short-cycling and shutdowns."
+  ]
+}
