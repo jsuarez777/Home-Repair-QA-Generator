@@ -141,7 +141,7 @@ def main():
     parser.add_argument("--version", metavar="VERSION", help="Prompt version folder (e.g. v1, v2).")
     parser.add_argument("--model", metavar="MODEL", help="LLM model to use for generation.")
     parser.add_argument("--num-items", type=int, metavar="NUM", help="Number of items to generate (1-1000).")
-    parser.add_argument("--temperature", type=float, metavar="TEMP", default=1.8, help="Temperature for generation (default: 1.8).")
+    parser.add_argument("--temperature", type=float, metavar="TEMP", default=1.0, help="Temperature for generation (default: 1.0).")
     parser.add_argument("--max-parallel", type=int, metavar="N", default=DEFAULT_MAX_PARALLEL, help=f"Maximum parallel workers (default: {DEFAULT_MAX_PARALLEL}).")
     args = parser.parse_args()
 
@@ -197,7 +197,8 @@ def main():
     template = _read_file_content(template_file)
     prompts = {}
     for cat, vars in category_defs.items():
-        prompt = template.format_map(vars)
+        vars_with_extra = {**vars, 'repair_type_extra': vars.get('repair_type_extra', '')}
+        prompt = template.format_map(vars_with_extra)
         prompt += "\n\n" + prompt_output_format_suffix
         prompts[cat] = prompt
 

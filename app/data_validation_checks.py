@@ -257,6 +257,14 @@ def main():
     batch_dedup_check(qa_folder)
 
     remaining = sorted(qa_folder.glob("*.qa"))
+
+    dupes_dir = qa_folder / "duplicates"
+    dupes_dist: dict[str, int] = {}
+    if dupes_dir.exists():
+        for f in dupes_dir.glob("*.qa"):
+            cat = re.sub(r"\d+$", "", f.stem.split("_")[1]) if "_" in f.stem else "unknown"
+            dupes_dist[cat] = dupes_dist.get(cat, 0) + 1
+
     if remaining:
         dist: dict[str, int] = {}
         for f in remaining:
@@ -264,9 +272,13 @@ def main():
             dist[cat] = dist.get(cat, 0) + 1
         total = len(remaining)
         log.info(f"\nFinal item distribution by category ({total} of {len(qa_files)} original):")
-        for cat, count in sorted(dist.items()):
-            pct = count / total * 100
-            log.info(f"  {cat}: {pct:.1f}% ({count})")
+        all_cats = sorted(set(dist.keys()) | set(dupes_dist.keys()))
+        for cat in all_cats:
+            kept = dist.get(cat, 0)
+            discarded = dupes_dist.get(cat, 0)
+            pct = kept / total * 100 if total > 0 else 0
+            discard_str = f" [{discarded} discarded as duplicates]" if discarded > 0 else ""
+            log.info(f"  {cat}: {pct:.1f}% ({kept}){discard_str}")
 
     if failed:
         sys.exit(1)

@@ -62,8 +62,12 @@ def _select_prompt_version() -> Path:
     log.info("\nAvailable judge prompt versions:")
     for i, v in enumerate(versions, start=1):
         prompts = list(v.glob("*.prompt"))
-        log.info(f"  {i}) {v.name}  [{len(prompts)} prompt(s)]")
-    choice = input(f"Select prompt version (1-{len(versions)}): ").strip()
+        marker = " *" if i == len(versions) else ""
+        log.info(f"  {i}) {v.name}  [{len(prompts)} prompt(s)]{marker}")
+    log.info("  * = default")
+    choice = input(f"Select prompt version (1-{len(versions)}) [{len(versions)}]: ").strip()
+    if choice == "":
+        return versions[-1]
     if choice.isdigit() and 1 <= int(choice) <= len(versions):
         return versions[int(choice) - 1]
     log.info(f"Invalid choice {choice!r}, defaulting to {versions[-1].name}.")
@@ -352,12 +356,16 @@ def main():
         llm_eval_count = len(list(folder.glob("QA_llm_eval_v*.json")))
         llm_note = f", {llm_eval_count} llm eval version(s)" if llm_eval_count else ""
         human_note = f", {human_count} human judge item(s)" if human_count else ""
-        log.info(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]")
+        marker = " *" if i == len(versions) + 1 else ""
+        log.info(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]{marker}")
 
     max_choice = len(versions) + 1
-    choice = input(f"Enter 1-{max_choice}: ").strip()
+    log.info("  * = default")
+    choice = input(f"Enter 1-{max_choice} [{max_choice}]: ").strip()
 
-    if choice == "1":
+    if choice == "":
+        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[-1], max_workers=args.max_parallel)
+    elif choice == "1":
         evaluate_training_set(client, mono_prompt, prompt_dir, max_workers=args.max_parallel)
     elif choice.isdigit() and 2 <= int(choice) <= max_choice:
         evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2], max_workers=args.max_parallel)

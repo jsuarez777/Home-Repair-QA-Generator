@@ -410,17 +410,21 @@ def main():
     for i, (name, _, has_h, llm_count) in enumerate(versions, 1):
         h_mark = "present" if has_h else "—"
         l_mark = f"{llm_count} version{'s' if llm_count != 1 else ''}" if llm_count > 0 else "—"
-        print(f"  {i:<4} {name:<12} {h_mark:<14} {l_mark}")
+        num_str = f"{i} *" if i == len(versions) else str(i)
+        print(f"  {num_str:<4} {name:<12} {h_mark:<14} {l_mark}")
 
+    print("  * = default")
     print()
     try:
-        choice = input("Enter version number (or name) to visualize: ").strip()
+        choice = input(f"Enter version number (or name) to visualize [{len(versions)}]: ").strip()
     except (KeyboardInterrupt, EOFError):
         print()
         sys.exit(0)
 
     selected = None
-    if choice.isdigit():
+    if choice == "":
+        selected = versions[-1]
+    elif choice.isdigit():
         idx = int(choice) - 1
         if 0 <= idx < len(versions):
             selected = versions[idx]

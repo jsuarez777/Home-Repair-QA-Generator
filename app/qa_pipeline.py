@@ -96,7 +96,7 @@ def main():
     parser.add_argument("--gen-model", metavar="MODEL", help="LLM model for QA generation.")
     parser.add_argument("--gen-version", metavar="VERSION", help="Prompt version for QA generation.")
     parser.add_argument("--num-items", type=int, metavar="NUM", help="Number of items to generate (1-1000).")
-    parser.add_argument("--temperature", type=float, metavar="TEMP", help="Temperature for QA generation (default: 1.8).")
+    parser.add_argument("--temperature", type=float, metavar="TEMP", default=1.0, help="Temperature for QA generation (default: 1.0).")
     parser.add_argument("--max-parallel", type=int, metavar="N", help="Maximum parallel workers (default: 50).")
     parser.add_argument("--judge-model", metavar="MODEL", help="LLM model for judging.")
     parser.add_argument("--judge-prompt-version", metavar="VERSION", help="Judge prompt version.")
