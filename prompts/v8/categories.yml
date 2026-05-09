@@ -1,5 +1,5 @@
 appliance:
-  repair_type_extra: When generating the QA item, keep the scope simple, do not produce an answer that requires professional help, or if the scope might includes that please be sure to mention that a professional should be consulted.
+  repair_type_extra: When generating the QA item, keep the scope simple, do not produce an answer that requires professional help, or if the scope might includes that please be sure to mention that a professional should be consulted.  Example - Any work on a microwave dealing with internals and wires, capcitor, or magnetron must refer the owner to a professional including in the first step. Any diagnosis involving live wires must also refer to a professional in the steps.  Any work requiring inspection or replacement of refrigerants must refer to a professional in the steps. 
   repair_type: appliance
   repair_examples: refrigerators, washing machines, dryers, dishwashers, ovens, microwaves,
     icemakers, freezers (including standalone), water dispensers, toasters, air fryers,
@@ -13,7 +13,7 @@ appliance:
   
 
 electrical:
-  repair_type_extra:
+  repair_type_extra: If steps include a recommendation to replace wiring, or panel changes, refer the homeowner to a professional in step 1. Any instructions for making changes to the breaker panel should include a strong referral to a professional. Instructions involving eletrical work should always be preceded by a recommendation to consult a professional as the first step.
   repair_type: electrical
   repair_examples: outlets, circuit breakers, light switches, ceiling fans, wiring,
     dimmer switches, doorbells, security cameras, intercoms, GFCI outlets (tripping
@@ -25,8 +25,8 @@ electrical:
     lighting, track lighting, flickering lights, frequently tripping breakers,
     burning smell from outlet, power outage (partial), aluminum wiring concerns. Do not focus on GFCI outlets.
 
-general:
-  repair_type_extra:
+general:  
+  repair_type_extra: When generating safety_info for this category make sure the precautions are not generic an apply to the repair type being done, for example be cautions with limbs and fingers when operating the garage door due to pinch injuries, or wear a mask when sanding drywall due to particulate inhilation hazards, or Wear knee pads to protect your joints during prolonged work on the floor, or use eye and ear protection when cutting or sanding — sawdust and debris can cause real damage.
   repair_type: general home
   repair_examples: doors, windows, drywall, flooring, painting, closet doors, attic
     stairs, stairs, railing, floorboards, countertops, cabinets, garage, garage doors,
@@ -41,7 +41,7 @@ general:
     chimney (exterior), fireplace surround, built-in shelving, wall anchors/mounting
 
 hvac:
-  repair_type_extra:
+  repair_type_extra: If steps mention gas lines or pipes they must include a referral a professional.  If steps mentioning burnt wires or capacitors they should refer the homeowner to consult a professional.  If steps suspect refrigerant problem (checking or changing), they must refer to an HVAC professional to make the diagnosis.
   repair_type: HVAC
   repair_examples: air conditioners (central), furnaces, heat pumps, thermostats,
     ductwork, AC drip pan, AC returns, vents, smells (burning, musty, chemical),
@@ -56,7 +56,7 @@ hvac:
     pilot light issues, gas valve problems, condensate drain clogs
 
 plumbing:
-  repair_type_extra:  If the "tips" field contains suggestions for regular maintenance of a part or specific condition then it passes its usefulness check.
+  repair_type_extra:  If the "tips" field contains suggestions for regular maintenance of a part or specific condition then it passes its usefulness check.  For safety_info, avoid stating things like be careful with tools or use tools safely, but it is acceptable to refer to specific hazards such as be cautious using wired power tools near water due to electrocution if necessary.
   repair_type: plumbing
   repair_examples: faucets (dripping, loose, low pressure), pipes (leaking, burst,
     corroded, banging), water heaters (tankless and tank), drains, clogs, backups,

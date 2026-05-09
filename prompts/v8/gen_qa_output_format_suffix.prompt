@@ -21,10 +21,11 @@ All fields are required and will be a string or list of strings as in the exampl
 </JSON_example>
 <constraints>
 - The object must have all 7 fields: question, answer, equipment_problem, tools_required, steps, safety_info, tips.
-- The "steps" field must contain 3 or more steps addressing how to diagnose or fix the original question.
-- The "answer" field must contain a short intro briefly explaining the plan, safety_info, listing required tools (a numbered list of the same tools in the "tools_required" section but without quotes in their names), and the same steps from the "steps" section listed verbatim, but numbered starting with 1.  It will conclude with a tip after the numbered steps, which will be a verbatim copy of the "tips" section.
+- The "answer" field contains all steps from "steps" field Verbatim.
+- The "steps" field must contain 3 or more steps addressing how to diagnose or fix the original question and must match exactly the numbered steps from the "answer" field.
+- The "answer" field must contain a short intro briefly explaining the plan, safety_info (verbatim copy of the "safety_info" field including all sentences), listing required tools (a numbered list of the exact tools in "tools_required" section but without quotes in their names), and the same steps from the "steps" section listed verbatim, but numbered starting with 1.  It will conclude with a tip after the numbered steps, which will be a verbatim copy of the "tips" section.
 - The output JSON needs to contain all keys listed in the example and exactly as they are spelled.
-- "safety_info" must be at least 80 characters or longer.
+- "safety_info" must be at least 80 characters or longer.  It must not contain generic statements like "wear appropriate safety gear when working with tools" or avoid stating things like be careful with tools or use tools safely, but it is acceptable to refer to specific hazards such as be cautious using wired power tools near water due to electrocution if necessary.
 - Please strictly observe JSON constraints and ensure strings are properly escaped.  Take note that escaping such as \", \\, \/, \n, \r, \t, \b, \f, and \uXXXX are allowed.  Single quotes are never escaped in JSON.
     -<escaped_string_example> "This \"escaped string\" contains double quotes (\") all over the place."</escaped_string_example>
 - Check output for invalid JSON and make necessary adjustments to make it valid without destroying content meaning.

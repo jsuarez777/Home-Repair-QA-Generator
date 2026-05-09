@@ -34,6 +34,34 @@
 - **Result**: No JSON parsing issues on sets 200 or less.  1 error occurred on 300 at the item where rate-limiting responses began (presumably it cutt-off the response due to rate limit).
 - **Decision**: Keep
 - **Next step**: Move on to focus on LLM judge prompts before further refinement.
+### Iteration 6: Expand examples to generative prompts to reduce duplicates
+- **Date**: 2026-05-04
+- **Change**: After training LLM judge, I tried generating QA Items and found too many were being discarded.  I updated the list of examples and tweak the main prompt a little (asking to sort, reorder, append, and select index X from list) to reduce the number of duplicates being discarded. 
+- **Hypothesis**: A larger example set will result in more variety.
+- **Result**: For many categories the number of duplicates dropped by >70%, however seems in the plumbing category the LLM has an obsession with Toilets, where almost all duplicate were due to the same issue with toilets, even with 10-20 generated items.  I had to explicitely tell it not to use a toilet example for QA.  Same issue with Appliances in the subcategory Dishwasher.
+- **Decision**: Keep
+- **Next step**: Move on to improve weakest dimension x category.
+### Iteration 7: The weakest item is Plumbing x Tip Usefulness at 71% pass rate, with 2 failed items
+- **Date**: 2026-05-09
+- **Change**: Found that "tip_usefulness" was failing for "plumbing" category. After reviewing the tips for 2 failed items, I found they were valid so I tweaked the LLM judge prompt to pass them by providing futher criteria and an example.  
+- **Hypothesis**: Improved judgement
+- **Result**: The two failed items now pass, moving on to next category.
+- **Decision**: Keep
+- **Next step**: An interesting note is that using gpt-5.4-nano resulted in very high pass rate for almost all criteria whereas 5.4-mini was more varied.  Either 5.4-nano is much more lenient overall (with possible exception of tip_usefulness), or 5.4-mini is more varied and strict across the board.  Will likely be using 5.4-mini going forward.  
+### Iteration 8: The next weakest item is HVAC and Electrical x Scope Appropriateness at 33% and 67% pass rates. 
+- **Date**: 2026-05-09
+- **Change**: Make it more explicit that any work involving replacing the fuse panel, wires, refigerant (for HVAC), or dealing with live voltage must refer the homeowner to a professional in the steps.
+- **Hypothesis**: Improved pass rate
+- **Result**: Pass rate improved particularly for HVAC, but only somewhat for eletrical. Using enhanced LLM judge (created specifically for getting reason for failure) it seems that even on items that should be passing, the judge still marked them inappropriate. For example, the reason either stated that a proper recommendation was made but still failed, or stated that the recommendation was not strong enought.  After repeated prompt updates and getting a high percent of failures saying professional recommandation was made, and reading through the QA Items, I decided to udpate the judge to PASS items that could be dangerous, but that do mention that danger and referral to a professional for that part.  
+- **Decision**: Keep
+- **Next step**: Next weak category is Plumbing x safety specificity  
+### Iteration 9: The next weakest item is Plumbing x Safety at 73% pass rates. 
+- **Date**: 2026-05-09
+- **Change**: 
+- **Hypothesis**: Improved pass rate
+- **Result**: Pass rate improved particularly for HVAC, but only somewhat for eletrical. Using enhanced LLM judge (created specifically for getting reason for failure) it seems that even on items that should be passing, the judge still marked them inappropriate. For example, the reason either stated that a proper recommendation was made but still failed, or stated that the recommendation was not strong enought.  After repeated prompt updates and getting a high percent of failures saying professional recommandation was made, and reading through the QA Items, I decided to udpate the judge to PASS items that could be dangerous, but that do mention that danger and referral to a professional for that part.  
+- **Decision**: Keep
+- **Next step**: Next weak category is Plumbing x safety specificity
 
 
 ## LLM Judge Prompt - Judges QA items based on 6 dimensions
@@ -83,3 +111,10 @@
 Agreement on 5.4-mini exceeded the 80% threshold.  4.1-nano exceeded 80% in all dimensions except answer_completeness, where it was at aprpox 75%.
 - **Decision**: Keep
 - **Next step**: Use LLM judge to improve generative prompt.
+### Iteration 6 & 7: Pass items per criteria in Generator iterations 7 and 8
+- **Date**: 2026-05-09
+- **Change**: Per getting proper "tips" and later proper "scope_appropriateness", I updated the judge to be more lenient in these as it was improperly failing good data.
+- **Hypothesis**: Improved correctness.
+- **Result**: Items with reasonable tips and scope are now passing.
+- **Decision**: Keep
+- **Next step**: Further refine generator prompt in categories <80% pass rate.
