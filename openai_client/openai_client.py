@@ -40,6 +40,8 @@ class MyOpenAIClient:
             kwargs = {}
             if self.api_key:
                 kwargs["api_key"] = self.api_key
+            # Disable OpenAI SDK's built-in retries - we handle retries at application level
+            kwargs["max_retries"] = 0
             self._client = OpenAI(**kwargs)
         return self._client
 

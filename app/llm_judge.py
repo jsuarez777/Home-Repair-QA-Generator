@@ -5,6 +5,7 @@ import logging
 import os
 import re
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
@@ -36,9 +37,14 @@ from openai_client.openai_client import MyOpenAIClient
 
 PROMPTS_ROOT = PROJECT_ROOT / "prompts_llm_judge"
 DEFAULT_MODEL = "gpt-5.4-mini"
-DEFAULT_MAX_PARALLEL = 50
-MAX_RETRIES = 5
-RETRY_BASE_DELAY = 2.0
+DEFAULT_MAX_PARALLEL = 20
+MAX_RETRIES = 6
+RETRY_DELAYS = [2, 8, 16, 32, 64, 100]  # seconds for each retry attempt
+
+# Dynamic rate limit throttling
+_rate_limit_lock = threading.Lock()
+_dynamic_max_workers = None  # Will be set if we hit a 429 error
+_rate_limit_hit = False  # Flag to pause new submissions until all existing threads complete
 
 DIMENSIONS = [
     "answer_completeness",
@@ -98,7 +104,6 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
         {"role": "system", "content": mono_prompt},
         {"role": "user", "content": item_json},
     ]
-    delay = RETRY_BASE_DELAY
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = client.query(input=messages)
@@ -133,19 +138,51 @@ def evaluate_qa_item(client: MyOpenAIClient, mono_prompt: str, trace_id: str, qa
             result["overall_pass"] = all(result[d] == 1 for d in DIMENSIONS)
             return result
 
-        except RateLimitError:
+        except RateLimitError as e:
             if attempt == MAX_RETRIES:
                 raise
-            log.warning(f"  [rate limit] {trace_id}: attempt {attempt}/{MAX_RETRIES}, retrying in {delay:.1f}s...")
-            time.sleep(delay)
-            delay *= 2
+            # Try to extract server-recommended wait time and token limits from response body
+            retry_delay = RETRY_DELAYS[attempt - 1]  # attempt-1 because attempt is 1-indexed
+            rate_limit_info = ""
+            if hasattr(e, 'response') and e.response is not None:
+                if hasattr(e.response, 'text'):
+                    try:
+                        body = json.loads(e.response.text)
+                        if 'error' in body and 'message' in body['error']:
+                            msg = body['error']['message']
+                            # Extract "Please try again in X.XXXs" from the message
+                            match = re.search(r'Please try again in ([\d.]+)s', msg)
+                            if match:
+                                server_wait_time = float(match.group(1))
+                                rate_limit_info = f" (server says: {server_wait_time:.2f}s)"
+                            # Extract token limits to throttle parallelism
+                            limit_match = re.search(r'Limit (\d+)', msg)
+                            requested_match = re.search(r'Requested (\d+)', msg)
+                            if limit_match and requested_match:
+                                limit = int(limit_match.group(1))
+                                requested = int(requested_match.group(1))
+                                calculated_max = max(1, (limit // requested) // 2)  # half the calculated ratio
+                                with _rate_limit_lock:
+                                    global _dynamic_max_workers, _rate_limit_hit
+                                    _dynamic_max_workers = calculated_max
+                                    _rate_limit_hit = True
+                                log.warning(f"  [rate limit] {trace_id}: Pausing new submissions until all existing threads complete. Will resume at {calculated_max} workers (Limit: {limit}, Requested: {requested})")
+                    except (json.JSONDecodeError, ValueError, AttributeError):
+                        pass
+
+            # Check if wait time is excessive (>180 seconds)
+            if retry_delay > 180:
+                log.error(f"  [ERROR] {trace_id}: Excessive rate limit wait time! Waiting {retry_delay}s ({int(retry_delay/60)}m {int(retry_delay%60)}s). This indicates severe API rate limiting.")
+
+            log.warning(f"  [rate limit] {trace_id}: attempt {attempt}/{MAX_RETRIES}, retrying in {retry_delay}s...{rate_limit_info}")
+            time.sleep(retry_delay)
         except (json.JSONDecodeError, ValueError) as e:
             if attempt == MAX_RETRIES:
                 raise
+            retry_delay = RETRY_DELAYS[attempt - 1]
             log.warning(f"  [parse error] {trace_id}: attempt {attempt}/{MAX_RETRIES}: {e}")
             log.warning(f"    Raw response received: {raw_text[:500]}")
-            time.sleep(delay)
-            delay *= 2
+            time.sleep(retry_delay)
 
 
 # ---------------------------------------------------------------------------
@@ -157,11 +194,13 @@ _QA_ITEM_FIELDS = set(QAItem.model_fields.keys())
 
 
 def evaluate_training_set(
-    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL, max_workers: int = DEFAULT_MAX_PARALLEL,
+    client: MyOpenAIClient, mono_prompt: str, prompt_dir: Path, eval_path: Path = EVAL_JSONL, max_workers: int = DEFAULT_MAX_PARALLEL, limit: int = None,
 ) -> list[dict]:
     items: list[tuple[str, QAItem]] = []
     with eval_path.open() as f:
         for line_num, line in enumerate(f, start=1):
+            if limit and line_num > limit:
+                break
             line = line.strip()
             if not line:
                 continue
@@ -179,7 +218,8 @@ def evaluate_training_set(
 
     results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_workers=max_workers)
     log.info(f"\nEvaluated {len(results)} item(s) from {eval_path}.")
-    _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model)
+    source_path = str(eval_path.relative_to(PROJECT_ROOT))
+    _write_eval_results(results, eval_path.parent, prompt_dir, mono_prompt, client.model, source=source_path)
     return results
 
 
@@ -197,10 +237,17 @@ def _log_result(result: dict, prompt_version: str) -> None:
 def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version: str, items: list[tuple[str, QAItem]], max_workers: int = DEFAULT_MAX_PARALLEL) -> list[dict]:
     results = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        pending = {
-            executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item): trace_id
-            for trace_id, qa_item in items
-        }
+        # Submit initial batch of tasks
+        pending = {}
+        items_queue = list(items)
+
+        # Submit up to max_workers tasks initially
+        while len(pending) < max_workers and items_queue:
+            trace_id, qa_item = items_queue.pop(0)
+            future = executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item)
+            pending[future] = trace_id
+
+        # Process completed tasks and submit new ones
         while pending:
             done, _ = wait(pending.keys(), return_when=FIRST_COMPLETED)
             for future in done:
@@ -211,10 +258,35 @@ def _evaluate_parallel(client: MyOpenAIClient, mono_prompt: str, prompt_version:
                     _log_result(result, prompt_version)
                 except Exception as e:
                     log.warning(f"  Error evaluating {trace_id}: {e}")
+
+            # Check if we should throttle based on dynamic rate limit
+            with _rate_limit_lock:
+                rate_limit_hit = _rate_limit_hit
+                effective_max = _dynamic_max_workers if _dynamic_max_workers is not None else max_workers
+
+            # If rate limit was hit, pause new submissions until all existing threads complete
+            if rate_limit_hit:
+                if not pending and items_queue:
+                    # All threads completed, resume submissions at reduced rate
+                    log.info(f"Resuming with {effective_max} parallel workers")
+                    with _rate_limit_lock:
+                        globals()['_rate_limit_hit'] = False
+                    # Submit new tasks at the reduced rate
+                    while len(pending) < effective_max and items_queue:
+                        trace_id, qa_item = items_queue.pop(0)
+                        future = executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item)
+                        pending[future] = trace_id
+            else:
+                # Normal operation: submit new tasks respecting the effective max workers limit
+                while len(pending) < effective_max and items_queue:
+                    trace_id, qa_item = items_queue.pop(0)
+                    future = executor.submit(evaluate_qa_item, client, mono_prompt, trace_id, qa_item)
+                    pending[future] = trace_id
+
     return results
 
 
-def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mono_prompt: str, model: str) -> None:
+def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mono_prompt: str, model: str, source: str = None) -> None:
     if not results:
         return
     eval_version = _next_eval_version(folder)
@@ -227,6 +299,8 @@ def _write_eval_results(results: list[dict], folder: Path, prompt_dir: Path, mon
         "judge_prompt": mono_prompt,
         "results": results,
     }
+    if source:
+        payload["evaluated_source"] = source
     out_path.write_text(json.dumps(payload, indent=2))
     log.info(f"Results written to {out_path}")
 
@@ -244,7 +318,8 @@ def evaluate_qa_folder(client: MyOpenAIClient, mono_prompt: str, prompt_dir: Pat
             log.warning(f"  Parse error {qa_file.name}: {e}")
     results = _evaluate_parallel(client, mono_prompt, prompt_dir.name, items, max_workers=max_workers)
     log.info(f"\nEvaluated {len(results)} item(s) from {folder}.")
-    _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model)
+    source_path = str(folder.relative_to(PROJECT_ROOT))
+    _write_eval_results(results, folder, prompt_dir, mono_prompt, client.model, source=source_path)
     return results
 
 
@@ -257,7 +332,8 @@ def evaluate_single_qa_file(client: MyOpenAIClient, mono_prompt: str, prompt_dir
         return []
     result = evaluate_qa_item(client, mono_prompt, _extract_trace_id(path.stem), qa_item)
     _log_result(result, prompt_dir.name)
-    _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model)
+    source_path = str(path.parent.relative_to(PROJECT_ROOT))
+    _write_eval_results([result], path.parent, prompt_dir, mono_prompt, client.model, source=source_path)
     return [result]
 
 
@@ -300,6 +376,33 @@ def _select_model() -> str:
     return DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
 
 
+def _select_max_parallel() -> int:
+    presets = [10, 20, 50, 100]
+    log.info("\nParallel workers:")
+    for i, n in enumerate(presets, start=1):
+        marker = " *" if n == DEFAULT_MAX_PARALLEL else ""
+        log.info(f"  {i}) {n} workers{marker}")
+    log.info("  5) Custom value")
+    log.info("  * = default")
+
+    choice = input(f"\nSelect (1-5) [{presets.index(DEFAULT_MAX_PARALLEL) + 1}]: ").strip()
+    if choice == "":
+        return DEFAULT_MAX_PARALLEL
+    if choice.isdigit() and 1 <= int(choice) <= 4:
+        return presets[int(choice) - 1]
+    if choice == "5":
+        custom = input("Enter number of parallel workers: ").strip()
+        if custom.isdigit():
+            val = int(custom)
+            if val > 0:
+                log.info(f"Using {val} parallel workers.")
+                return val
+        log.info(f"Invalid value, using default ({DEFAULT_MAX_PARALLEL}).")
+        return DEFAULT_MAX_PARALLEL
+    log.info(f"Invalid choice {choice!r}, using default ({DEFAULT_MAX_PARALLEL}).")
+    return DEFAULT_MAX_PARALLEL
+
+
 def main():
     parser = argparse.ArgumentParser(description="LLM judge for DIY repair QA items.")
     parser.add_argument(
@@ -327,12 +430,14 @@ def main():
     mono_prompt = _load_mono_prompt(prompt_dir)
     log.info(f"Using judge prompts from: {prompt_dir.name}\n")
 
+    max_parallel = args.max_parallel if args.max_parallel != DEFAULT_MAX_PARALLEL else _select_max_parallel()
+
     if args.evaluate:
         target = Path(args.evaluate)
         if not target.exists():
             log.info(f"Error: path not found — {target}")
             return
-        _resolve_target(client, mono_prompt, prompt_dir, target, max_workers=args.max_parallel)
+        _resolve_target(client, mono_prompt, prompt_dir, target, max_workers=max_parallel)
         return
 
     # Interactive prompt
@@ -342,9 +447,38 @@ def main():
         key=lambda p: int(p.name.lstrip("v")) if p.name.lstrip("v").isdigit() else 0,
     )
 
+    # Discover JSONL files and count items
+    def count_jsonl_items(path: Path) -> int:
+        count = 0
+        try:
+            with path.open() as f:
+                for line in f:
+                    if line.strip():
+                        count += 1
+        except Exception:
+            return 0
+        return count
+
+    jsonl_files = []
+    jsonl_item_counts = {}
+    for name in ["eval.jsonl", "train.jsonl"]:
+        path = PROJECT_ROOT / name
+        if path.exists():
+            item_count = count_jsonl_items(path)
+            jsonl_files.append((name, path, item_count))
+            jsonl_item_counts[name] = item_count
+
     log.info("What would you like to evaluate?")
-    log.info("  1) Training dataset (eval.jsonl)")
-    for i, folder in enumerate(versions, start=2):
+    choice_idx = 1
+    jsonl_choices = {}
+    for name, path, count in jsonl_files:
+        jsonl_choices[choice_idx] = (name, path, count)
+        marker = " *" if choice_idx == len(jsonl_files) else ""
+        log.info(f"  {choice_idx}) {name}  [{count} items]{marker}")
+        choice_idx += 1
+
+    version_start_idx = choice_idx
+    for i, folder in enumerate(versions, start=version_start_idx):
         qa_count = len(list(folder.glob("*.qa")))
         human_eval = folder / "QA_human_eval.json"
         human_count = 0
@@ -356,21 +490,42 @@ def main():
         llm_eval_count = len(list(folder.glob("QA_llm_eval_v*.json")))
         llm_note = f", {llm_eval_count} llm eval version(s)" if llm_eval_count else ""
         human_note = f", {human_count} human judge item(s)" if human_count else ""
-        marker = " *" if i == len(versions) + 1 else ""
+        marker = " *" if i == version_start_idx + len(versions) - 1 else ""
         log.info(f"  {i}) {folder.name}  [{qa_count} QA item(s){human_note}{llm_note}]{marker}")
 
-    max_choice = len(versions) + 1
+    max_choice = version_start_idx + len(versions) - 1
+    default_choice = max_choice
     log.info("  * = default")
-    choice = input(f"Enter 1-{max_choice} [{max_choice}]: ").strip()
+    choice = input(f"Enter 1-{max_choice} [{default_choice}]: ").strip()
 
     if choice == "":
-        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[-1], max_workers=args.max_parallel)
-    elif choice == "1":
-        evaluate_training_set(client, mono_prompt, prompt_dir, max_workers=args.max_parallel)
-    elif choice.isdigit() and 2 <= int(choice) <= max_choice:
-        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[int(choice) - 2], max_workers=args.max_parallel)
+        selected_choice = default_choice
+    elif choice.isdigit():
+        selected_choice = int(choice)
     else:
         log.warning(f"Unknown choice: {choice!r}. Please enter a number between 1 and {max_choice}.")
+        return
+
+    if selected_choice in jsonl_choices:
+        name, path, count = jsonl_choices[selected_choice]
+        limit = None
+        if count > 100:
+            limit_prompt = input(f"This dataset has {count} items. Enter number to limit (default 200, or 0 for all): ").strip()
+            if limit_prompt.isdigit():
+                limit = int(limit_prompt)
+                if limit == 0:
+                    limit = None
+                if limit:
+                    log.info(f"Processing first {limit} items from {name}.")
+            else:
+                limit = 200
+                log.info(f"Processing first {limit} items from {name} (default).")
+        evaluate_training_set(client, mono_prompt, prompt_dir, eval_path=path, max_workers=max_parallel, limit=limit)
+    elif version_start_idx <= selected_choice <= max_choice:
+        version_idx = selected_choice - version_start_idx
+        evaluate_qa_folder(client, mono_prompt, prompt_dir, versions[version_idx], max_workers=max_parallel)
+    else:
+        log.warning(f"Invalid choice: {selected_choice}. Please enter a number between 1 and {max_choice}.")
 
 
 if __name__ == "__main__":

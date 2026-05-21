@@ -1,0 +1,25 @@
+# Core dependencies for QA generation and evaluation pipeline
+# Used by: qa_pipeline.py, generate_qa_set.py, llm_judge.py, enhanced_llm_judge.py
+openai>=1.0.0
+
+# Used by: data_validation_checks.py, llm_judge.py, enhanced_llm_judge.py
+pydantic>=2.0.0
+
+# Used by: generate_qa_set.py
+PyYAML>=6.0
+
+# Visualization and data analysis
+# Used by: judge_visualizer.py
+matplotlib>=3.7.0
+seaborn>=0.12.0
+pandas>=2.0.0
+
+# Web applications for manual evaluation
+# Used by: human_judge.py, human_llm_enhanced_compare.py
+flask>=2.3.0
+
+# OPTIONAL: Semantic deduplication (large ~500MB-2GB)
+# Used by: semantic_dedup_check.py
+# Only needed for advanced dedup workflows with embedding-based similarity
+# To install: pip install sentence-transformers
+# sentence-transformers>=2.2.0

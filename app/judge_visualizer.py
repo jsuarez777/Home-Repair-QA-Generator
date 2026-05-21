@@ -250,6 +250,64 @@ def plot_qa_category_distribution(version_name: str, version_dir: Path, out_dir:
     plt.show()
 
 
+def plot_llm_heatmap_from_records(dataset_name: str, records: list[dict], model: str, prompt_version: str, out_dir: Path, jsonl_file: Path = None) -> None:
+    """Heatmap for JSONL data using category field from source JSONL."""
+    # Build category mapping from source JSONL file
+    cat_map = {}
+    if jsonl_file and jsonl_file.exists():
+        try:
+            with open(jsonl_file) as f:
+                for line in f:
+                    if line.strip():
+                        item = json.loads(line)
+                        trace_id = item.get("id")
+                        category = item.get("category", "unknown")
+                        if trace_id:
+                            cat_map[trace_id] = category
+        except Exception as e:
+            print(f"  Warning: could not load categories from {jsonl_file}: {e}")
+
+    # Group records by category
+    cat_records: dict[str, list[dict]] = {}
+    for r in records:
+        trace_id = r.get("trace_id")
+        cat = cat_map.get(trace_id, "unknown") if trace_id else "unknown"
+        cat_records.setdefault(cat, []).append(r)
+
+    if not cat_records or all(k == "unknown" for k in cat_records.keys()):
+        print("  No category information found — skipping heatmap.")
+        return
+
+    dim_labels = [d.replace("_", " ").title() for d in DIMENSIONS]
+    categories = sorted(cat_records.keys())
+    data = [
+        [dim_score(cat_records[cat], dim) for dim in DIMENSIONS]
+        for cat in categories
+    ]
+    df = pd.DataFrame(data, index=categories, columns=dim_labels)
+
+    fig, ax = plt.subplots(figsize=(11, max(4, len(categories) * 0.6 + 1.5)))
+    sns.heatmap(
+        df, ax=ax, annot=True, fmt=".0f", cmap="RdYlGn",
+        vmin=0, vmax=100, linewidths=0.5,
+        cbar_kws={"label": "Pass Rate (%)"},
+    )
+    ax.set_title(
+        f"Pass Rate by Category & Dimension — {dataset_name}\n"
+        f"LLM Judge Prompt {prompt_version} ({model})",
+        fontsize=12,
+    )
+    ax.set_xlabel("")
+    ax.set_ylabel("Category")
+    ax.tick_params(axis="x", labelrotation=20)
+    plt.tight_layout()
+
+    out_path = out_dir / "llm_heatmap.png"
+    fig.savefig(out_path, dpi=150)
+    print(f"  Heatmap saved to {out_path}")
+    plt.show()
+
+
 def plot_llm_heatmap(version_name: str, version_dir: Path, llm_evals: dict[str, dict], out_dir: Path) -> None:
     trace_cat = _build_trace_category_map(version_dir)
     if not trace_cat:
@@ -398,47 +456,131 @@ def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: 
     plot_human_llm_agreement(version_name, human_records, llm_evals, out_dir)
 
 
+def discover_jsonl_evals():
+    """Find eval files for eval.jsonl and train.jsonl in PROJECT_ROOT by reading evaluated_source field."""
+    jsonl_evals = {}
+    eval_files = sorted(PROJECT_ROOT.glob("QA_llm_eval_*.json"), reverse=True)
+
+    # Group eval files by their evaluated_source
+    eval_by_source = {}
+    for eval_file in eval_files:
+        try:
+            with open(eval_file) as f:
+                data = json.load(f)
+            source = data.get("evaluated_source", "unknown")
+            if source not in eval_by_source:
+                eval_by_source[source] = []
+            eval_by_source[source].append(eval_file)
+        except Exception as e:
+            print(f"  Warning: could not read {eval_file.name}: {e}")
+
+    # Extract eval files for eval.jsonl and train.jsonl
+    for source in ["eval.jsonl", "train.jsonl"]:
+        if source in eval_by_source:
+            files = eval_by_source[source]
+            jsonl_evals[source] = (len(files), files[0])
+
+    return jsonl_evals
+
+
 def main():
     versions = discover_versions()
-    if not versions:
-        print(f"No eval files found under {QA_ITEMS_DIR}")
+    jsonl_evals = discover_jsonl_evals()
+
+    if not versions and not jsonl_evals:
+        print(f"No eval files found under {QA_ITEMS_DIR} or in PROJECT_ROOT")
         sys.exit(1)
 
-    print("\nAvailable versions with eval data:\n")
-    print(f"  {'#':<4} {'Version':<12} {'Human Eval':<14} {'LLM Eval Versions'}")
-    print(f"  {'─' * 50}")
-    for i, (name, _, has_h, llm_count) in enumerate(versions, 1):
-        h_mark = "present" if has_h else "—"
-        l_mark = f"{llm_count} version{'s' if llm_count != 1 else ''}" if llm_count > 0 else "—"
-        num_str = f"{i} *" if i == len(versions) else str(i)
-        print(f"  {num_str:<4} {name:<12} {h_mark:<14} {l_mark}")
+    print("\nAvailable eval data:\n")
 
+    choice_idx = 1
+    jsonl_choices = {}
+    version_choices = {}
+
+    total_items = len(jsonl_evals) + len(versions)
+
+    # JSONL files first
+    if jsonl_evals:
+        print(f"  {'#':<4} {'Dataset':<12} {'LLM Eval Versions'}")
+        print(f"  {'─' * 50}")
+        for name in ["eval.jsonl", "train.jsonl"]:
+            if name in jsonl_evals:
+                llm_count, _ = jsonl_evals[name]
+                l_mark = f"{llm_count} version{'s' if llm_count != 1 else ''}"
+                marker = " *" if choice_idx == total_items else ""
+                print(f"  {choice_idx:<4} {name:<12} {l_mark}{marker}")
+                jsonl_choices[choice_idx] = name
+                choice_idx += 1
+        print()
+
+    # QA versions
+    if versions:
+        print(f"  {'#':<4} {'Version':<12} {'Human Eval':<14} {'LLM Eval Versions'}")
+        print(f"  {'─' * 50}")
+        for name, _, has_h, llm_count in versions:
+            h_mark = "present" if has_h else "—"
+            l_mark = f"{llm_count} version{'s' if llm_count != 1 else ''}" if llm_count > 0 else "—"
+            marker = " *" if choice_idx == total_items else ""
+            num_str = f"{choice_idx}{marker}"
+            print(f"  {num_str:<4} {name:<12} {h_mark:<14} {l_mark}")
+            version_choices[choice_idx] = (name, _, has_h, llm_count)
+            choice_idx += 1
+
+    max_choice = total_items
+    default_choice = max_choice
     print("  * = default")
     print()
     try:
-        choice = input(f"Enter version number (or name) to visualize [{len(versions)}]: ").strip()
+        choice = input(f"Enter number to visualize [{default_choice}]: ").strip()
     except (KeyboardInterrupt, EOFError):
         print()
         sys.exit(0)
 
-    selected = None
+    selected_choice = None
     if choice == "":
-        selected = versions[-1]
-    elif choice.isdigit():
-        idx = int(choice) - 1
-        if 0 <= idx < len(versions):
-            selected = versions[idx]
+        selected_choice = default_choice
+    elif choice.isdigit() and 1 <= int(choice) <= max_choice:
+        selected_choice = int(choice)
     else:
-        for v in versions:
-            if v[0] == choice:
-                selected = v
-                break
-
-    if selected is None:
         print(f"Invalid selection: '{choice}'")
         sys.exit(1)
 
-    visualize(*selected)
+    # Handle JSONL selection
+    if selected_choice in jsonl_choices:
+        jsonl_name = jsonl_choices[selected_choice]
+        llm_count, latest_eval = jsonl_evals[jsonl_name]
+        with open(latest_eval) as f:
+            eval_data = json.load(f)
+        results = eval_data.get("results", [])
+        model = eval_data.get("model", "unknown")
+        prompt_version = eval_data.get("judge_prompt_version", "unknown")
+
+        print(f"\n{'═' * 60}")
+        print(f"  Dataset: {jsonl_name}")
+        print(f"  LLM Eval File: {latest_eval.name}")
+        print(f"  Model: {model}")
+        print(f"{'═' * 60}\n")
+
+        print_section("LLM EVAL", results, f"LLM Judge ({model})")
+
+        # Generate charts for JSONL data
+        out_dir = PROJECT_ROOT / "visualizations" / datetime.now().strftime("%Y%m%d_%H%M")
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        llm_evals_for_chart = {f"{prompt_version}_{model}": {"records": results, "model": model, "judge_prompt_version": prompt_version}}
+        plot_llm_pass_rates(jsonl_name.replace(".jsonl", ""), llm_evals_for_chart, out_dir)
+        jsonl_path = PROJECT_ROOT / jsonl_name
+        plot_llm_heatmap_from_records(jsonl_name.replace(".jsonl", ""), results, model, prompt_version, out_dir, jsonl_path)
+        print()
+        return
+
+    # Handle version selection
+    if selected_choice in version_choices:
+        selected = version_choices[selected_choice]
+        visualize(*selected)
+    else:
+        print(f"Invalid selection: {selected_choice}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
