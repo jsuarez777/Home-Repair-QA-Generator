@@ -71,4 +71,10 @@ Thumbs.db
 
 # Project output
 qa_items/
+logs/
+visualizations/
 tmp/
+
+# External datasets (golden test data)
+eval.jsonl
+train.jsonl

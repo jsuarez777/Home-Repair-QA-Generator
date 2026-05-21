@@ -31,7 +31,7 @@ if os.getenv("LOG_HTTP") != "1":
     logging.getLogger("httpx").setLevel(logging.WARNING)
 log.info(f"Logging to {_log_file}")
 
-from qa_item import QAItem
+from app.qa_item import QAItem
 from openai_client.openai_client import MyOpenAIClient
 
 

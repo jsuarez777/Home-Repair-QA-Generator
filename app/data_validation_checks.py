@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 log.info(f"Logging to {_log_file}")
 
 from pydantic import ValidationError
-from qa_item import QAItem
+from app.qa_item import QAItem
 
 JACCARD_THRESHOLD = 0.5
 VAGUE_PHRASE_MAX_RATIO = 0.15

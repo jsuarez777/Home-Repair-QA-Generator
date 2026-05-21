@@ -18,7 +18,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 if try_to_load_from_cache("sentence-transformers/all-MiniLM-L6-v2", "config.json"):
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
-from qa_item import QAItem
+from app.qa_item import QAItem
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 SIMILARITY_THRESHOLD = 0.88

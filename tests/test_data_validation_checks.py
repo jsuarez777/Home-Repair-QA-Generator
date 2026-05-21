@@ -4,9 +4,12 @@ import os
 
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "app"))
-from data_validation_checks import _validate_text, dim_sanity_check
-from qa_item import QAItem
+# Add project root to path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
+from app.data_validation_checks import _validate_text, dim_sanity_check
+from app.qa_item import QAItem
 
 VALID = {
     "question": "What should I do when the hydraulic pump fails?",

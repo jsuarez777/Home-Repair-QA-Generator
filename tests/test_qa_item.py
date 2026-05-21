@@ -3,8 +3,11 @@ from pydantic import ValidationError
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
-from qa_item import QAItem
+# Add project root to path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
+from app.qa_item import QAItem
 
 VALID = {
     "question": "What should I do when the hydraulic pump fails?",

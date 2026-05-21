@@ -112,6 +112,29 @@ To generate and evaluate 100 QA items in under 5 minutes:
    # Select the newly created version to see charts and pass rates
    ```
 
+## Testing
+
+The project includes a comprehensive test suite covering data validation, QA item schema, batch deduplication, and evaluation visualization.
+
+**Run all tests:**
+```bash
+python -m pytest tests/ -v
+```
+
+**Run specific test file:**
+```bash
+python -m pytest tests/test_qa_item.py -v
+```
+
+**Test coverage:**
+- **test_qa_item.py** (14 tests): QAItem Pydantic model validation (question length, answer length, field requirements, list constraints)
+- **test_data_validation_checks.py** (16 tests): Data validation checks (JSON validity, required fields, string lengths, vague phrases)
+- **test_batch_dedup.py** (7 tests): Jaccard-based deduplication (duplicate detection, preservation of distinct items, malformed file handling)
+- **test_judge_visualizer.py** (4 tests): Agreement calculation between human and LLM evaluations
+- **test_visualizer_ascii_output.py** (1 test): ASCII table formatting
+
+All 42 tests pass with the current codebase. Tests use pytest fixtures and temporary directories for isolated testing without side effects.
+
 ## Pipeline Overview
 
 ## **1. Inputs**
