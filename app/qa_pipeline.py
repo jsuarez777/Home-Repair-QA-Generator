@@ -107,6 +107,9 @@ def main():
     log.info("QA Generation and Evaluation Pipeline")
     log.info("=" * 80)
 
+    # Set default max_parallel if not provided
+    max_parallel = args.max_parallel if args.max_parallel else 50
+
     # Collect inputs
     gen_model = args.gen_model if args.gen_model else _select_model("Select model for QA generation")
     log.info(f"Using generation model: {gen_model}")
@@ -149,11 +152,10 @@ def main():
         "--model", gen_model,
         "--version", gen_version,
         "--num-items", str(num_items),
+        "--max-parallel", str(max_parallel),
     ]
     if args.temperature is not None:
         gen_cmd.extend(["--temperature", str(args.temperature)])
-    if args.max_parallel is not None:
-        gen_cmd.extend(["--max-parallel", str(args.max_parallel)])
     if not _run_command(gen_cmd, "QA Generation"):
         return
 
@@ -169,14 +171,15 @@ def main():
 
     # Step 3: Judge QA items
     if not args.skip_judge:
+        qa_items_path = PROJECT_ROOT / "qa_items" / gen_version
         judge_cmd = [
             sys.executable,
             str(PROJECT_ROOT / "app" / "llm_judge.py"),
             "--model", judge_model,
             "--prompt-version", judge_prompt_version,
+            "--evaluate", str(qa_items_path),
+            "--max-parallel", str(max_parallel),
         ]
-        if args.max_parallel is not None:
-            judge_cmd.extend(["--max-parallel", str(args.max_parallel)])
         if not _run_command(judge_cmd, "LLM Judging"):
             log.error("Judging failed")
             return

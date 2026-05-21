@@ -89,7 +89,7 @@ The pipeline is designed for iterative development: run generation → validate 
 
 ## Quick Start
 
-To generate and evaluate 100 QA items in under 5 minutes:
+To generate and evaluate 50 QA items in under 5 minutes:
 
 1. **Configure API key** (if not already done):
    ```bash
@@ -100,10 +100,10 @@ To generate and evaluate 100 QA items in under 5 minutes:
    ```bash
    python app/qa_pipeline.py \
      --gen-model gpt-4.1-nano \
-     --gen-version v6 \
-     --num-items 100 \
+     --gen-version v8 \
+     --num-items 50 \
      --judge-model gpt-5.4-mini \
-     --judge-prompt-version v6
+     --judge-prompt-version v7
    ```
 
 3. **View results**:
