@@ -320,3 +320,64 @@ Runs steps 2-4 in sequence (generation → validation → judging). Automates th
   ```
 
   **Output:** `qa_items/v8/QA*.qa`, `qa_items/v8/QA_llm_eval_*.json`, `logs/{timestamp}_qa_pipeline.log`
+
+# Development and Iteration process
+## Human Judging
+### Tools: local Flask app
+
+![Human Judge Flask app - version selection](visualizations/screenshots/human_judge_folder_selection.png)
+
+![Human Judge Flask app - reviewing QA items](visualizations/screenshots/human_judge_reviewing_QA_items.png)
+
+Flask app allows quickly loading saved results, viewing full QA item and criteria (as pop-up tooltips), one-click Pass/Fail voting for each dimension, saving on-demand, and arbitrary browsing to any item (very helpful during debug).
+
+## LLM judge calibration
+
+Experimented with various LLM models using v5 of generated QA items (after sorting out initial QA quality issues) to identify which judge model performed best. The evaluation criteria included not only agreement with human evaluations, but also cost efficiency and execution speed, to balance quality with practical resource constraints. Please note that I did not keep/generate data for every version for every model, so 4.1-nano and 5.4-mini only illustrate v1,v3,v4,v5.  In some cases I also generated data for other models like gpt-4o-mini, gpt-3.5-turbo, etc. but those results either were worse than the 4.1/5.4 models, or did not add significant value to interating the trend, so I am using 4.1 and 5.4 to show the improvements in LLM judge prompt versions.
+The 4.1 mini and nano models were significantly cheaper than 5.4, but the key finding was that **4.1 mini seriously outperformed from the start**, achieving strong human agreement while maintaining cost efficiency. This made it the optimal choice for the pipeline, delivering quality results at a fraction of the expense of larger models.  Nonetheless, I refined the LLM judge prompts so that I could generally see an improvement across all models.  
+For example, between v3 and v4 there was a regression:
+ - 4.1-mini regressed on "Answer Completeness"
+ - 5.4-mini regressed "Answer Completness", "Safety Specificity", and "Overall"
+
+However, this was offset by improvements in the 4.1-nano model in 4 dimensions, with the 5th remaining same.
+Additionally, 4.1-nano regressed between v1 and v3 of LLM prompts on 4 of 5 dimensions and 5.4-mini on 2 dimensions, but this was made up by improvements in 4.1-mini and 5.4-mini on 4 dimensions and 3 dimensions.  While this appears to be a net 1 dimension improvement across all models:
+ - 5.4-mini's respective dimenions accuracy improvements was a 45% point gain vs a 15% point loss on those it became less accurate in.
+ - 4.1-nano lost 40% accuracy points across 4 dimensions, but this was offset by 4.1-mini's 70% point aggregate gain across 4 dimensions for a net 30% gain between these two models alone.
+
+Further, during LLM judge prompt iteration, and because I created an enhanced LLM judge script that ask the LLM to output reasoning as to why a dimension was judged as failed for a given item, I found that I had made mistakes in judging certain QA items myself (mostly by adding false positives, but in some cases being too strict on the criteria).  Its entirely likely that some of the regression that was seen was the new prompt version appearing to regress when in fact it was actually improving in accuracy and convincement me to change my mind. 
+
+![LLM vs human judge agreement across models](visualizations/screenshots/human_llm_agreement.png)
+
+## QA Item Generation Prompt Iteration
+
+After initial prompt setup, refinement focused on improving output quality and reducing failures due to invalid JSON, duplicate items, and missing content. Later iterations used dimension-by-dimension analysis from evaluation heatmaps to target specific weak spots in QA items.
+
+**Early refinements (Apr 19 - Apr 26):**
+- **Data validation constraints**: Added requirements for minimum field lengths (e.g., steps must be ≥3) and exact key naming to prevent truncated or malformed fields
+- **JSON robustness**: Instructed LLM to explicitly escape quotes and validate JSON before output, reducing JSON parsing errors from ~1 per 300 items to near-zero
+- **Content consistency**: Restructured prompt to ensure answer section verbatim repeats steps, tips, and safety info from individual sections, eliminating discrepancies
+
+**Variety and deduplication (May 4):**
+- **Expanded examples**: Increased example count in generation prompts to encourage variety and reduce duplicate items by >70% across most categories
+
+**Dimension-targeted refinements (May 9+):**
+
+Used evaluation heatmaps to identify and target weak category-dimension pairs:
+
+- **Plumbing × Tip Usefulness (71% → 100%)**: Added explicit guidance on what constitutes useful, non-obvious tips for plumbing repairs.
+
+![Baseline heatmap showing Plumbing × Tip Usefulness weakness](visualizations/baseline_20260509_1212/llm_heatmap_v5_gpt54nano.png)
+
+- **HVAC & Appliances × Scope Appropriateness (33-67%)**: Made safety boundaries explicit—any work involving live voltage, fuses, or refrigerant must include professional referral in steps.
+- **Plumbing × Safety Specificity (73% → improved)**: Refined safety_info field to require specific hazard identification + specific precaution pairs (not generic "be careful" phrases).
+
+![Corrected heatmap showing improvements to HVAC/Appliances and Plumbing dimensions](visualizations/corrected_20260509_1513/llm_heatmap_v6_gpt54mini.png)
+
+This dimension-targeted approach allowed systematic improvement of weak spots in the heatmap, moving the pipeline toward consistent high pass rates across all category-dimension combinations.
+
+![Final heatmap showing overall improvements after all generator prompt refinements](visualizations/corrected_20260509_1758/llm_heatmap_v7_gpt54mini.png)
+
+After additional refinements to v8 of the generator prompt, the pipeline achieved consistent high-quality output using **4.1-mini to generate** QA items and **5.4-mini to judge** their quality:
+
+![Final v8 generator prompt results with 4.1-mini generation and 5.4-mini evaluation](visualizations/generator_v8_final/llm_heatmap_v7_gpt54mini.png)
+

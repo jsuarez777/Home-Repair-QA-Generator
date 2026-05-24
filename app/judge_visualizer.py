@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import os
 import re
@@ -157,27 +158,85 @@ def plot_human_llm_agreement(
     rows = []
     sorted_evals = sorted(llm_evals.items(), key=lambda x: (x[1]["model"], x[1]["judge_prompt_version"]))
     for llm_ver, entry in sorted_evals:
-        legend_label = f"Prompt {entry['judge_prompt_version']} ({entry['model']})"
+        model = entry["model"]
+        prompt_version = entry["judge_prompt_version"]
         for dim, label in zip(all_dims, dim_labels):
             rows.append({
-                "Judge Prompt & Model": legend_label,
                 "Dimension": label,
+                "Model": model,
+                "Prompt Version": prompt_version,
                 "Agreement (%)": _dim_agreement(human_records, entry["records"], dim),
             })
 
     df = pd.DataFrame(rows)
 
-    sns.set_theme(style="whitegrid")
-    fig, ax = plt.subplots(figsize=(13, 6))
-    sns.barplot(data=df, x="Dimension", y="Agreement (%)", hue="Judge Prompt & Model", ax=ax)
+    sns.set_theme(style="white")
+    fig, ax = plt.subplots(figsize=(14, 6))
+    ax.grid(axis="y", alpha=0.3)
 
-    ax.set_title(f"Human vs LLM Agreement by Dimension — QA version {version_name}", fontsize=13)
+    dimensions = dim_labels
+    n_dims = len(dimensions)
+
+    # Get all (model, version) pairs in order
+    eval_pairs = [(row["Model"], row["Prompt Version"]) for _, row in df.drop_duplicates(subset=["Model", "Prompt Version"]).iterrows()]
+    eval_pairs = sorted(set(eval_pairs), key=lambda x: (x[0], x[1]))
+
+    n_evals = len(eval_pairs)
+    bar_width = 0.8 / n_evals if n_evals > 1 else 0.6
+
+    # Assign unique colors to each (model, version) pair
+    palette = sns.color_palette("husl", n_evals)
+    eval_colors = {pair: palette[idx] for idx, pair in enumerate(eval_pairs)}
+
+    # Track where models change for dividers
+    model_change_indices = [0]
+    for eval_idx in range(1, len(eval_pairs)):
+        if eval_pairs[eval_idx][0] != eval_pairs[eval_idx-1][0]:
+            model_change_indices.append(eval_idx)
+    model_change_indices.append(len(eval_pairs))
+
+    # Plot bars for each (model, version) pair
+    for eval_idx, (model, version) in enumerate(eval_pairs):
+        agreements = []
+
+        for dim in dimensions:
+            dim_data = df[(df["Dimension"] == dim) & (df["Model"] == model) & (df["Prompt Version"] == version)]
+            if len(dim_data) > 0:
+                agreements.append(float(dim_data.iloc[0]["Agreement (%)"]))
+            else:
+                agreements.append(0.0)
+
+        # Calculate x positions for this eval's bars
+        if n_evals > 1:
+            x_offset = (eval_idx - n_evals / 2 + 0.5) * bar_width
+        else:
+            x_offset = 0
+        x_positions = [float(i) + x_offset for i in range(n_dims)]
+
+        # Use (model, version) for label and color
+        label = f"{model} ({version})"
+        bars = ax.bar(x_positions, agreements, bar_width, label=label, color=eval_colors[(model, version)])
+
+    # Add vertical dividers between model groups for each dimension
+    for model_boundary_idx in model_change_indices[1:-1]:
+        # Calculate the x position between two model groups
+        x_before = (model_boundary_idx - 1 - n_evals / 2 + 0.5) * bar_width + bar_width / 2
+        x_after = (model_boundary_idx - n_evals / 2 + 0.5) * bar_width - bar_width / 2
+        x_divider = (x_before + x_after) / 2
+
+        for dim_idx in range(n_dims):
+            x_pos = dim_idx + x_divider
+            ax.axvline(x=x_pos, color="gray", linestyle="-", linewidth=1.5, alpha=0.4)
+
     ax.set_xlabel("")
     ax.set_ylabel("Agreement (%)")
+    ax.set_title(f"Human vs LLM Agreement by Dimension — QA version {version_name}", fontsize=13)
+    ax.set_xticks(range(n_dims))
+    ax.set_xticklabels(dimensions, rotation=20)
     ax.set_ylim(0, 105)
-    ax.tick_params(axis="x", labelrotation=20)
-    ax.legend(title="Judge Prompt & Model")
-    ax.axhline(y=80, color="grey", linestyle="--", linewidth=0.8, label="80% reference")
+    ax.legend(title="Model & Version", loc="lower right")
+    ax.axhline(y=80, color="grey", linestyle="--", linewidth=0.8, alpha=0.5)
+
     _add_item_axis(ax, n_shared)
 
     plt.tight_layout()
@@ -423,7 +482,13 @@ def print_dimension_agreement_table(human_records: list[dict], llm_evals: dict[s
                 print(f"  {label:<30}: {bar_str} {agreement_pct:5.1f}% agree  ({matches}/{total})")
 
 
-def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: int):
+def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: int, charts: list[str] = None):
+    if charts is None:
+        charts = ["all"]
+
+    charts = [c.lower() for c in charts]
+    generate_all = "all" in charts
+
     print(f"\n{'═' * 60}")
     print(f"  Version: {version_name}")
     print(f"{'═' * 60}")
@@ -450,10 +515,14 @@ def visualize(version_name: str, version_dir: Path, has_human: bool, llm_count: 
         print_dimension_agreement_table(human_records, llm_evals)
 
     print()
-    plot_qa_category_distribution(version_name, version_dir, out_dir)
-    plot_llm_pass_rates(version_name, llm_evals, out_dir)
-    plot_llm_heatmap(version_name, version_dir, llm_evals, out_dir)
-    plot_human_llm_agreement(version_name, human_records, llm_evals, out_dir)
+    if generate_all or "category" in charts:
+        plot_qa_category_distribution(version_name, version_dir, out_dir)
+    if generate_all or "pass-rates" in charts:
+        plot_llm_pass_rates(version_name, llm_evals, out_dir)
+    if generate_all or "heatmap" in charts:
+        plot_llm_heatmap(version_name, version_dir, llm_evals, out_dir)
+    if generate_all or "agreement" in charts:
+        plot_human_llm_agreement(version_name, human_records, llm_evals, out_dir)
 
 
 def discover_jsonl_evals():
@@ -484,6 +553,16 @@ def discover_jsonl_evals():
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Visualize QA evaluation results")
+    parser.add_argument(
+        "--chart",
+        nargs="+",
+        choices=["all", "category", "pass-rates", "heatmap", "agreement"],
+        default=["all"],
+        help="Specific chart(s) to generate: 'category' (category distribution), 'pass-rates' (LLM pass rates), 'heatmap' (by category & dimension), 'agreement' (human vs LLM), or 'all' (default)"
+    )
+    args = parser.parse_args()
+
     versions = discover_versions()
     jsonl_evals = discover_jsonl_evals()
 
@@ -567,17 +646,23 @@ def main():
         out_dir = PROJECT_ROOT / "visualizations" / datetime.now().strftime("%Y%m%d_%H%M")
         out_dir.mkdir(parents=True, exist_ok=True)
 
+        charts = args.chart
+        charts = [c.lower() for c in charts]
+        generate_all = "all" in charts
+
         llm_evals_for_chart = {f"{prompt_version}_{model}": {"records": results, "model": model, "judge_prompt_version": prompt_version}}
-        plot_llm_pass_rates(jsonl_name.replace(".jsonl", ""), llm_evals_for_chart, out_dir)
-        jsonl_path = PROJECT_ROOT / jsonl_name
-        plot_llm_heatmap_from_records(jsonl_name.replace(".jsonl", ""), results, model, prompt_version, out_dir, jsonl_path)
+        if generate_all or "pass-rates" in charts:
+            plot_llm_pass_rates(jsonl_name.replace(".jsonl", ""), llm_evals_for_chart, out_dir)
+        if generate_all or "heatmap" in charts:
+            jsonl_path = PROJECT_ROOT / jsonl_name
+            plot_llm_heatmap_from_records(jsonl_name.replace(".jsonl", ""), results, model, prompt_version, out_dir, jsonl_path)
         print()
         return
 
     # Handle version selection
     if selected_choice in version_choices:
         selected = version_choices[selected_choice]
-        visualize(*selected)
+        visualize(*selected, charts=args.chart)
     else:
         print(f"Invalid selection: {selected_choice}")
         sys.exit(1)
